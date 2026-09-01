@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+<meta charset="UTF-8">
+<title>Plan učenja — rok septembar 2026</title>
+<style>
+  :root{
+    --bg:#0f1115;
+    --card:#171a21;
+    --card-border:#262a34;
+    --text:#eef0f4;
+    --muted:#9aa1ac;
+    --red:#e5484d;
+    --orange:#f2994a;
+    --yellow:#e8c547;
+    --blue:#4fa3f7;
+    --green:#3ecf8e;
+    --accent:#6e9bff;
+    --purple:#c084fc;
+    --teal:#2dd4bf;
+    --warn-bg:#3a1418;
+    --warn-text:#ff8a8f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    padding:20px 14px 60px;
+  }
+  .wrap{max-width:760px;margin:0 auto;}
+  h1{font-size:1.35rem;margin:0 0 4px;}
+  .sub{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+
+  .storage-warning{
+    display:none;
+    background:var(--warn-bg);color:var(--warn-text);border:1px solid var(--red);
+    border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:0.82rem;font-weight:600;
+  }
+  .storage-warning.show{display:block;}
+
+  .exams{
+    display:flex;flex-direction:column;gap:6px;
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:12px;padding:14px 16px;margin-bottom:8px;font-size:0.88rem;
+  }
+  .exams b{color:var(--accent);}
+  .exams .cat-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin-top:6px;}
+  .exams .cat-title:first-child{margin-top:0;}
+  .fix-note{
+    font-size:0.72rem;color:var(--muted);margin-bottom:18px;font-style:italic;
+  }
+
+  .overall{
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:14px;padding:16px 18px;margin-bottom:20px;
+  }
+  .overall-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
+  .overall-top .pct{font-size:1.5rem;font-weight:700;color:var(--green);}
+  .bar-bg{height:10px;border-radius:6px;background:#262a34;overflow:hidden;margin-bottom:12px;}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:6px;transition:width .3s;}
+  .subject-mini{display:flex;gap:10px;flex-wrap:wrap;font-size:0.78rem;color:var(--muted);}
+  .subject-mini span.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;}
+
+  .day{
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:14px;margin-bottom:14px;overflow:hidden;
+  }
+  .day-header{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 16px;cursor:pointer;user-select:none;
+  }
+  .day-header:hover{background:#1c2029;}
+  .day-title{font-weight:600;font-size:0.98rem;display:flex;align-items:center;gap:8px;}
+  .day-progress{font-size:0.8rem;color:var(--muted);white-space:nowrap;}
+  .day-body{padding:0 16px 14px;display:none;}
+  .day.open .day-body{display:block;}
+  .chevron{transition:transform .2s;color:var(--muted);margin-left:8px;}
+  .day.open .chevron{transform:rotate(90deg);}
+
+  .exam-flag{
+    display:inline-block;margin-left:8px;font-size:0.72rem;font-weight:700;
+    background:#3a1418;color:var(--red);padding:2px 8px;border-radius:6px;
+  }
+  .note{
+    font-size:0.8rem;color:var(--muted);background:#1c1f26;border-radius:8px;
+    padding:8px 10px;margin:8px 0;
+  }
+  .note.done{color:var(--green);font-weight:600;}
+
+  .group{margin-top:10px;}
+  .group-title{
+    font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
+    margin:0 0 6px;padding:3px 0;display:flex;align-items:center;gap:6px;
+  }
+  .group-title.ess{color:var(--red);}
+  .group-title.ibo{color:var(--orange);}
+  .group-title.spt{color:var(--yellow);}
+  .group-title.eng{color:var(--blue);}
+  .group-title.spi{color:var(--purple);}
+  .group-title.pseu{color:var(--teal);}
+  .group-count{color:var(--muted);font-weight:500;font-size:0.72rem;}
+  .group-note{color:var(--muted);font-weight:500;font-size:0.7rem;text-transform:none;}
+
+  label.item{
+    display:flex;align-items:flex-start;gap:9px;padding:6px 8px;border-radius:8px;
+    cursor:pointer;font-size:0.86rem;line-height:1.35;
+  }
+  label.item:hover{background:#1c2029;}
+  label.item input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+  label.item span.txt{transition:color .15s,opacity .15s;}
+  label.item input:checked ~ span.txt{color:var(--muted);text-decoration:line-through;opacity:0.75;}
+
+  .review-block{
+    border:1px dashed var(--card-border);border-radius:10px;padding:10px 12px;margin-top:8px;
+  }
+  .review-block label.item{font-weight:600;}
+
+  .examcheck-block{
+    border:1px solid var(--red);background:#1c1215;border-radius:10px;padding:10px 12px;margin-bottom:10px;
+  }
+  .examcheck-block label.item{font-weight:700;color:var(--red);}
+  .examcheck-block label.item input:checked ~ span.txt{color:var(--muted);}
+
+  .loading{text-align:center;color:var(--muted);padding:30px;font-size:0.85rem;}
+
+  .planned-min{color:var(--muted);font-weight:400;}
+  .actual-row{
+    display:flex;align-items:center;gap:7px;margin:2px 0 6px 30px;font-size:11px;color:var(--muted);flex-wrap:wrap;
+  }
+  .actual-row input[type="number"]{
+    background:#1c1f26;border:1px solid var(--card-border);color:var(--text);border-radius:6px;
+    padding:3px 6px;font-size:11px;width:56px;font-family:inherit;
+  }
+  .actual-row input[type="number"]:focus{outline:none;border-color:var(--accent);}
+  .diff-badge{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap;}
+  .diff-badge.late{background:rgba(229,72,77,0.14);color:var(--red);}
+  .diff-badge.early{background:rgba(62,207,142,0.14);color:var(--green);}
+  .diff-badge.ontime{background:rgba(79,163,247,0.14);color:var(--blue);}
+  .roast{font-size:10.5px;font-style:italic;white-space:normal;}
+  .roast.late{color:var(--red);}
+  .roast.early{color:var(--green);}
+  .roast.ontime{color:var(--blue);}
+
+  .comment-row{margin:0 0 10px 30px;}
+  .comment-input{
+    width:100%;max-width:440px;background:#1c1f26;border:1px solid var(--card-border);color:var(--text);
+    border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit;resize:vertical;min-height:30px;
+    box-sizing:border-box;
+  }
+  .comment-input:focus{outline:none;border-color:var(--accent);}
+  .comment-reply{margin-top:4px;font-size:11.5px;font-style:italic;color:var(--accent);}
+
+  .subject-drift-line{font-size:0.72rem;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--card-border);}
+  .late{color:var(--red);font-weight:700;}
+  .early{color:var(--green);font-weight:700;}
+  .ontime{color:var(--blue);font-weight:700;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📚 Plan učenja — septembar 2026.</h1>
+
+  <div class="storage-warning" id="storageWarning">⚠️ Čuvanje napretka trenutno ne radi — ono što štikliraš možda neće ostati sačuvano. Ne oslanjaj se na ovo dok se poruka ne sakrije.</div>
+
+  <div class="exams">
+    <div class="cat-title">Kolokvijumi</div>
+    <div><b>14. septembar</b> — Engleski jezik 2 kolokvijum</div>
+    <div class="cat-title">Ispiti</div>
+    <div><b>16. septembar, 9:00</b> — Savremena politička istorija</div>
+    <div><b>19. septembar, 10:00</b> — Ekonomski sistem Srbije</div>
+    <div><b>21. septembar, 9:00</b> — Istorija balkanskih odnosa</div>
+    <div><b>23. septembar, 9:00</b> — Politički sistem Evropske unije</div>
+    <div><b>26. septembar, 9:00</b> — Savremena politička teorija</div>
+  </div>
+
+  <div class="overall">
+    <div class="overall-top">
+      <div>Ukupan napredak</div>
+      <div class="pct" id="overallPct">0%</div>
+    </div>
+    <div class="bar-bg"><div class="bar-fill" id="overallBar" style="width:0%"></div></div>
+    <div class="subject-mini" id="subjectMini"></div>
+  </div>
+
+  <div id="days"><div class="loading">Učitavanje...</div></div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'plan-septembar-2026-progress';
+
+const SUBJECTS = {
+  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--red)"},
+  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--orange)"},
+  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--yellow)"},
+  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--blue)"},
+  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--purple)"},
+  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--teal)"}
+};
+
+const itemLateComments = ["Alo, ovo kasni više nego što bi trebalo.", "Bre, sat otkucava brže nego što ti okrećeš stranice.", "Ajde, da nisi zaspala nad skriptom.", "Slušaj, manje zurenja, više učenja.", "Realno, vreme ti curi kao voda kroz prste.", "Ma daj, ovo kasni više nego tvoja motivacija jutros.", "Pazi, fokus ti je otišao na pauzu bez tebe.", "Iskreno, ovo pitanje te je savladalo, ne obrnuto."];
+const itemOnTimeComments = ["Ovako se to radi, nastavi u tom ritmu.", "Tačno na vreme, bravo.", "Dobro, drži tempo do kraja.", "Solidno, upravo kako treba.", "Fino, ni brzo ni sporo.", "Odlično, disciplina se isplati.", "Bravo, poštuješ raspored."];
+const itemEarlyComments = ["Brzo si to sredila — jesi li stvarno naučila ili samo prelistala.", "Hitro, samo proveri da ti je ostalo u glavi.", "Munjevito, nadam se da nije bilo brzinsko čitanje.", "Turbo, ne žrtvuj razumevanje zarad tempa.", "Rekordno, ali nemoj da se hvališ ako ne znaš detalje."];
+const commentReplies = ["Aha, primljeno k znanju, sad glavu u tekst.", "Zvuči uverljivo, sad nazad na učenje.", "Zapisano, hajde dalje.", "Razumem, ali gradivo se samo ne uči.", "Ok, sad ozbiljno, dalje.", "Jasno, diši i vrati se tekstu."];
+
+function hashStr(s){
+  let h = 0;
+  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; }
+  return Math.abs(h);
+}
+function pickComment(arrv, seed){
+  if(!arrv || !arrv.length) return '';
+  return arrv[hashStr(String(seed)) % arrv.length];
+}
+// Deterministička procena planiranog vremena za temu (nema ručno unetih minuta u DAYS,
+// pa se planirano vreme računa iz teksta teme — isti tekst uvek daje isti broj).
+function estimateMinutes(text, factor){
+  factor = factor || 1;
+  const words = text.split(/\s+/).length;
+  const base = 14 + (hashStr(text) % 18) + Math.round(words*0.9);
+  return Math.round(Math.max(15, Math.min(45, base)) * factor);
+}
+function diffInfo(planned, actualVal){
+  if(actualVal === undefined || actualVal === null || actualVal === '') return null;
+  const diff = actualVal - planned;
+  if(diff === 0) return {text:"tačno", cls:"ontime", diff:0};
+  if(diff > 0) return {text:`+${diff} min`, cls:"late", diff};
+  return {text:`${diff} min`, cls:"early", diff};
+}
+function itemComment(cls, seed){
+  const map = {late:itemLateComments, ontime:itemOnTimeComments, early:itemEarlyComments};
+  return pickComment(map[cls], seed);
+}
+// Engleski: fiksno 10 min po temi (ukupno pola sata za 3 teme dnevno), bez obzira na dužinu teksta.
+function getPlanned(subj, text, factor){
+  if(subj === 'eng') return 10;
+  return estimateMinutes(text, factor);
+}
+
+// Each day: {date, examFlag, note, afterNotes: [...], groups: [{subj, groupNote, items: [...]}], review: {subj, label}}
+const DAYS = [
+{date:"4. septembar", groups:[
+  {subj:"eng", items:[
+    "Kvantifikatori: many/much, a lot of, few/a little, plenty of, enough",
+    "Kvantifikatori: too much/too many, both/either/neither, ostali (each, every, several, quite a few...)",
+    "Reported speech: potvrdne i odrične izjave, backshift tabela"
+  ]},
+  {subj:"spi", items:[
+    "Prva faza Drugog svetskog rata 1939-1941",
+    "Druga faza Drugog svetskog rata 1941-1943",
+    "Treća faza Drugog svetskog rata",
+    "Pokreti otpora u Evropi",
+    "Podela Nemačke nakon Drugog svetskog rata"
+  ]},
+  {subj:"ess", items:[
+    "Privredni sistem - osnovno određenje i definisanje",
+    "Sadržaj i osnovne komponente privrednog sistema",
+    "Grupisanje (tipologija) privrednih sistema"
+  ]},
+  {subj:"ibo", items:[
+    "Sanstefanski mir i stvaranje bugarske države (1878-1908)",
+    "Velika istočna kriza i Berlinski kongres"
+  ]},
+  {subj:"spt", items:[
+    "Pozitivna i negativna sloboda",
+    "Sloboda kao autonomija",
+    "Dž. S. Mil i vrednost slobode"
+  ]},
+  {subj:"pseu", items:[
+    "Koncept političkog sistema i njegova primena na EU",
+    "Evolucija od međunarodne organizacije ka političkom sistemu"
+  ]}
+]},
+{date:"5. septembar", groups:[
+  {subj:"eng", items:[
+    "Reported speech: promene vremena i mesta, say vs tell",
+    "Reported speech: reported questions, reported commands/requests, reporting verbs",
+    "Adding emphasis (naglašavanje)"
+  ]},
+  {subj:"spi", items:[
+    "Stvaranje socijalističkih država u Evropi",
+    "Početak Hladnog rata",
+    "Stvaranje i delatnost Ujedinjenih nacija",
+    "Prve hladnoratovske krize — Iran, Turska i Grčka"
+  ]},
+  {subj:"ess", items:[
+    "Vrednovanje uspešnosti privrednih sistema",
+    "Uporedni metod i poređenje privrednih sistema",
+    "Razvoj privrednog sistema Srbije",
+    "Merenje makroekonomske aktivnosti - BDP"
+  ]},
+  {subj:"ibo", items:[
+    "Nastanak i razvoj hrvatskog nacionalnog pitanja u 19. veku",
+    "Prizrenska liga i stvaranje albanskog nacionalnog pokreta (1878-1913)"
+  ]},
+  {subj:"spt", items:[
+    "Pravo, moral, paternalizam",
+    "Utilitarizam i njegova privlačnost",
+    "Mere korisnosti: hedonizam blagostanja i nehedonistička korisnost"
+  ]},
+  {subj:"pseu", items:[
+    "Politički sistem i država — na primeru Evropske unije",
+    "Ugovorna i ustavna strana političkog sistema EU"
+  ]}
+]},
+{date:"6. septembar", groups:[
+  {subj:"eng", items:[
+    "Second conditional (hipotetička sadašnjost/budućnost)",
+    "Third conditional (hipotetička prošlost)",
+    "Mixed conditionals (mešoviti kondicionali)"
+  ]},
+  {subj:"spi", items:[
+    "Trumanova doktrina i Maršalov plan",
+    "Stvaranje paktova i trka u naoružanju",
+    "Kineski građanski rat",
+    "Japan pod okupacijom"
+  ]},
+  {subj:"ess", items:[
+    "Merenje makroekonomske aktivnosti - stopa inflacije i stopa nezaposlenosti",
+    "Merenje makroekonomske aktivnosti - kamatna stopa i devizni kurs",
+    "Privredni rast - značaj; stabilnost vs. rast",
+    "Privredni razvoj - značaj; osnovne komponente; razvijenost i nerazvijenost"
+  ]},
+  {subj:"ibo", items:[
+    "Makedonsko pitanje u balkanskim i evropskim odnosima",
+    "Ideje o ujedinjenju južnoslovenskih naroda u 19. veku"
+  ]},
+  {subj:"spt", items:[
+    "Mere korisnosti: zadovoljenje preferencija i preferencije zasnovane na potpunim informacijama",
+    "Maksimiranje koristi: U-agent i posebni odnosi",
+    "Maksimiranje koristi: problem nelegitimnih preferencija"
+  ]},
+  {subj:"pseu", items:[
+    "Kvazifederalna raspodela materijalnih nadležnosti",
+    "Teorije o evropskim integracijama"
+  ]}
+]},
+{date:"7. septembar", groups:[
+  {subj:"eng", items:[
+    "-ing form vs infinitive: glagoli + -ing, + to infinitiv, + osoba + to infinitiv",
+    "Causative have (have something done)",
+    "7.1 Vrste TV programa i osnovni termini"
+  ]},
+  {subj:"spi", items:[
+    "Rat u Koreji",
+    "Ajzenhauerova era",
+    "Dekolonizacija nakon Drugog svetskog rata",
+    "Nezavisnost Indije"
+  ]},
+  {subj:"ess", items:[
+    "Razlikovanje pojmova razvoja i rasta",
+    "Ekonomske funkcije države u savremenoj robnoj privredi",
+    "Institucionalna teorija države - tržišni neuspesi i uloga države",
+    "Politička makroekonomija - loše i dobre institucije"
+  ]},
+  {subj:"ibo", items:[
+    "Crna Gora u vreme Nikole Petrovića",
+    "Srbija pod vlašću poslednjih Obrenovića",
+    "Mladoturska revolucija i stvaranje turske nacije"
+  ]},
+  {subj:"spt", items:[
+    "Argumenti u prilog maksimiranja koristi",
+    "Utilitarizam i jednakost: spoljne i sebične preferencije",
+    "Politika utilitarizma"
+  ]},
+  {subj:"pseu", items:[
+    "Politički sistem EU u vremenu krize",
+    "Osnovna pitanja: podela vlasti i institucionalni balans"
+  ]}
+]},
+{date:"8. septembar", groups:[
+  {subj:"eng", items:[
+    "7.2 The Press/Media — detaljan vokabular",
+    "7.3 Glagoli govorenja u novinarstvu (reporting verbs — nijanse)",
+    "7.4 Multi-word verbs (medijski/opšti kontekst)"
+  ]},
+  {subj:"spi", items:[
+    "Rat na prostoru Indokine (1945-1954)",
+    "Bliski istok i stvaranje Izraela",
+    "Sueska kriza 1956.",
+    "SSSR za vreme Nikite Hruščova",
+    "Revolucija u Mađarskoj 1956."
+  ]},
+  {subj:"ess", items:[
+    "Pojam, elementi i vrste ekonomske politike",
+    "Politika i ekonomska politika na našem državnom prostoru",
+    "Formalni i stvarni ciljevi ekonomske politike",
+    "Proces tranzicije: pojam i sadržaj"
+  ]},
+  {subj:"ibo", items:[
+    "Majski prevrat i vlast Petra I (1903-1912)",
+    "Aneksiona kriza i odnosi AU i Srbije",
+    "Balkanski ratovi i njihove posledice"
+  ]},
+  {subj:"spt", items:[
+    "Rolsova teorija pravde",
+    "Rolsov argument jednakosti mogućnosti",
+    "Rolsov argument društvenog ugovora"
+  ]},
+  {subj:"pseu", items:[
+    "Evropski savet",
+    "Savet ministara (Savet Evropske unije)"
+  ]}
+]},
+{date:"9. septembar", groups:[
+  {subj:"eng", items:[
+    "7.5 Dodatni TV/media vokabular",
+    "7.6 Adding emphasis — vokabular",
+    "7.7 When things go wrong — fraze za prepričavanje vesti"
+  ]},
+  {subj:"spi", items:[
+    "Nastanak Pete republike u Francuskoj",
+    "Integracija Zapadne Evrope i stvaranje EEZ",
+    "Pokret nesvrstanih",
+    "Dekolonizacija Afrike",
+    "Kubanska revolucija i sukobi dve supersile"
+  ]},
+  {subj:"ess", items:[
+    "Tranzicija i ideološke predrasude; ekonomska nauka i tranzicija",
+    "Privatizacija i efikasnost - problem odnosa principala i agenta",
+    "Makroekonomska osnova privatizacije"
+  ]},
+  {subj:"ibo", items:[
+    "Prvi svetski rat na Balkanu od 1914. do kraja 1915. godine",
+    "Prvi svetski rat na Balkanu od 1916. do 1918. godine"
+  ]},
+  {subj:"spt", items:[
+    "Dvorkinova teorija jednakosti resursa",
+    "Primena Dvorkinove teorije jednakosti resursa",
+    "Politika liberalne jednakosti i država blagostanja"
+  ]},
+  {subj:"pseu", items:[
+    "Komisija",
+    "Evropski parlament"
+  ]}
+]},
+{date:"10. septembar", groups:[
+  {subj:"eng", items:[
+    "8.1 Ličnost i karakter — parovi koji NISU sinonimi",
+    "8.2 Compound adjectives (složeni pridevi)",
+    "8.3 Values — vrednosti"
+  ]},
+  {subj:"spi", items:[
+    "Sukobi na Bliskom istoku 60-ih godina",
+    "Kulturna revolucija u Kini",
+    "Detant i ograničavanje trke u naoružanju",
+    "SAD u Vijetnamu"
+  ]},
+  {subj:"ess", items:[
+    "Modeli privatizacije",
+    "Specifičnosti privatizacije društvene svojine - nastanak i efikasnost društvene svojine",
+    "Mešovita preduzeća kao privatizacija društvene svojine"
+  ]},
+  {subj:"ibo", items:[
+    "Versajska mirovna konferencija i geopolitičke promene na Balkanu posle Prvog svetskog rata",
+    "Kraljevina SHS/Jugoslavija između dva svetska rata",
+    "Kemal Ataturk i turska država između dva svetska rata"
+  ]},
+  {subj:"spt", items:[
+    "Nova desnica i država blagostanja",
+    "Komunitarizam i granice pravde: zajednička značenja"
+  ]},
+  {subj:"pseu", items:[
+    "Sud pravde Evropske unije",
+    "Evropska centralna banka"
+  ]}
+]},
+{date:"11. septembar", groups:[
+  {subj:"eng", items:[
+    "8.4 Decisions — kolokacije sa nijansama",
+    "8.5 Behaviour — glagoli, izrazi i idiomi",
+    "8.6 Handling an awkward situation — functional language"
+  ]},
+  {subj:"spi", items:[
+    "Studentski protesti",
+    "Istočna politika Vilija Branta",
+    "Sukobi na Bliskom istoku 70-ih godina",
+    "Rat u Avganistanu"
+  ]},
+  {subj:"ess", items:[
+    "Privatizacija u Jugoslaviji (Srbiji) do 2000. godine",
+    "Privatizacija u Srbiji posle 2000. godine",
+    "Privatizacija i institucionalno okruženje",
+    "Ekonomsko stanje poljoprivrede od 1945. do 1957. godine"
+  ]},
+  {subj:"ibo", items:[
+    "Balkan u politici sila tokom Drugog svetskog rata",
+    "Grčka pod Venizelosom i Metaksisom"
+  ]},
+  {subj:"spt", items:[
+    "Komunitarizam: individualna prava, opšte dobro, neutralna država",
+    "Politički liberalizam: autonomija i tolerancija",
+    "Politički liberalizam vs. obuhvatni liberalizam: Rolsova revizija"
+  ]},
+  {subj:"pseu", items:[
+    "Nepolitičke institucije",
+    "Različitost modela upravljanja u EU"
+  ]}
+]},
+{date:"12. septembar", note:"✅ Ovim se završava prva runda engleskog (gramatika + vokabular Unit 7 & 8).", groups:[
+  {subj:"eng", items:[
+    "8.7 Idioms connected to time",
+    "Najčešće zamke na testu (Unit 7 & 8) — pregled",
+    "Dodatni opšti vokabular + pregled glagolskih konstrukcija + brza referenca za prepoznavanje oblika",
+    "Prvo čitanje tekstova (bez literature, samo tekstovi)"
+  ]},
+  {subj:"spi", items:[
+    "VB za vreme Margaret Tačer",
+    "SAD za vreme Ronalda Regana",
+    "Kraj Hladnog rata",
+    "Amerika 90-ih godina",
+    "Slom socijalizma u Evropi"
+  ]},
+  {subj:"ess", items:[
+    "Seljačko gazdinstvo u agrarnoj politici i samoupravljanju od 1957. godine",
+    "Poljoprivreda u srednjoročnim planovima razvoja Jugoslavije od 1976. do 1985. godine",
+    "Tempo i dinamika spoljnotrgovinske razmene Srbije"
+  ]},
+  {subj:"ibo", items:[
+    "Albanija pod Ahmedom Zoguom",
+    "Britanija i pokreti otpora na Balkanu tokom Drugog svetskog rata"
+  ]},
+  {subj:"spt", items:[
+    "Društvena uslovljenost autonomije i dužnost održanja kulture",
+    "Modeli multikulturalizma: nacionalne manjine"
+  ]},
+  {subj:"pseu", items:[
+    "Politički proces u okviru komunitarnog metoda",
+    "Obeležja političkog procesa u okviru međuvladinog modela"
+  ]}
+]},
+{date:"13. septembar", note:"🔵 SAMO ENGLESKI JEZIK 2 — celodnevni finalni pregled OBE skripte pred kolokvijum. Ne uči se ESS, ni IBO, ni SPT.", review:{subj:"eng", label:"Kompletan pregled: cela skripta Unit 7 & 8 (gramatika + vokabular) + drugo čitanje tekstova + rešavanje svih vežbi iz zbirke (Verzije A–F, kondicionali, reported speech)"}},
+{date:"14. septembar", examFlag:"KOLOKVIJUM — Engleski jezik 2", examCheck:"Izašla sam na kolokvijum — Engleski jezik 2", note:"🚨 poslednji dan novog gradiva iz SPI", groups:[
+  {subj:"spi", items:[
+    "Zalivski rat",
+    "Daleki istok 90-ih godina",
+    "Stanje u Evropi 90-ih godina",
+    "Rusija za vreme Borisa Jeljcina",
+    "Bliski istok 90-ih godina"
+  ]},
+  {subj:"ess", items:[
+    "Spoljni dug Srbije",
+    "Strane direktne investicije u Srbiji",
+    "Međunarodne ekonomske integracije - primer CEFTA-e",
+    "Merenje nivoa razvijenosti"
+  ]},
+  {subj:"ibo", items:[
+    "Rumunija u međuratnom periodu",
+    "Bugarska u međuratnom periodu"
+  ]},
+  {subj:"spt", items:[
+    "Liberalizam i problem kolektivne deliberacije izvan politike",
+    "Politički liberalizam: zajedničke vrednosti, solidarnost, legitimitet",
+    "Liberalni nacionalizam"
+  ]},
+  {subj:"pseu", items:[
+    "Otvoreni metod koordinacije",
+    "Model upravljanja krizom"
+  ]}
+]},
+{date:"15. septembar", note:"🟢 SAMO SAVREMENA POLITIČKA ISTORIJA — celodnevno ponavljanje svih 45 pitanja. Ne uči se ništa drugo.", review:{subj:"spi", label:"Ponovljeno svih 45 pitanja"}},
+{date:"16. septembar", examFlag:"ISPIT — Savremena politička istorija", examCheck:"Izašla sam na ispit — Savremena politička istorija", note:"🚨 poslednji dan novog gradiva iz ESS", groups:[
+  {subj:"ess", doneNote:"✅ Prvi prolaz ESS završen", items:[
+    "Dinamika razvoja industrije u Srbiji - zaposlenost i investicije u industriji",
+    "Efekti privatizacije u Srbiji i industrija",
+    "Restrukturiranje javnih preduzeća",
+    "Koncept privatizacije javnih preduzeća"
+  ]},
+  {subj:"ibo", items:[
+    "Balkanska multilateralna saradnja između dva svetska rata",
+    "Francuski i italijanski sistem saveza na Balkanu između dva svetska rata i Mala antanta",
+    "Uticaj fašizma i nacizma na Balkanu tridesetih godina XX veka"
+  ]},
+  {subj:"spt", items:[
+    "Nacionalizam i kosmopolitizam",
+    "Modeli multikulturalizma: imigrantske grupe",
+    "Vrline demokratskih građana"
+  ]},
+  {subj:"pseu", items:[
+    "Pitanje o evropskoj javnosti"
+  ]}
+]},
+{date:"17. septembar", note:"🚨 poslednji dan novog gradiva iz IBO. Plus: dodatni dan za ESS — aktivno ponavljanje, ne samo prelistavanje (ESS nije lak predmet).", groups:[
+  {subj:"ess", groupNote:"dodatni dan pre „čisto ponavljanje“ dana — iskoristi ga puno", items:[
+    "Aktivno ponavljanje svih dosadašnjih tema ESS (zaključno sa 16.9) — reši svako pitanje kao na ispitu, ne samo pročitaj naslov",
+    "Izdvoji i ponovo pregledaj teme koje ti nisu bile jasne iz prve"
+  ]},
+  {subj:"ibo", doneNote:"✅ Prvi prolaz IBO završen", items:[
+    "Prodor Musolinija i Hitlera na Balkan 1939-1941.",
+    "Pokreti otpora na Balkanu tokom Drugog svetskog rata",
+    "Uzroci i posledice sporazuma Staljina i Čerčila o podeli interesnih sfera na Balkanu posle Drugog svetskog rata",
+    "Mirovni sporazumi i početak hladnoratovskih podela interesnih sfera na Balkanu nakon Drugog svetskog rata",
+    "Građanski rat u Grčkoj 1945-1949."
+  ]},
+  {subj:"spt", items:[
+    "Javna razloženost: agregativna i deliberativna demokratija",
+    "Građanski republikanizam",
+    "Liberalni republikanizam i instrumentalne vrline",
+    "Polna jednakost i polna diskriminacija",
+    "Izvori građanskih vrlina"
+  ]},
+  {subj:"pseu", items:[
+    "Političko predstavljanje — uloga političkih stranaka"
+  ]}
+]},
+{date:"18. septembar", note:"🔴 GLAVNI FOKUS: EKONOMSKI SISTEM SRBIJE — celodnevno ponavljanje svih 40 tema. Plus: IBO dobija lagano prelistavanje (~15 min), da dan ne ostane mrtav za njega. Ne uči se SPT. Ne uči se novo gradivo.", groups:[
+  {subj:"ibo", groupNote:"lagano, samo prelistavanje — fokus dana je ESS", items:[
+    "Lagano prelistavanje svih 31 pitanja IBO (naslovi i kratki odgovori, ~15 min)"
+  ]}
+], review:{subj:"ess", label:"Ponovljeno svih 40 tema"}},
+{date:"19. septembar", examFlag:"ISPIT — Ekonomski sistem Srbije", examCheck:"Izašla sam na ispit — Ekonomski sistem Srbije", note:"🚨 poslednji dan novog gradiva iz PSEU", groups:[
+  {subj:"ibo", groupNote:"ispit za 2 dana", items:[
+    "Ponavljanje svih 31 pitanja"
+  ]},
+  {subj:"spt", items:[
+    "Obrazovanje za građanske vrline",
+    "Kosmopolitansko građanstvo",
+    "Multikulturalna kritika „građanstva kao prava\"",
+    "Politika preraspodele i politika priznanja",
+    "Komunitarni i liberalni multikulturalizam",
+    "Grupno-diferencirana prava",
+    "Multikulturalizam i izgradnja nacije",
+    "Javno i privatno: država i civilno društvo",
+    "Javno i privatno: lično i društveno",
+    "Etika brige i etika pravde: moralne sposobnosti i rasuđivanje"
+  ]},
+  {subj:"pseu", doneNote:"✅ Prvi prolaz svih 24 pitanja PSEU završen", items:[
+    "Interesna i korporativna strana političkog života",
+    "Pitanje o demokratiji u EU"
+  ]}
+]},
+{date:"20. septembar", note:"🔵 SAMO POLITIČKI SISTEM EVROPSKE UNIJE (PSEU) — ponavljanje, prvi krug, celodnevno. Ne uči se ništa drugo.", review:{subj:"pseu", label:"Prvi krug ponavljanja: svih 24 pitanja PSEU"}},
+{date:"21. septembar", examFlag:"ISPIT — Istorija balkanskih odnosa", examCheck:"Izašla sam na ispit — Istorija balkanskih odnosa", groups:[
+  {subj:"spt", items:[
+    "Etika brige i etika pravde: univerzalnost vs. očuvanje odnosa",
+    "Etika brige i etika pravde: čovečanstvo vs. individualnost",
+    "Etika brige i etika pravde: prava i odgovornosti",
+    "Izbori i demokratija: Šmitova kritika",
+    "Javnost i demokratija (Lipman)",
+    "Problem legitimnosti u parlamentarnim demokratijama",
+    "Demokratija kao forma i suština (Marks)",
+    "Marksov odnos prema izborima i demokratiji",
+    "Politička forma komune",
+    "Marksizam i demokratija"
+  ]}
+]},
+{date:"22. septembar", note:"🔵 SAMO POLITIČKI SISTEM EVROPSKE UNIJE (PSEU) — ponavljanje, drugi krug, fokus na slabije tačke. Plus: SPT dobija svoju sledeću turu (3 teme), da dan ne ostane mrtav za njega.", review:{subj:"pseu", label:"Drugi krug ponavljanja: svih 24 pitanja PSEU"}},
+{date:"23. septembar", examFlag:"ISPIT — Politički sistem Evropske unije", examCheck:"Izašla sam na ispit — Politički sistem Evropske unije"},
+{date:"24. septembar", note:"🚨 Poslednji dan novog gradiva iz SPT", groups:[
+  {subj:"spt", doneNote:"✅ Prvi prolaz svih 64 pitanja SPT završen", items:[
+    "Centralističke i anarhističke težnje unutar demokratije",
+    "Napeti odnos kapitalizma i demokratije (Laski)",
+    "Normativna privlačnost i kriza demokratije: Kelzen i Lipman",
+    "Demokratski elitizam kao revizija pojma demokratije",
+    "Realistički pojam demokratije",
+    "Trijumf demokratije i postdemokratija",
+    "Postdemokratija kao dijagnoza stanja realne demokratije",
+    "Postdemokratija kao otklon od realne demokratije"
+  ]}
+]},
+{date:"25. septembar", note:"🟡 SAMO SAVREMENA POLITIČKA TEORIJA — celodnevno ponavljanje svih 64 pitanja. Ne uči se ništa drugo.", review:{subj:"spt", label:"Ponovljeno svih 64 pitanja"}},
+{date:"26. septembar", examFlag:"ISPIT — Savremena politička teorija", examCheck:"Izašla sam na ispit — Savremena politička teorija"}
+];
+
+let progress = {};
+let actualMin = {};
+let itemComments = {};
+let itemIndex = []; // {id, subj, text, planned}
+let storageOk = true;
+let openDays = new Set();
+
+function buildIndex(){
+  DAYS.forEach((day, di)=>{
+    if(day.groups){
+      day.groups.forEach((g, gi)=>{
+        g.items.forEach((text, ii)=>{
+          itemIndex.push({id:`d${di}-g${gi}-i${ii}`, subj:g.subj, text, planned:getPlanned(g.subj, text)});
+        });
+      });
+    }
+    if(day.review){
+      itemIndex.push({id:`d${di}-review`, subj:day.review.subj, text:day.review.label, planned:estimateMinutes(day.review.label, 6)});
+    }
+    if(day.examCheck){
+      itemIndex.push({id:`d${di}-examcheck`, subj:null, text:day.examCheck, planned:null});
+    }
+  });
+}
+
+function render(){
+  const container = document.getElementById('days');
+  container.innerHTML = '';
+  DAYS.forEach((day, di)=>{
+    const dayEl = document.createElement('div');
+    dayEl.className = 'day';
+    dayEl.dataset.day = di;
+
+    let dayTotal = 0, dayChecked = 0;
+    if(day.groups) day.groups.forEach((g, gi)=>{
+      g.items.forEach((_, ii)=>{
+        dayTotal++;
+        if(progress[`d${di}-g${gi}-i${ii}`]) dayChecked++;
+      });
+    });
+    if(day.review){
+      dayTotal++;
+      if(progress[`d${di}-review`]) dayChecked++;
+    }
+    if(day.examCheck){
+      dayTotal++;
+      if(progress[`d${di}-examcheck`]) dayChecked++;
+    }
+
+    const header = document.createElement('div');
+    header.className = 'day-header';
+    header.innerHTML = `
+      <div class="day-title">${day.date}${day.examFlag ? `<span class="exam-flag">🎓 ${day.examFlag}</span>`:''}</div>
+      <div style="display:flex;align-items:center;">
+        <div class="day-progress">${dayTotal? `${dayChecked}/${dayTotal}` : ''}</div>
+        <span class="chevron">▶</span>
+      </div>
+    `;
+    header.addEventListener('click', ()=>{
+      dayEl.classList.toggle('open');
+    });
+
+    const body = document.createElement('div');
+    body.className = 'day-body';
+
+    if(day.examCheck){
+      const id = `d${di}-examcheck`;
+      const ec = document.createElement('div');
+      ec.className = 'examcheck-block';
+      ec.innerHTML = `<label class="item"><input type="checkbox" data-id="${id}" ${progress[id]?'checked':''}/><span class="txt">${day.examCheck}</span></label>`;
+      body.appendChild(ec);
+    }
+
+    if(day.note){
+      const n = document.createElement('div');
+      n.className = 'note';
+      n.textContent = day.note;
+      body.appendChild(n);
+    }
+
+    if(day.groups){
+      day.groups.forEach((g, gi)=>{
+        const s = SUBJECTS[g.subj];
+        const checkedInGroup = g.items.filter((_,ii)=>progress[`d${di}-g${gi}-i${ii}`]).length;
+        const grp = document.createElement('div');
+        grp.className = 'group';
+        grp.innerHTML = `<div class="group-title ${s.cls}">${s.label}${g.groupNote ? ` <span class="group-note">(${g.groupNote})</span>`:''} <span class="group-count">(${checkedInGroup}/${g.items.length})</span></div>`;
+        g.items.forEach((text, ii)=>{
+          const id = `d${di}-g${gi}-i${ii}`;
+          const planned = getPlanned(g.subj, text);
+          const lab = document.createElement('label');
+          lab.className = 'item';
+          lab.innerHTML = `<input type="checkbox" data-id="${id}" ${progress[id]?'checked':''}/><span class="txt">${text} <span class="planned-min">(~${planned} min)</span></span>`;
+          grp.appendChild(lab);
+
+          const info = diffInfo(planned, actualMin[id]);
+          const cmt = info ? itemComment(info.cls, id+':'+actualMin[id]) : '';
+          const actualRow = document.createElement('div');
+          actualRow.className = 'actual-row';
+          actualRow.innerHTML = `
+            <span>Potrošeno vremena:</span>
+            <input type="number" min="0" placeholder="min" data-actual-id="${id}" value="${actualMin[id] !== undefined ? actualMin[id] : ''}">
+            ${info ? `<span class="diff-badge ${info.cls}">${info.text}</span><span class="roast ${info.cls}">${cmt}</span>` : ''}
+          `;
+          grp.appendChild(actualRow);
+
+          const commentRow = document.createElement('div');
+          commentRow.className = 'comment-row';
+          commentRow.innerHTML = `
+            <textarea class="comment-input" placeholder="komentar (opciono)" data-comment-id="${id}">${itemComments[id] || ''}</textarea>
+            ${itemComments[id] ? `<div class="comment-reply">${pickComment(commentReplies, id+':'+itemComments[id])}</div>` : ''}
+          `;
+          grp.appendChild(commentRow);
+        });
+        body.appendChild(grp);
+        if(g.doneNote){
+          const n = document.createElement('div');
+          n.className = 'note done';
+          n.textContent = g.doneNote;
+          body.appendChild(n);
+        }
+      });
+    }
+
+    if(day.review){
+      const id = `d${di}-review`;
+      const s = SUBJECTS[day.review.subj];
+      const planned = estimateMinutes(day.review.label, 6);
+      const rb = document.createElement('div');
+      rb.className = 'review-block';
+      rb.innerHTML = `<label class="item"><input type="checkbox" data-id="${id}" ${progress[id]?'checked':''}/><span class="txt" style="color:${s.color}">${day.review.label} <span class="planned-min">(~${planned} min)</span></span></label>`;
+
+      const info = diffInfo(planned, actualMin[id]);
+      const cmt = info ? itemComment(info.cls, id+':'+actualMin[id]) : '';
+      const actualRow = document.createElement('div');
+      actualRow.className = 'actual-row';
+      actualRow.innerHTML = `
+        <span>Potrošeno vremena:</span>
+        <input type="number" min="0" placeholder="min" data-actual-id="${id}" value="${actualMin[id] !== undefined ? actualMin[id] : ''}">
+        ${info ? `<span class="diff-badge ${info.cls}">${info.text}</span><span class="roast ${info.cls}">${cmt}</span>` : ''}
+      `;
+      rb.appendChild(actualRow);
+
+      const commentRow = document.createElement('div');
+      commentRow.className = 'comment-row';
+      commentRow.innerHTML = `
+        <textarea class="comment-input" placeholder="komentar (opciono)" data-comment-id="${id}">${itemComments[id] || ''}</textarea>
+        ${itemComments[id] ? `<div class="comment-reply">${pickComment(commentReplies, id+':'+itemComments[id])}</div>` : ''}
+      `;
+      rb.appendChild(commentRow);
+
+      body.appendChild(rb);
+    }
+
+    dayEl.appendChild(header);
+    dayEl.appendChild(body);
+    container.appendChild(dayEl);
+  });
+
+  container.querySelectorAll('input[type=checkbox]').forEach(cb=>{
+    cb.addEventListener('change', async (e)=>{
+      const id = e.target.dataset.id;
+      progress[id] = e.target.checked;
+      trackOpenState();
+      saveProgress();
+      render();
+      restoreOpenState(openDays);
+      updateOverall();
+    });
+  });
+
+  container.querySelectorAll('input[data-actual-id]').forEach(inp=>{
+    inp.addEventListener('click', e=>e.stopPropagation());
+    inp.addEventListener('change', (e)=>{
+      e.stopPropagation();
+      const id = e.target.dataset.actualId;
+      const v = e.target.value;
+      if(v !== '' && v !== null) actualMin[id] = parseInt(v,10);
+      else delete actualMin[id];
+      trackOpenState();
+      saveProgress();
+      render();
+      restoreOpenState(openDays);
+      updateOverall();
+    });
+  });
+
+  container.querySelectorAll('textarea[data-comment-id]').forEach(ta=>{
+    ta.addEventListener('click', e=>e.stopPropagation());
+    ta.addEventListener('change', (e)=>{
+      e.stopPropagation();
+      const id = e.target.dataset.commentId;
+      const v = e.target.value;
+      if(v && v.trim() !== '') itemComments[id] = v;
+      else delete itemComments[id];
+      trackOpenState();
+      saveProgress();
+      render();
+      restoreOpenState(openDays);
+      updateOverall();
+    });
+  });
+}
+
+function trackOpenState(){
+  document.querySelectorAll('.day').forEach(d=>{
+    if(d.classList.contains('open')) openDays.add(d.dataset.day);
+    else openDays.delete(d.dataset.day);
+  });
+}
+function restoreOpenState(set){
+  document.querySelectorAll('.day').forEach(d=>{
+    if(set.has(d.dataset.day)) d.classList.add('open');
+  });
+}
+
+document.addEventListener('click', (e)=>{
+  if(e.target.closest('.day-header')){
+    setTimeout(trackOpenState, 0);
+  }
+});
+
+function updateOverall(){
+  const total = itemIndex.length;
+  const checked = itemIndex.filter(it=>progress[it.id]).length;
+  const pct = total ? Math.round((checked/total)*100) : 0;
+  document.getElementById('overallPct').textContent = pct + '%';
+  document.getElementById('overallBar').style.width = pct + '%';
+
+  const mini = document.getElementById('subjectMini');
+  mini.innerHTML = '';
+  let grandDrift = 0, grandCount = 0;
+  Object.keys(SUBJECTS).forEach(key=>{
+    const s = SUBJECTS[key];
+    const items = itemIndex.filter(it=>it.subj===key);
+    if(items.length === 0) return;
+    const subChecked = items.filter(it=>progress[it.id]).length;
+
+    let drift = 0, dcount = 0;
+    items.forEach(it=>{
+      if(it.planned !== null && actualMin[it.id] !== undefined){
+        drift += actualMin[it.id] - it.planned;
+        dcount++;
+      }
+    });
+    grandDrift += drift; grandCount += dcount;
+
+    let driftTxt = '';
+    if(dcount > 0){
+      const cls = drift === 0 ? 'ontime' : (drift > 0 ? 'late' : 'early');
+      const label = drift === 0 ? 'tačno' : (drift > 0 ? `+${drift} min` : `${drift} min`);
+      driftTxt = ` · <span class="${cls}">${label}</span>`;
+    }
+
+    const span = document.createElement('span');
+    span.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}: ${subChecked}/${items.length}${driftTxt}`;
+    mini.appendChild(span);
+  });
+
+  let driftLine = document.getElementById('overallDriftLine');
+  if(!driftLine){
+    driftLine = document.createElement('div');
+    driftLine.id = 'overallDriftLine';
+    driftLine.className = 'subject-drift-line';
+    document.querySelector('.overall').appendChild(driftLine);
+  }
+  if(grandCount > 0){
+    const cls = grandDrift === 0 ? 'ontime' : (grandDrift > 0 ? 'late' : 'early');
+    const label = grandDrift === 0 ? 'tačno po planu' : (grandDrift > 0 ? `u minusu ${grandDrift} min` : `u plusu ${-grandDrift} min`);
+    driftLine.innerHTML = `Ukupno odstupanje od plana (${grandCount} uneto): <span class="${cls}">${label}</span>`;
+  } else {
+    driftLine.innerHTML = '';
+  }
+}
+
+function showStorageWarning(show){
+  const el = document.getElementById('storageWarning');
+  if(show) el.classList.add('show');
+  else el.classList.remove('show');
+}
+
+// This file is meant to be opened standalone / hosted externally (e.g.
+// GitHub Pages), not rendered inside Claude.ai — so it uses the browser's
+// own localStorage rather than Claude's window.storage API (which only
+// exists inside a Claude.ai artifact iframe and would otherwise make
+// this warning fire permanently on any external host).
+function verifyStorageWorks(){
+  const canaryKey = STORAGE_KEY + '-canary';
+  const canaryVal = String(Date.now());
+  try{
+    localStorage.setItem(canaryKey, canaryVal);
+    const readBack = localStorage.getItem(canaryKey);
+    localStorage.removeItem(canaryKey);
+    return readBack === canaryVal;
+  }catch(err){
+    return false;
+  }
+}
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const data = raw ? JSON.parse(raw) : {};
+    if(data && (data.progress || data.actualMin || data.itemComments)){
+      progress = data.progress || {};
+      actualMin = data.actualMin || {};
+      itemComments = data.itemComments || {};
+    } else {
+      // stari format (samo checkbox-ovi, pre uvođenja praćenja vremena)
+      progress = data || {};
+      actualMin = {};
+      itemComments = {};
+    }
+  }catch(err){
+    progress = {};
+    actualMin = {};
+    itemComments = {};
+  }
+}
+
+function saveProgress(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({progress, actualMin, itemComments}));
+    if(!storageOk){
+      storageOk = true;
+      showStorageWarning(false);
+    }
+  }catch(err){
+    storageOk = false;
+    showStorageWarning(true);
+    console.error('Storage save error', err);
+  }
+}
+
+(function init(){
+  buildIndex();
+  loadProgress();
+  const worksNow = verifyStorageWorks();
+  storageOk = worksNow;
+  showStorageWarning(!worksNow);
+  render();
+  updateOverall();
+  const firstDay = document.querySelector('.day');
+  if(firstDay){ firstDay.classList.add('open'); openDays.add('0'); }
+})();
+</script>
+</body>
+</html>
