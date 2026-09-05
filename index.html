@@ -103,8 +103,7 @@ label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:po
 <body>
 <div class="wrap">
   <header class="command-header">
-        <h1 class="command-title"><span>Septembarski</span><span>rok ’26</span></h1>
-    <div class="command-mark" aria-hidden="true"><svg viewBox="0 0 220 90" fill="none"><path d="M2 72 L30 55 L55 62 L78 38 L104 47 L130 24 L156 34 L181 15 L218 28" stroke="currentColor" stroke-width="2"/><path d="M2 80H218M2 53H218M2 26H218" stroke="currentColor" stroke-width=".7" opacity=".35"/></svg></div>
+        <h1 class="command-title"><span>Septembarski</span><span>rok '26</span></h1>
   </header>
   <div id="missionStrip"></div>
 
@@ -169,31 +168,27 @@ function subjectIcon(subj){
 
 const STORAGE_KEY = 'plan-sept-2026-v5';
 const YEAR = 2026, MONTH = 8; // septembar
-const START_DAY = 5;
-const DAY_COUNT = 22; // indeksi 0..21 = 5..26. septembar
+const START_DAY = 6;
+const DAY_COUNT = 21; // indeksi 0..20 = 6..26. septembar
 
 const SUBJECTS = {
-  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:9},
-  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:11},
-  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:14},
-  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:16},
-  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:18},
-  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:21}
+  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:8},
+  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:10},
+  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:13},
+  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:15},
+  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:17},
+  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:20}
 };
 
 const EXAMS = {
-  9:  {type:'kolokvijum', subj:'eng'},
-  11: {type:'ispit', subj:'spi'},
-  14: {type:'ispit', subj:'ess'},
-  16: {type:'ispit', subj:'ibo'},
-  18: {type:'ispit', subj:'pseu'},
-  21: {type:'ispit', subj:'spt'}
+  8:  {type:'kolokvijum', subj:'eng'},
+  10: {type:'ispit', subj:'spi'},
+  13: {type:'ispit', subj:'ess'},
+  15: {type:'ispit', subj:'ibo'},
+  17: {type:'ispit', subj:'pseu'},
+  20: {type:'ispit', subj:'spt'}
 };
 
-// Pool gradiva po predmetu, u pedagoškom redosledu. Poslednja stavka (ili
-// dve, kod PSEU) svakog predmeta je zbirni pregled/ponavljanje (review:true).
-// PSEU stavke dodatno nose "area" (oblast iz zvaničnog spiska od 24 oblasti)
-// radi grupisanja u prikazu i area-aware zaokruživanja u schedule-ru.
 const POOLS = {
   eng: [
     'Kvantifikatori: many/much, a lot of, few/a little, plenty of, enough',
@@ -354,7 +349,7 @@ const POOLS = {
   pseu:   [
     {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Klasična teorija političkog sistema'},
     {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Primena koncepta političkog sistema na Evropsku zajednicu/uniju'},
-    {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Evolucija Evropskih zajednica – od osnivanja do krize „prazne stolice“'},
+    {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Evolucija Evropskih zajednica – od osnivanja do krize „prazne stolice"'},
     {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Stabilizovanje poretka evropske integracije – od sredine šezdesetih do Ugovora iz Mastrihta (1993)'},
     {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Stabilizovanje poretka evropske integracije – Ugovori o Evropskoj uniji (od 1993. do 2009)'},
     {area: '3. Politički sistem i država – na primeru EU', text: 'Nedržavni tip političkog sistema'},
@@ -366,7 +361,7 @@ const POOLS = {
     {area: '5. Kvazifederalna raspodela materijalnih nadležnosti', text: 'Evolucija podele nadležnosti'},
     {area: '5. Kvazifederalna raspodela materijalnih nadležnosti', text: 'Današnje stanje nadležnosti EU – opšta pitanja'},
     {area: '5. Kvazifederalna raspodela materijalnih nadležnosti', text: 'Ugovorna sistematizacija nadležnosti EU'},
-    {area: '6. Teorije o evropskim integracijama', text: 'Teorije o evropskim integracijama; rano shvatanje „evropskog federalizma“'},
+    {area: '6. Teorije o evropskim integracijama', text: 'Teorije o evropskim integracijama; rano shvatanje „evropskog federalizma"'},
     {area: '6. Teorije o evropskim integracijama', text: 'Neofunkcionalistički pristup evropskim integracijama'},
     {area: '6. Teorije o evropskim integracijama', text: 'Teorija o međuvladinim odnosima na primeru evropske integracije'},
     {area: '6. Teorije o evropskim integracijama', text: 'Teorije o upravljanju na više nivoa i novi institucionalizam'},
@@ -404,22 +399,22 @@ const POOLS = {
     {area: '15. Nepolitičke institucije', text: 'Komitet regiona'},
     {area: '15. Nepolitičke institucije', text: 'Revizorski sud i regulatorna tela'},
     {area: '16. Različitost modela upravljanja u EU', text: 'Modeli upravljanja u EU'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Poreklo i početak komunitarnog modela'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Evolucija zakonodavne politike'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Od saodlučivanja do redovnog zakonskog postupka; pitanje efikasnosti'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Vrste pravnih propisa u EZ/EU'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Zakonska inicijativa'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Priroda izvršne vlasti; Moneov metod izvršne vlasti u EZ/EU'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Komisija: kontrola sprovođenja zakona u državama članicama'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Komisija: donošenje izvršnih akata i postupak „komitologije“'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Pravosudna politika EU'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Sud pravde kao politički akter'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Načela komunitarnog prava (prava EU) proizašla iz prakse Suda pravde'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Fenomen konstitucionalizacije'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Tri osnovna mehanizma konstitucionalizacije'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Načelo nadređenosti/prvenstva prava EU u političkom procesu integracije'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Alternativna sudska praksa nacionalnih sudova'},
-    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Dinamički karakter pitanja o nadređenosti/prvenstvu prava EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Poreklo i početak komunitarnog modela'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Evolucija zakonodavne politike'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Od saodlučivanja do redovnog zakonskog postupka; pitanje efikasnosti'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Vrste pravnih propisa u EZ/EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Zakonska inicijativa'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Priroda izvršne vlasti; Moneov metod izvršne vlasti u EZ/EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Komisija: kontrola sprovođenja zakona u državama članicama'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — I deo', text: 'Komisija: donošenje izvršnih akata i postupak „komitologije"'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Pravosudna politika EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Sud pravde kao politički akter'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Načela komunitarnog prava (prava EU) proizašla iz prakse Suda pravde'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Fenomen konstitucionalizacije'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Tri osnovna mehanizma konstitucionalizacije'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Načelo nadređenosti/prvenstva prava EU u političkom procesu integracije'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Alternativna sudska praksa nacionalnih sudova'},
+    {area: '17. Politički proces u okviru komunitarnog metoda — II deo', text: 'Dinamički karakter pitanja o nadređenosti/prvenstvu prava EU'},
     {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Opšte karakteristike međuvladinog modela upravljanja'},
     {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Međuvladine konferencije'},
     {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Policijska i pravosudna saradnja; prostor slobode, bezbednosti i pravde'},
@@ -428,7 +423,7 @@ const POOLS = {
     {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Prva faza spoljne i bezbednosne politike – ciljevi i sredstva'},
     {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Druga faza spoljne i bezbednosne politike – reformska nastojanja'},
     {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Fuzija spoljne, bezbednosne i odbrambene politike EU'},
-    {area: '19. Otvoreni metod koordinacije', text: 'Otvoreni metod koordinacije; „meko pravo“ EU'},
+    {area: '19. Otvoreni metod koordinacije', text: 'Otvoreni metod koordinacije; „meko pravo" EU'},
     {area: '19. Otvoreni metod koordinacije', text: 'Osmišljavanje otvorenog metoda koordinacije i njegov domašaj'},
     {area: '20. Model upravljanja krizom', text: 'Model upravljanja krizom; uzroci i tokovi kriza'},
     {area: '20. Model upravljanja krizom', text: 'Antikrizne intervencije u oblasti ekonomske politike'},
@@ -529,8 +524,6 @@ const POOLS = {
   ]
 };
 
-// Tematske celine za sve ispitne predmete. ID pitanja ostaje isti (subj-index),
-// pa postojeći čekirani napredak ostaje kompatibilan.
 const THEMATIC_AREAS = {
   spi: [
     [1,4,'Drugi svetski rat'],
@@ -547,8 +540,7 @@ const THEMATIC_AREAS = {
     [1,6,'Privredni sistem'],
     [7,12,'Makroekonomsko merenje, rast i razvoj'],
     [13,18,'Država i ekonomska politika'],
-    [19,20,'Tranzicija'],
-    [21,24,'Privatizacija — teorija i modeli'],
+    [19,24,'Tranzicija i privatizacija — teorija i modeli'],
     [25,28,'Privatizacija — primena i institucionalni okvir'],
     [29,31,'Poljoprivreda'],
     [32,35,'Spoljni sektor i integracije'],
@@ -581,8 +573,6 @@ function thematicAreaFor(subj, oneBasedIndex){
   return hit ? hit[2] : null;
 }
 
-// Normalizacija: svaka stavka u pool-u dobija stabilan id subj-index, review
-// flag, i (opciono) area — oblast kojoj pripada (PSEU zvanično, ostali po logičnim tematskim celinama).
 const ITEM_POOL = {};
 Object.keys(POOLS).forEach(subj=>{
   ITEM_POOL[subj] = POOLS[subj].map((it, idx)=>{
@@ -608,11 +598,11 @@ function effectiveTodayIndex(){
 }
 
 let state = {
-  progress: {},        // itemId -> {done:true, completedAt: iso}
-  examAnswers: {},      // examDay(string) -> 'yes' | 'no'
-  todayCache: null,     // {dayIndex, items:{subj:[ids]}}
+  progress: {},
+  examAnswers: {},
+  todayCache: null,
   todayFinalized: false,
-  pendingCarryover: null // {fromDay, ids:[itemId,...]} — nedovršeno sa "Završila za danas"
+  pendingCarryover: null
 };
 let openDays = new Set();
 let storageOk = true;
@@ -655,20 +645,12 @@ function showStorageWarning(show){
   document.getElementById('storageWarning').classList.toggle('show', !!show);
 }
 
-// ---------- Area-aware zaokruživanje ----------
-// Kad predmet ima stavke grupisane po "oblastima" (PSEU zvanično, ostali po logičnim tematskim celinama), broj
-// stavki koje dan dobija se zaokružuje na granicu oblasti umesto da se seče
-// nasred oblasti. Cilj: nikad ne ostaviti samo 1 stavku oblasti odvojenu od
-// ostatka. Ako oblast mora da se deli (prevelika za jedan dan), deli se na
-// približno jednake dve polovine.
 function areaAwareCount(poolArr, rawCount){
   if(rawCount <= 0) return 0;
   if(rawCount >= poolArr.length) return poolArr.length;
   if(!poolArr[0] || !poolArr[0].area){
-    // predmet nema koncept oblasti — obično zaokruživanje
     return Math.round(rawCount);
   }
-  // segmenti uzastopnih stavki iste oblasti, od početka pool-a
   const segments = [];
   let i = 0;
   while(i < poolArr.length){
@@ -681,16 +663,12 @@ function areaAwareCount(poolArr, rawCount){
   for(const seg of segments){
     if(rawCount <= seg.start) return seg.start;
     if(rawCount < seg.end){
-      const posInSeg = rawCount - seg.start;      // 1..len-1
-      const remainInSeg = seg.end - rawCount;      // 1..len-1
+      const posInSeg = rawCount - seg.start;
+      const remainInSeg = seg.end - rawCount;
       if(seg.len <= 3){
-        // dužina 2 ili 3 se ne može podeliti bez da jedna strana dobije
-        // samo 1 (3 = 1+2 je jedina moguća podela) — ne deli, snapuj na bliži kraj
         return (posInSeg <= remainInSeg) ? seg.start : seg.end;
       }
       if(posInSeg === 1 || remainInSeg === 1){
-        // izbegni da 1 stavka ostane odvojena — podeli oblast na pola
-        // (dužina je ovde >=4, pa je i najmanja polovina bar 2)
         let half = Math.round(seg.len / 2);
         half = Math.max(2, Math.min(seg.len - 2, half));
         return seg.start + half;
@@ -701,12 +679,9 @@ function areaAwareCount(poolArr, rawCount){
   return poolArr.length;
 }
 
-// ---------- Scheduler: čisto brojanje tema, bez procene trajanja ----------
-// Za svaki predmet: dan(i) review-a, i da li je taj dan BLOKIRAJUĆI (ceo dan
-// ide samo tom predmetu, svi ostali dobijaju nulu) ili DELJEN (predmet uzima
-// svoj review, ostali nastavljaju svoj normalan raspored isti dan).
-// Regularni rok predmeta = dan PRE njegovog PRVOG review dana — posle tog
-// dana se za taj predmet više nikad ne otvara nova (neregularna) tema.
+const SCHEDULER_VERSION = 'priority-route-v9-no-sep5-area-aware';
+const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
+
 const REVIEW_PLAN = {
   eng:  [{day: SUBJECTS.eng.examDay - 1, round: null, blocking: false}],
   spi:  [{day: SUBJECTS.spi.examDay - 1, round: null, blocking: true}],
@@ -719,25 +694,16 @@ const REVIEW_PLAN = {
   spt:  [{day: SUBJECTS.spt.examDay - 1, round: null, blocking: true}]
 };
 
-// Dani koji su nečiji BLOKIRAJUĆI review dan — na te dane svi OSTALI
-// predmeti dobijaju nula, bez izuzetka.
 const BLOCKED_DAYS = new Set();
 Object.values(REVIEW_PLAN).forEach(rounds=>{
   rounds.forEach(r=>{ if(r.blocking) BLOCKED_DAYS.add(r.day); });
 });
 
-// Regularni rok svakog predmeta = dan pre njegovog prvog review dana.
 const REGULAR_DEADLINE = {};
 Object.keys(REVIEW_PLAN).forEach(s=>{
   REGULAR_DEADLINE[s] = REVIEW_PLAN[s][0].day - 1;
 });
 
-// Broj STVARNO iskoristivih dana za regularno gradivo, u rasponu
-// [fromDay, toDayInclusive] — isključujući dane koji su BLOKIRANI tuđim
-// review danom (tog dana predmet ionako dobija nulu, pa se ne računa kao
-// raspoloživ). Ovo je razlog zašto npr. PSEU mora da završi 19. septembra
-// a ne 20. — 20. je IBO-in blokirajući dan, pa je stvarni poslednji
-// upotrebljivi dan za PSEU 19. septembar, bez obzira na nominalni rok.
 function daysLeftAvailable(fromDay, toDayInclusive){
   let count = 0;
   for(let t = fromDay; t <= toDayInclusive; t++){
@@ -746,46 +712,27 @@ function daysLeftAvailable(fromDay, toDayInclusive){
   return Math.max(1, count);
 }
 
-// ---------- Scheduler ----------
-// Svaki dan, u ovom redosledu:
-// 1) Ako je ovo nečiji BLOKIRAJUĆI review dan — taj predmet uzima svoj
-//    review (samo taj krug, ako ih ima više), niko drugi ovog dana ne
-//    dobija ništa, dan je gotov.
-// 2) Inače, za predmet(e) čiji je ovo DELJENI review dan — uzima se
-//    njegov review, i dan se nastavlja normalno za sve ostale.
-// 3) Normalna raspodela REGULARNOG gradiva (review stavke se ovde nikad ne
-//    diraju — već su rezervisane za svoj review dan). Kapacitet (18/28) je
-//    čisto informativan, ne ograničava — svaki predmet dobija tačno
-//    onoliko koliko mu treba da stigne do SVOG regularnog roka
-//    (REGULAR_DEADLINE), računato preko STVARNO raspoloživih dana
-//    (daysLeftAvailable, koja isključuje tuđe blokirajuće dane). Na sam
-//    regularni rok (poslednji mogući dan), pokupi se BAŠ SVE što je
-//    ostalo — nema "ostavi za sutra", jer sutra je već review dan.
-const SCHEDULER_VERSION = 'priority-route-v8-eng6-ibo-spt-rotation';
-const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
-
-// Zaključana osnovna ruta. Engleski je VAN ove računice.
-// Redosled prioriteta dok su svi aktivni: SPI > ESS > IBO > PSEU > SPT.
-// Kada ispit prođe, njegov prostor se preliva prema sledećim predmetima
-// upravo onako kako je dogovoreno. Brojevi su cilj, a tematske celine su
-// drugi kriterijum. Zaostaci se proporcionalno razlivaju na preostale dane.
+// Dnevni ciljevi su namerno birani kao TAČNE kumulativne sume celih tematskih
+// blokova/oblasti (THEMATIC_AREAS / PSEU area polje), tako da areaAwareCount()
+// (pozvan u simulateForward) svaki dan preseca TAČNO na granici teme — nikad
+// nasred nje. Dan 0 (6. septembar) je namerno rezervisan isključivo za ESS i
+// PSEU (~60% pun dan), i to tačno prvim celim blokom svakog od njih.
 const BASE_TARGETS = {
-  0:  {ess:3, pseu:7},                                      // 5.9.
-  1:  {spi:4, ess:3, pseu:3, spt:4},                      // 6.9. smanjen dan — SPT
-  2:  {spi:7, ess:3, ibo:6, pseu:8},                      // 7.9. — IBO
-  3:  {spi:4, ess:3, pseu:9, spt:4},                      // 8.9. — SPT
-  4:  {spi:5, ess:3, ibo:5, pseu:9},                      // 9.9. — IBO
-  5:  {spi:5, ess:3, pseu:8, spt:4},                      // 10.9. — SPT
-  6:  {spi:5, ess:2, ibo:5, pseu:8},                      // 11.9. — IBO
-  7:  {spi:4, ess:4, pseu:8, spt:4},                      // 12.9. — SPT
-  8:  {spi:4, ess:4, ibo:5, pseu:8},                      // 13.9. — IBO
-  9:  {spi:7, ess:3, pseu:8, spt:3},                      // 14.9. — SPT
-  11: {ess:4, ibo:3, pseu:9, spt:4},                      // 16.9. SPI ispit
-  12: {ess:5, ibo:3, pseu:8, spt:7},                      // 17.9.
-  14: {ibo:4, pseu:12, spt:7},                            // 19.9. ESS ispit
-  16: {spt:7},                                             // 21.9. IBO ispit + PSEU review 1
-  18: {spt:6},                                             // 23.9. PSEU ispit
-  19: {spt:14}                                             // 24.9.
+  0:  {ess:6, pseu:2},                                     // 6.9. — samo ESS blok 1 (1-6) + PSEU oblast 1
+  1:  {spi:4, ess:6, ibo:5, pseu:8},                        // 7.9.
+  2:  {spi:7, pseu:11, spt:4},                               // 8.9.
+  3:  {spi:4, ess:6, ibo:4, pseu:9},                         // 9.9.
+  4:  {spi:10, pseu:10},                                     // 10.9. — SPI blokovi 4+5 spojeni (najlakši dan za to)
+  5:  {spi:5, ess:6, ibo:6, pseu:8},                         // 11.9.
+  6:  {spi:4, pseu:12, spt:8},                               // 12.9.
+  7:  {spi:4, ess:4, ibo:5, pseu:8},                         // 13.9.
+  8:  {spi:7, ess:3, pseu:8, spt:7},                         // 14.9. (ENG kolokvijum)
+  10: {ess:4, pseu:9},                                       // 16.9. (SPI ispit)
+  11: {ess:5, ibo:7, pseu:8, spt:11},                        // 17.9.
+  13: {ibo:4, pseu:12},                                      // 19.9. (ESS ispit)
+  15: {spt:8},                                                // 21.9. (IBO ispit + PSEU krug 1)
+  17: {spt:11},                                               // 23.9. (PSEU ispit)
+  18: {spt:15}                                                // 24.9.
 };
 
 function baseTarget(day, subj){
@@ -805,9 +752,6 @@ function adjustedTargetsFrom(startDay, pools){
       const b = baseTarget(d, subj);
       if(b > 0){ days.push(d); planned += b; }
     }
-    // Ako smo u zaostatku u odnosu na zaključanu rutu, višak rasporedi
-    // proporcionalno postojećim kvotama kroz preostale dane. Time rep ne
-    // eksplodira u jednom danu samo zato što je prošao datum.
     let extra = Math.max(0, remaining - planned);
     if(extra > 0 && days.length){
       const weights = days.map(d=>Math.max(1, baseTarget(d, subj)));
@@ -830,8 +774,6 @@ function simulateForward(startDay){
     pools[subj] = ITEM_POOL[subj].filter(it => !(state.progress[it.id] && state.progress[it.id].done));
   });
 
-  // Rep prenesen klikom na "Završila za danas" ostaje posebna obaveza i
-  // kači se na prvi sledeći dan kada se predmet prirodno pojavi.
   const carryoverFromDay = state.pendingCarryover ? state.pendingCarryover.fromDay : -1;
   const carryoverBySubj = {};
   Object.keys(SUBJECTS).forEach(s=> carryoverBySubj[s] = []);
@@ -846,15 +788,12 @@ function simulateForward(startDay){
     });
   }
 
-  // Zaključana ruta + proporcionalni drift za eventualni zaostatak.
-  // ENG se ne računa u ovu raspodelu.
   const ADJUSTED_TARGETS = adjustedTargetsFrom(Math.max(startDay,0), pools);
 
   const schedule = {};
   for(let d = Math.max(startDay,0); d < DAY_COUNT; d++){
     schedule[d] = {};
 
-    // 1) Blokirajući review dan: samo taj predmet.
     let blockingSubj = null, blockingRound = null;
     Object.keys(REVIEW_PLAN).forEach(s=>{
       REVIEW_PLAN[s].forEach(r=>{
@@ -874,7 +813,6 @@ function simulateForward(startDay){
       continue;
     }
 
-    // 2) Deljeni review dan: review ostaje, ali ostali predmeti mogu regularno.
     Object.keys(REVIEW_PLAN).forEach(s=>{
       REVIEW_PLAN[s].forEach(r=>{
         if(!r.blocking && r.day === d){
@@ -889,14 +827,11 @@ function simulateForward(startDay){
       });
     });
 
-    // 3) Jedna zajednička dnevna kasa samo za ISPITE. Engleski je potpuno van kase.
     const counts = ADJUSTED_TARGETS[d] || {};
     Object.keys(counts).forEach(s=>{
       const regularItems = pools[s].filter(it => !it.review);
       let n = Math.min(counts[s], regularItems.length);
-
-      // BASE_TARGETS su već ručno usklađeni sa tematskim celinama gde je to
-      // moguće (PSEU naročito), zato ovde ne menjamo dogovorenu dnevnu kvotu.
+      n = areaAwareCount(regularItems, n);
 
       if(n > 0){
         const taken = regularItems.slice(0, n);
@@ -906,11 +841,7 @@ function simulateForward(startDay){
       }
     });
 
-    // 3b) ENGLESKI — potpuno van dnevne kase za ispite.
-    // Raspoređuje se samostalno do svog regularnog roka i ne utiče na DAILY_CAPACITY.
-    // Engleski, kao i ostali predmeti, kreće 6. septembra.
-    // 5. septembar je rezervisan isključivo za ESS + PSEU.
-    if(d >= 1 && d <= REGULAR_DEADLINE.eng){
+    if(d >= 0 && d <= REGULAR_DEADLINE.eng){
       const engRegular = pools.eng.filter(it => !it.review);
       if(engRegular.length){
         const daysLeft = daysLeftAvailable(d, REGULAR_DEADLINE.eng);
@@ -926,7 +857,6 @@ function simulateForward(startDay){
       }
     }
 
-    // 4) Prenesi rep čim se predmet prvi put prirodno pojavi posle finalizacije.
     Object.keys(SUBJECTS).forEach(s=> attachCarryoverIfDue(s, d));
   }
 
@@ -995,7 +925,6 @@ function renderMissionStrip(){
   el.innerHTML=`<section class="mission-strip"><div class="mission-top"><div class="mission-next"><div class="label">Sledeće na redu</div><div class="value">${subjectCode(next)} · ${START_DAY+SUBJECTS[next].examDay}. septembar ${examClock(next)?'· '+examClock(next):''} · ${nextText}</div></div></div><div class="route">${stops}</div></section>`;
 }
 
-// ---------- Render ----------
 function render(){
   const todayIdx = effectiveTodayIndex();
   ensureTodayCache();
@@ -1058,7 +987,6 @@ function renderOverall(missed){
 }
 
 function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
-  // mode: 'today' (interactive), 'projected' (locked), 'history' (locked, only done shown)
   Object.keys(SUBJECTS).forEach(subj=>{
     const ids = itemsBySubj[subj];
     if(!ids || !ids.length) return;
@@ -1076,7 +1004,6 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
     const hasAreas = visibleIds.some(id => itemLookup(id).area);
 
     if(hasAreas){
-      // grupiši dodatno po oblasti, redosled po prvom pojavljivanju tog dana
       const byArea = [];
       const areaIndex = {};
       visibleIds.forEach(id=>{
@@ -1146,7 +1073,6 @@ function renderDays(todayIdx, schedule){
     let dayTotal=0, dayDone=0;
     const itemsForDay = (d===todayIdx) ? (state.todayCache.items||{}) : (schedule[d]||{});
     if(d < todayIdx){
-      // istorijski prikaz: broji samo stvarno završeno tog datuma
       Object.keys(SUBJECTS).forEach(subj=>{
         ITEM_POOL[subj].forEach(it=>{
           const p = state.progress[it.id];
@@ -1222,7 +1148,6 @@ function renderDays(todayIdx, schedule){
 }
 
 function itemsForDayHistory(d){
-  // vraća {subj:[ids]} svih stavki koje su završene tog kalendarskog dana
   const out = {};
   Object.keys(SUBJECTS).forEach(subj=>{
     const ids = ITEM_POOL[subj].filter(it=>{
@@ -1279,12 +1204,6 @@ function restoreOpenState(){
 
 document.addEventListener('click', (e)=>{
   if(e.target.closest('[data-action="finalize"]')){
-    // Sve što je danas bilo na spisku a NIJE čekirano — prebacuje se na
-    // PRVI SLEDEĆI dan kad se taj predmet ponovo prirodno pomene u
-    // rasporedu (ne nužno sutra — čeka svoj red, po predmetu posebno).
-    // Spaja se sa eventualnim već čekajućim repom (ako je "završila za
-    // danas" kliknuto više dana zaredom pre nego što se prethodni rep
-    // stigao prikačiti), ne prepisuje ga.
     const todayIdx = effectiveTodayIndex();
     const cacheItems = (state.todayCache && state.todayCache.items) || {};
     const uncheckedIds = [];
