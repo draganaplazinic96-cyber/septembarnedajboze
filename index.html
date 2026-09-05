@@ -803,7 +803,7 @@ function daysLeftAvailable(fromDay, toDayInclusive){
 //    (daysLeftAvailable, koja isključuje tuđe blokirajuće dane). Na sam
 //    regularni rok (poslednji mogući dan), pokupi se BAŠ SVE što je
 //    ostalo — nema "ostavi za sutra", jer sutra je već review dan.
-const SCHEDULER_VERSION = 'balanced-exams-v4-spt-24-safe';
+const SCHEDULER_VERSION = 'balanced-exams-v5-numbered-questions';
 const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
 
 // Minimalni zajednički dnevni kapacitet koji garantuje da svi predmeti mogu
@@ -1228,7 +1228,7 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
           const done = !!(state.progress[id] && state.progress[id].done);
           const lab = document.createElement('label');
           lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
-          lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : ''}${it.text}</span>`;
+          lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : (['spi','ibo','pseu','spt'].includes(subj) ? `${Number(id.split('-').pop()) + 1}. ` : '')}${it.text}</span>`;
           areaDiv.appendChild(lab);
         });
         grp.appendChild(areaDiv);
@@ -1239,7 +1239,7 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
         const done = !!(state.progress[id] && state.progress[id].done);
         const lab = document.createElement('label');
         lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
-        lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : ''}${it.text}</span>`;
+        lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : (['spi','ibo','pseu','spt'].includes(subj) ? `${Number(id.split('-').pop()) + 1}. ` : '')}${it.text}</span>`;
         grp.appendChild(lab);
       });
     }
