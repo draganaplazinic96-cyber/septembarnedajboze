@@ -803,19 +803,171 @@ function daysLeftAvailable(fromDay, toDayInclusive){
 //    (daysLeftAvailable, koja isključuje tuđe blokirajuće dane). Na sam
 //    regularni rok (poslednji mogući dan), pokupi se BAŠ SVE što je
 //    ostalo — nema "ostavi za sutra", jer sutra je već review dan.
+const SCHEDULER_VERSION = 'balanced-exams-v4-spt-24-safe';
+const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
+
+// Minimalni zajednički dnevni kapacitet koji garantuje da svi predmeti mogu
+// da stignu do svojih regularnih rokova. Ne sabiramo više zasebne dnevne
+// kvote svakog predmeta. Umesto toga računamo JEDNU dnevnu kasu za sve.
+function computeBalancedCapacity(startDay, pools){
+  const deadlines = Array.from(new Set(EXAM_SUBJECTS.map(s => REGULAR_DEADLINE[s]))).sort((a,b)=>a-b);
+  let capacity = 1;
+
+  deadlines.forEach(D=>{
+    if(D < startDay) return;
+    let required = 0;
+    EXAM_SUBJECTS.forEach(s=>{
+      if(REGULAR_DEADLINE[s] <= D){
+        required += pools[s].filter(it => !it.review).length;
+      }
+    });
+
+    let availableDays = 0;
+    for(let d=startDay; d<=D; d++){
+      if(!BLOCKED_DAYS.has(d)) availableDays++;
+    }
+    if(availableDays > 0){
+      capacity = Math.max(capacity, Math.ceil(required / availableDays));
+    }
+  });
+
+  return capacity;
+}
+
+function availableDaysForSubject(fromDay, subj){
+  let n = 0;
+  for(let d=fromDay; d<=REGULAR_DEADLINE[subj]; d++){
+    if(!BLOCKED_DAYS.has(d)) n++;
+  }
+  return Math.max(1, n);
+}
+
+// Raspodela jedne zajedničke dnevne kase među predmetima.
+// Težina = preostalo / (broj raspoloživih dana)^2.
+// Kvadrat daje prednost bližim rokovima, ali kasniji predmeti ipak dobijaju
+// mali deo na početku; njihov deo raste kako raniji ispiti otpadaju.
+function balancedCountsForDay(day, pools, capacity){
+  const eligible = EXAM_SUBJECTS.filter(s =>
+    day <= REGULAR_DEADLINE[s] && pools[s].some(it => !it.review)
+  );
+  if(!eligible.length) return {};
+
+  const remaining = {};
+  const score = {};
+  let totalRemaining = 0;
+  let totalScore = 0;
+
+  eligible.forEach(s=>{
+    remaining[s] = pools[s].filter(it => !it.review).length;
+    totalRemaining += remaining[s];
+    const days = availableDaysForSubject(day, s);
+    score[s] = remaining[s] / (days * days);
+    totalScore += score[s];
+  });
+
+  const slots = Math.min(capacity, totalRemaining);
+  const alloc = {};
+  const raw = {};
+  let used = 0;
+
+  eligible.forEach(s=>{
+    raw[s] = totalScore > 0 ? slots * (score[s] / totalScore) : 0;
+    alloc[s] = Math.min(remaining[s], Math.floor(raw[s]));
+    used += alloc[s];
+  });
+
+  // Ostatak raspodeli po najvećem decimalnom ostatku; ako su jednaki,
+  // prednost ima bliži rok.
+  while(used < slots){
+    const possible = eligible.filter(s => alloc[s] < remaining[s]);
+    if(!possible.length) break;
+    possible.sort((a,b)=>{
+      const fa = raw[a] - Math.floor(raw[a]);
+      const fb = raw[b] - Math.floor(raw[b]);
+      if(fb !== fa) return fb - fa;
+      if(REGULAR_DEADLINE[a] !== REGULAR_DEADLINE[b]) return REGULAR_DEADLINE[a] - REGULAR_DEADLINE[b];
+      return score[b] - score[a];
+    });
+    const s = possible[0];
+    alloc[s]++;
+    raw[s] = Math.floor(raw[s]); // da isti decimalni ostatak ne pobedi beskonačno
+    used++;
+  }
+
+  // Sigurnosna provera rokova. Za svaki rok proveri koliko gradiva SA TIM
+  // ILI RANIJIM rokom mora biti završeno baš danas da bi ostatak stao u
+  // buduće zajedničke dnevne kapacitete. Ako fali, prebacujemo slot sa
+  // kasnijeg predmeta na grupu koja ranije dospeva.
+  const deadlines = Array.from(new Set(eligible.map(s => REGULAR_DEADLINE[s]))).sort((a,b)=>a-b);
+  deadlines.forEach(D=>{
+    const due = eligible.filter(s => REGULAR_DEADLINE[s] <= D);
+    let tasksDue = 0;
+    due.forEach(s=> tasksDue += remaining[s]);
+
+    let futureDays = 0;
+    for(let d=day+1; d<=D; d++){
+      if(!BLOCKED_DAYS.has(d)) futureDays++;
+    }
+
+    const mustDoToday = Math.max(0, tasksDue - capacity * futureDays);
+    let allocatedDue = 0;
+    due.forEach(s=> allocatedDue += alloc[s] || 0);
+    let short = mustDoToday - allocatedDue;
+
+    while(short > 0){
+      const donors = eligible.filter(s => REGULAR_DEADLINE[s] > D && (alloc[s]||0) > 0);
+      const receivers = due.filter(s => (alloc[s]||0) < remaining[s]);
+      if(!donors.length || !receivers.length) break;
+
+      donors.sort((a,b)=> REGULAR_DEADLINE[b] - REGULAR_DEADLINE[a]);
+      receivers.sort((a,b)=>{
+        if(score[b] !== score[a]) return score[b] - score[a];
+        return REGULAR_DEADLINE[a] - REGULAR_DEADLINE[b];
+      });
+
+      alloc[donors[0]]--;
+      alloc[receivers[0]]++;
+      short--;
+    }
+  });
+
+  // SPT: 21. i 23. septembar želimo lakše, a 24. teže — ALI bez zaostatka.
+  // Zato SPT nikad ne smemo spustiti ispod minimuma koji garantuje da SVE
+  // preostalo može da stane u buduće regularne dane do SPT roka.
+  //
+  // desired = približno pola normalne kvote na 21/23.
+  // minToday = koliko MORAMO uraditi danas da ostatak može da stane u
+  // buduće raspoložive dane, uz isti DAILY_CAPACITY.
+  // Uzimamo max(desired, minToday), pa 24. dobija što više može bez rizika.
+  if((day === 14 || day === 16) && alloc.spt > 0){
+    const desired = Math.max(1, Math.floor(alloc.spt * 0.5));
+
+    let futureRegularDays = 0;
+    for(let d = day + 1; d <= REGULAR_DEADLINE.spt; d++){
+      if(!BLOCKED_DAYS.has(d)) futureRegularDays++;
+    }
+
+    const sptRemainingToday = remaining.spt || 0;
+    const maxFutureCapacity = futureRegularDays * capacity;
+    const minToday = Math.max(0, sptRemainingToday - maxFutureCapacity);
+
+    alloc.spt = Math.min(
+      sptRemainingToday,
+      Math.max(desired, minToday)
+    );
+  }
+
+  return alloc;
+}
+
 function simulateForward(startDay){
   const pools = {};
   Object.keys(SUBJECTS).forEach(subj=>{
     pools[subj] = ITEM_POOL[subj].filter(it => !(state.progress[it.id] && state.progress[it.id].done));
   });
 
-  // Rep prenesen klikom na "Završila za danas": ove stavke se PRIVREMENO
-  // izvade iz svog pool-a (da ih normalna raspodela ne bi opet zakazala na
-  // dan finalizacije ili bilo koji dan pre svog prvog sledećeg pojavljivanja)
-  // i drže na strani dok se, po predmetu, ne stigne do prvog dana POSLE
-  // dana finalizacije na koji se taj predmet ionako prirodno pominje —
-  // tu se prikače na početak tog dana. Ne forsira se poseban dan; čeka se
-  // dan kad predmet stvarno dođe na red.
+  // Rep prenesen klikom na "Završila za danas" ostaje posebna obaveza i
+  // kači se na prvi sledeći dan kada se predmet prirodno pojavi.
   const carryoverFromDay = state.pendingCarryover ? state.pendingCarryover.fromDay : -1;
   const carryoverBySubj = {};
   Object.keys(SUBJECTS).forEach(s=> carryoverBySubj[s] = []);
@@ -830,11 +982,15 @@ function simulateForward(startDay){
     });
   }
 
+  // Jedan zajednički kapacitet samo za ispitne predmete. ENG se ne računa. Ako se plan pokrene
+  // kasnije ili postoji zaostatak, kapacitet se automatski preračuna naviše.
+  const DAILY_CAPACITY = computeBalancedCapacity(Math.max(startDay,0), pools);
+
   const schedule = {};
   for(let d = Math.max(startDay,0); d < DAY_COUNT; d++){
     schedule[d] = {};
 
-    // 1) blokirajući review dan?
+    // 1) Blokirajući review dan: samo taj predmet.
     let blockingSubj = null, blockingRound = null;
     Object.keys(REVIEW_PLAN).forEach(s=>{
       REVIEW_PLAN[s].forEach(r=>{
@@ -851,10 +1007,10 @@ function simulateForward(startDay){
         pools[s] = poolS.filter(it => !ids.has(it.id));
       }
       attachCarryoverIfDue(s, d);
-      continue; // svi ostali predmeti dobijaju nulu ovog dana
+      continue;
     }
 
-    // 2) deljeni review dan(i) danas — uzmi review stavku(e) tog kruga
+    // 2) Deljeni review dan: review ostaje, ali ostali predmeti mogu regularno.
     Object.keys(REVIEW_PLAN).forEach(s=>{
       REVIEW_PLAN[s].forEach(r=>{
         if(!r.blocking && r.day === d){
@@ -863,39 +1019,50 @@ function simulateForward(startDay){
           if(reviewItems.length){
             schedule[d][s] = (schedule[d][s] || []).concat(reviewItems.map(t=>t.id));
             const ids = new Set(reviewItems.map(t=>t.id));
-            pools[s] = poolS.filter(it => !ids.has(it.id));
+            pools[s] = pools[s].filter(it => !ids.has(it.id));
           }
         }
       });
     });
 
-    // 3) normalna raspodela regularnog gradiva
-    const eligible = Object.keys(SUBJECTS).filter(s =>
-      d <= REGULAR_DEADLINE[s] && pools[s].some(it => !it.review)
-    );
-    eligible.forEach(s=>{
+    // 3) Jedna zajednička dnevna kasa samo za ISPITE. Engleski je potpuno van kase.
+    const counts = balancedCountsForDay(d, pools, DAILY_CAPACITY);
+    Object.keys(counts).forEach(s=>{
       const regularItems = pools[s].filter(it => !it.review);
-      let items;
-      if(d === REGULAR_DEADLINE[s]){
-        // poslednji mogući dan za regularno gradivo — pokupi baš sve
-        items = regularItems.length;
-      } else {
-        const daysLeft = daysLeftAvailable(d, REGULAR_DEADLINE[s]);
-        const rate = regularItems.length / daysLeft;
-        const rounded = Math.min(Math.ceil(rate), regularItems.length);
-        items = areaAwareCount(regularItems, rounded);
-      }
-      if(items > 0){
-        const taken = regularItems.slice(0, items);
+      let n = Math.min(counts[s], regularItems.length);
+
+      // Za PSEU i druge eventualne area-poolove zadrži logične granice oblasti.
+      // Ovo može pomeriti dnevni zbir za 1-2 stavke, što je namerno prihvatljivo
+      // da se oblast ne preseče na besmislenom mestu.
+      if(n > 0) n = areaAwareCount(regularItems, n);
+
+      if(n > 0){
+        const taken = regularItems.slice(0, n);
         const takenIds = new Set(taken.map(t=>t.id));
         schedule[d][s] = (schedule[d][s] || []).concat(taken.map(t=>t.id));
         pools[s] = pools[s].filter(it => !takenIds.has(it.id));
       }
     });
 
-    // 4) Da li se neki predmet sa čekajućim repom danas prirodno pominje
-    //    (bilo kroz review iznad, bilo kroz regularnu raspodelu upravo
-    //    sad)? Ako da — rep mu se prikači na početak, ovde, prvi put.
+    // 3b) ENGLESKI — potpuno van dnevne kase za ispite.
+    // Raspoređuje se samostalno do svog regularnog roka i ne utiče na DAILY_CAPACITY.
+    if(d <= REGULAR_DEADLINE.eng){
+      const engRegular = pools.eng.filter(it => !it.review);
+      if(engRegular.length){
+        const daysLeft = daysLeftAvailable(d, REGULAR_DEADLINE.eng);
+        const n = d === REGULAR_DEADLINE.eng
+          ? engRegular.length
+          : Math.min(Math.ceil(engRegular.length / daysLeft), engRegular.length);
+        if(n > 0){
+          const taken = engRegular.slice(0, n);
+          const takenIds = new Set(taken.map(t=>t.id));
+          schedule[d].eng = (schedule[d].eng || []).concat(taken.map(t=>t.id));
+          pools.eng = pools.eng.filter(it => !takenIds.has(it.id));
+        }
+      }
+    }
+
+    // 4) Prenesi rep čim se predmet prvi put prirodno pojavi posle finalizacije.
     Object.keys(SUBJECTS).forEach(s=> attachCarryoverIfDue(s, d));
   }
 
@@ -909,16 +1076,12 @@ function simulateForward(startDay){
     }
   }
 
-  // Ako je predmetov ispit stigao a rep se nikad nije prikačio (predmet se
-  // više uopšte ne pominje) — vrati ga u pool da ispravno uđe u "missed".
   Object.keys(carryoverBySubj).forEach(s=>{
     if(carryoverBySubj[s].length){
       pools[s] = pools[s].concat(carryoverBySubj[s]);
     }
   });
 
-  // Šta god ostane u pool-u — bilo zato što je rok prošao, bilo zato što
-  // korisnik stvarno kasni u odnosu na plan — je zaostatak.
   const missed = {};
   Object.keys(SUBJECTS).forEach(subj=>{
     if(pools[subj].length > 0){
@@ -926,14 +1089,14 @@ function simulateForward(startDay){
     }
   });
 
-  return {schedule, missed};
+  return {schedule, missed, dailyCapacity: DAILY_CAPACITY};
 }
 
 function ensureTodayCache(){
   const idx = effectiveTodayIndex();
-  if(!state.todayCache || state.todayCache.dayIndex !== idx){
+  if(!state.todayCache || state.todayCache.dayIndex !== idx || state.todayCache.schedulerVersion !== SCHEDULER_VERSION){
     const {schedule} = simulateForward(idx);
-    state.todayCache = {dayIndex: idx, items: schedule[idx] || {}};
+    state.todayCache = {dayIndex: idx, schedulerVersion: SCHEDULER_VERSION, items: schedule[idx] || {}};
     state.todayFinalized = false;
     saveState();
   }
