@@ -104,7 +104,6 @@ label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:po
 <div class="wrap">
   <header class="command-header">
         <h1 class="command-title"><span>Septembarski</span><span>rok ’26</span></h1>
-    <div class="command-meta"><span>07—26 SEPTEMBAR</span><span>6 PREDMETA</span><span>20 DANA</span></div>
     <div class="command-mark" aria-hidden="true"><svg viewBox="0 0 220 90" fill="none"><path d="M2 72 L30 55 L55 62 L78 38 L104 47 L130 24 L156 34 L181 15 L218 28" stroke="currentColor" stroke-width="2"/><path d="M2 80H218M2 53H218M2 26H218" stroke="currentColor" stroke-width=".7" opacity=".35"/></svg></div>
   </header>
   <div id="missionStrip"></div>
@@ -1034,7 +1033,7 @@ function renderMissionStrip(){
     const date=7+SUBJECTS[s].examDay;
     return `<div class="route-stop ${cls}" style="color:${SUBJECTS[s].color}"><div class="route-dot"></div><div class="route-code">${subjectCode(s)}</div><div class="route-date">${date}. SEP${examClock(s)?' · '+examClock(s):''}</div></div>`;
   }).join('');
-  el.innerHTML=`<section class="mission-strip"><div class="mission-top"><div class="mission-next"><div class="label">Sledeći checkpoint</div><div class="value">${subjectCode(next)} · ${7+SUBJECTS[next].examDay}. septembar ${examClock(next)?'· '+examClock(next):''} · ${nextText}</div></div><div class="mission-days"><div class="label">Do kraja roka</div><div class="value">${endText}</div></div></div><div class="route">${stops}</div></section>`;
+  el.innerHTML=`<section class="mission-strip"><div class="mission-top"><div class="mission-next"><div class="label">Sledeće na redu</div><div class="value">${subjectCode(next)} · ${7+SUBJECTS[next].examDay}. septembar ${examClock(next)?'· '+examClock(next):''} · ${nextText}</div></div></div><div class="route">${stops}</div></section>`;
 }
 
 // ---------- Render ----------
