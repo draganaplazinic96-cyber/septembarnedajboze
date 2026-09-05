@@ -908,7 +908,9 @@ function simulateForward(startDay){
 
     // 3b) ENGLESKI — potpuno van dnevne kase za ispite.
     // Raspoređuje se samostalno do svog regularnog roka i ne utiče na DAILY_CAPACITY.
-    if(d <= REGULAR_DEADLINE.eng){
+    // Engleski, kao i ostali predmeti, kreće 6. septembra.
+    // 5. septembar je rezervisan isključivo za ESS + PSEU.
+    if(d >= 1 && d <= REGULAR_DEADLINE.eng){
       const engRegular = pools.eng.filter(it => !it.review);
       if(engRegular.length){
         const daysLeft = daysLeftAvailable(d, REGULAR_DEADLINE.eng);
