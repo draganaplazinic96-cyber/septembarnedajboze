@@ -7,213 +7,107 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#100f16;
-    --bg-2:#17151f;
-    --card:#1b1926;
-    --card-hover:#211f2d;
-    --card-border:#2c2938;
-    --text:#f2eee6;
-    --muted:#9490a3;
-    --muted-2:#6b6779;
-    --ess:#d3a256;
-    --ibo:#c2634a;
-    --spt:#8b8fe0;
-    --eng:#5fa8b0;
-    --spi:#c17a9e;
-    --pseu:#7fb069;
-    --red:#e0645a;
-    --green:#5cb897;
-    --accent:#8a8ff0;
-    --warn-bg:#341a1a;
-    --warn-text:#f0958c;
-    --serif:'Fraunces',Georgia,serif;
-    --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  }
-  *{box-sizing:border-box;}
-  body{
-    margin:0;
-    font-family:var(--sans);
-    background:var(--bg);
-    background-image:radial-gradient(ellipse 900px 500px at 50% -10%, rgba(138,143,240,0.09), transparent);
-    color:var(--text);
-    padding:28px 16px 70px;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:720px;margin:0 auto;}
-  h1{
-    font-family:var(--serif);font-weight:600;font-size:1.7rem;letter-spacing:-0.01em;
-    margin:0 0 3px;color:var(--text);
-  }
-  .sub{color:var(--muted);font-size:0.88rem;margin:0 0 22px;}
+:root{
+  --paper:#ece7dc;--paper-2:#ded7c8;--ink:#17201d;--ink-2:#2b3430;
+  --panel:#f5f1e8;--line:#b9b1a2;--muted:#756f66;--soft:#d4ccbd;
+  --ess:#ad7a2a;--ibo:#9b4d3a;--spt:#5857a6;--eng:#397985;--spi:#9a4c70;--pseu:#527d47;
+  --red:#a84339;--green:#3f765c;--accent:#2f4740;--warn-bg:#ead6cf;--warn-text:#8d302b;
+  --serif:'Fraunces',Georgia,serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--sans);color:var(--ink);background:
+  linear-gradient(rgba(35,45,40,.035) 1px,transparent 1px),
+  linear-gradient(90deg,rgba(35,45,40,.025) 1px,transparent 1px),var(--paper);
+  background-size:32px 32px;padding:34px 18px 80px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto}
+.command-header{position:relative;border-top:6px solid var(--ink);border-bottom:1px solid var(--ink);padding:24px 0 22px;margin-bottom:18px;overflow:hidden}
+.command-kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:8px}
+.command-title{font-family:var(--serif);font-size:clamp(2.9rem,8vw,6rem);line-height:.83;letter-spacing:-.055em;font-weight:600;margin:0;text-transform:uppercase}
+.command-title span{display:block}
+.command-meta{margin-top:14px;display:flex;gap:14px;flex-wrap:wrap;font-size:.73rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.command-mark{position:absolute;right:0;top:20px;width:210px;height:90px;opacity:.24}
+.command-mark svg{width:100%;height:100%}
+.storage-warning{display:none;background:var(--warn-bg);color:var(--warn-text);border:1px solid rgba(168,67,57,.45);padding:10px 13px;margin:0 0 14px;font-size:.78rem;font-weight:650}.storage-warning.show{display:block}
 
-  .storage-warning{
-    display:none;
-    background:var(--warn-bg);color:var(--warn-text);border:1px solid rgba(224,101,90,0.4);
-    border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:0.82rem;font-weight:500;
-  }
-  .storage-warning.show{display:block;}
+/* master route */
+.mission-strip{background:var(--ink);color:#f3eee4;padding:18px 20px 16px;margin-bottom:16px;border-radius:2px}
+.mission-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.mission-next .label,.mission-days .label{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:#aaa99e;font-weight:700}
+.mission-next .value{font-family:var(--serif);font-size:1.45rem;margin-top:2px}
+.mission-days{text-align:right}.mission-days .value{font-family:var(--serif);font-size:2.15rem;line-height:1}
+.route{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding-top:14px}
+.route:before{content:"";position:absolute;left:4%;right:4%;top:22px;height:1px;background:#777b75}
+.route-stop{position:relative;text-align:center;min-width:0}.route-dot{width:15px;height:15px;border-radius:50%;margin:0 auto 8px;border:3px solid var(--ink);box-shadow:0 0 0 1px currentColor;background:currentColor;position:relative;z-index:1}.route-stop.past{opacity:.48}.route-stop.next .route-dot{box-shadow:0 0 0 1px currentColor,0 0 0 5px rgba(255,255,255,.10)}
+.route-code{font-size:.68rem;font-weight:800;letter-spacing:.08em}.route-date{font-size:.64rem;color:#a8aaa3;margin-top:2px;white-space:nowrap}
 
-  .exams{
-    display:flex;flex-direction:column;gap:5px;
-    background:var(--card);border:1px solid var(--card-border);
-    border-radius:14px;padding:16px 18px;margin-bottom:16px;font-size:0.87rem;
-  }
-  .exams b{color:var(--text);font-weight:600;}
-  .exams .cat-title{
-    font-size:0.72rem;font-weight:600;letter-spacing:.02em;color:var(--muted-2);margin-top:8px;
-  }
-  .exams .cat-title:first-child{margin-top:0;}
-  .exams > div:not(.cat-title){color:var(--muted);padding:2px 0;}
+/* exam docket */
+.exams{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--ink);background:var(--panel);margin-bottom:16px}
+.exams .cat-title{display:none}.exams>div:not(.cat-title){font-size:.76rem;color:var(--muted);padding:11px 13px;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:53px}.exams b{display:block;color:var(--ink);font-family:var(--serif);font-size:.92rem;margin-bottom:2px}
 
-  .daily-plans{
-    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;
-  }
-  .daily-plan-col{
-    background:var(--card);border:1px solid var(--card-border);
-    border-radius:14px;padding:14px 16px;
-  }
-  .daily-plan-title{
-    font-family:var(--serif);font-weight:600;font-size:0.95rem;margin-bottom:10px;color:var(--text);
-  }
-  .daily-plan-row{
-    display:flex;gap:10px;font-size:0.82rem;padding:4px 0;line-height:1.4;
-  }
-  .daily-plan-row .time{
-    flex:0 0 46px;color:var(--accent);font-weight:600;font-family:var(--sans);
-  }
-  .daily-plan-row .act{color:var(--muted);}
-  @media (max-width:480px){
-    .daily-plans{grid-template-columns:1fr;}
-  }
+.daily-plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.daily-plan-col{background:transparent;border:1px solid var(--line);padding:14px 16px}.daily-plan-title{font-family:var(--serif);font-size:1rem;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:7px}.daily-plan-row{display:flex;gap:12px;font-size:.78rem;padding:3px 0;line-height:1.45}.daily-plan-row .time{flex:0 0 48px;color:var(--accent);font-weight:800}.daily-plan-row .act{color:var(--muted)}
 
-  /* Today card */
-  .today-card{
-    background:var(--card);border:1px solid var(--accent);border-radius:16px;
-    padding:18px 20px;margin-bottom:16px;
-  }
-  .today-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
-  .today-date{font-family:var(--serif);font-weight:600;font-size:1.15rem;}
-  .today-stats{display:flex;flex-direction:column;gap:6px;font-size:0.85rem;color:var(--muted);margin-bottom:12px;}
-  .today-stats b{color:var(--text);}
-  .finalize-btn{
-    font-family:var(--sans);font-size:0.85rem;font-weight:600;padding:10px 16px;border-radius:10px;
-    border:none;background:var(--accent);color:#0e0d14;cursor:pointer;
-  }
-  .finalize-btn:hover{opacity:0.9;}
-  .finalized-note{font-size:0.82rem;color:var(--green);font-weight:500;}
+/* today hero */
+.today-card{background:var(--panel);border:2px solid var(--ink);padding:0;margin-bottom:16px;position:relative}.today-card:before{content:"DANAS";position:absolute;right:16px;top:11px;font-size:.62rem;letter-spacing:.18em;font-weight:800;color:var(--muted)}
+.today-top{padding:18px 18px 8px}.today-date{font-family:var(--serif);font-size:2rem;font-weight:600;letter-spacing:-.03em}.today-stats{padding:0 18px 14px;font-size:.82rem;color:var(--muted)}.today-stats b{color:var(--ink);font-size:1rem}.finalize-btn{width:100%;border:0;border-top:1px solid var(--ink);background:var(--ink);color:#f5efe4;padding:13px 16px;font-family:var(--sans);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;cursor:pointer}.finalize-btn:hover{background:#27322e}.finalized-note{border-top:1px solid var(--line);padding:12px 18px;color:var(--green);font-weight:700;font-size:.78rem}.deficit-banner{margin:0;border-top:1px solid #c69990;background:var(--warn-bg);color:var(--warn-text);padding:10px 18px;font-size:.78rem;line-height:1.5}.deficit-banner b{color:inherit}.drift-label{font-weight:800;letter-spacing:.09em;text-transform:uppercase;margin-right:5px}
 
-  .deficit-banner{
-    background:var(--warn-bg);color:var(--warn-text);border-radius:10px;padding:10px 14px;
-    font-size:0.82rem;margin-top:4px;line-height:1.5;
-  }
-  .deficit-banner b{color:var(--warn-text);}
+/* radar */
+.overall{background:var(--panel);border:1px solid var(--ink);padding:18px;margin-bottom:24px}.overall-top{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line);padding-bottom:11px;margin-bottom:12px}.overall-title-wrap .eyebrow{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:800}.overall-title-wrap .title{font-family:var(--serif);font-size:1.35rem;margin-top:2px}.overall-top .pct{font-family:var(--serif);font-size:2.2rem;font-weight:600}.bar-bg{height:3px;background:var(--paper-2);overflow:hidden;margin-bottom:15px}.bar-fill{height:100%;background:var(--ink);transition:width .4s ease}.subject-mini{display:flex;flex-direction:column}.subject-mini-row{display:grid;grid-template-columns:190px 1fr 58px 118px;align-items:center;gap:10px;font-size:.75rem;padding:8px 0;border-bottom:1px solid var(--soft)}.subject-mini-row:last-child{border-bottom:0}.subj-name{font-weight:650;display:flex;align-items:center;gap:8px}.subj-name .subject-symbol{width:22px;height:22px;flex-basis:22px}.subj-name .subject-symbol svg{width:21px;height:21px} .mini-bar-bg{height:6px;background:var(--paper-2);overflow:hidden}.mini-bar-fill{display:block;height:100%;transition:width .4s}.subj-frac{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right}.subj-status{text-align:right;text-transform:uppercase;letter-spacing:.05em;font-size:.64rem;font-weight:800}.subj-status.ok{color:var(--green)}.subj-status.risk{color:var(--red)}.subj-status.done{color:var(--ink)}
 
-  .overall{
-    background:var(--card);border:1px solid var(--card-border);
-    border-radius:16px;padding:18px 20px;margin-bottom:22px;
-  }
-  .overall-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
-  .overall-top div:first-child{font-size:0.9rem;color:var(--muted);}
-  .overall-top .pct{font-family:var(--serif);font-size:1.9rem;font-weight:600;color:var(--text);}
-  .bar-bg{height:8px;border-radius:6px;background:var(--bg-2);overflow:hidden;margin-bottom:16px;}
-  .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:6px;transition:width .4s ease;}
-  .subject-mini{display:flex;flex-direction:column;gap:8px;}
-  .subject-mini-row{display:flex;align-items:center;gap:9px;font-size:0.78rem;color:var(--muted);flex-wrap:wrap;}
-  .subject-mini-row .subj-name{flex:0 0 150px;color:var(--text);}
-  .subject-mini-row .mini-bar-bg{flex:1;height:5px;border-radius:4px;background:var(--bg-2);overflow:hidden;min-width:60px;}
-  .subject-mini-row .mini-bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
-  .subject-mini-row .subj-frac{flex:0 0 auto;color:var(--muted-2);white-space:nowrap;}
-  .subject-mini-row .subj-status{flex:0 0 auto;white-space:nowrap;font-weight:600;font-size:0.72rem;}
-  .subject-mini-row .subj-status.ok{color:var(--green);}
-  .subject-mini-row .subj-status.risk{color:var(--red);}
+/* timeline */
+#days{position:relative;margin-left:70px;border-left:1px solid var(--ink);padding-left:22px}.day{position:relative;margin:0 0 12px;background:rgba(245,241,232,.62);border:1px solid var(--line)}.day:before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);left:-29px;top:19px;z-index:2}.day.is-today{border:2px solid var(--ink);background:var(--panel)}.day.is-today:before{background:var(--ink);box-shadow:0 0 0 4px var(--paper)}.day-header{display:flex;justify-content:space-between;align-items:center;padding:14px 15px;cursor:pointer;user-select:none;gap:10px;flex-wrap:wrap}.day-header:hover{background:rgba(23,32,29,.035)}.day-title{font-family:var(--serif);font-size:1.05rem;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.day-title:before{content:attr(data-short);position:absolute;left:-91px;width:56px;text-align:right;font-family:var(--sans);font-size:.62rem;letter-spacing:.08em;color:var(--muted);font-weight:800}.day-progress{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}.day-body{padding:0 15px 15px;display:none}.day.open .day-body{display:block}.chevron{transition:transform .2s;color:var(--muted);font-size:.7rem}.day.open .chevron{transform:rotate(90deg)}
+.exam-flag{display:inline-flex;align-items:center;font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:#f3eee4;padding:4px 7px;border-radius:1px}.day-tag{display:inline-flex;font-size:.59rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--line)}.day-tag.past{color:var(--muted)}.day-tag.projected{color:var(--accent);border-color:#92a69e}.day-tag.rest{color:var(--green)}
+.note{font-size:.76rem;color:var(--muted);background:rgba(23,32,29,.04);padding:8px 10px;margin:9px 0;border-left:2px solid var(--ink)}.group{margin-top:15px}.group-title{font-size:.82rem;font-weight:750;margin:0 0 7px;display:flex;align-items:center;gap:7px}.group-title .subj-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}.group-count{color:var(--muted);font-weight:500;font-size:.7rem}.area-group{margin:10px 0 0 4px}.area-title{font-size:.73rem;font-weight:750;color:var(--muted);margin:8px 0 4px}.area-count{font-weight:500;color:#918a7f}
+label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:pointer;font-size:.82rem;line-height:1.42;border-bottom:1px dotted rgba(117,111,102,.22)}label.item:hover{background:rgba(23,32,29,.035)}label.item input{margin-top:2px;accent-color:var(--ink);width:15px;height:15px;flex-shrink:0;cursor:pointer}label.item input:checked~span.txt{color:#918b82;text-decoration:line-through;opacity:.72}label.item.review span.txt{font-weight:650}label.item.locked{cursor:default;opacity:.62}label.item.locked input{cursor:default}.examcheck-block{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}.examcheck-block label.item{flex:1;min-width:180px;justify-content:center;text-align:center;font-weight:700;font-size:.74rem;background:transparent;border:1px solid var(--line);padding:8px}.examcheck-block label.item input{display:none}.examcheck-block label.item input:checked~span.txt{color:var(--ink);opacity:1;text-decoration:none}.examcheck-block label.item:has(input:checked){border-color:var(--ink);background:var(--paper-2)}
+.loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}.empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
+.footer-stamp{text-align:center;margin:28px 0 0;color:var(--muted);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}
+@media(max-width:720px){body{padding:20px 12px 60px}.command-mark{display:none}.exams{grid-template-columns:1fr 1fr}.route-date{font-size:.56rem}.daily-plans{grid-template-columns:1fr}.subject-mini-row{grid-template-columns:1fr 1fr 45px}.subj-status{grid-column:2/4;text-align:right;margin-top:-5px}.mission-days{text-align:left}#days{margin-left:43px;padding-left:15px}.day-title:before{left:-65px;width:40px}.day:before{left:-22px}}
+@media(max-width:480px){.command-title{font-size:3.25rem}.exams{grid-template-columns:1fr}.mission-strip{padding:15px 13px}.route{gap:2px}.route-code{font-size:.58rem}.route-date{font-size:.5rem}.today-date{font-size:1.65rem}.subject-mini-row{grid-template-columns:1fr 58px}.mini-bar-bg{grid-column:1/3}.subj-frac{grid-column:2}.subj-status{grid-column:1;text-align:left;grid-row:3}.day-title{font-size:.95rem}}
 
-  .day{
-    background:var(--card);border:1px solid var(--card-border);
-    border-radius:14px;margin-bottom:10px;overflow:hidden;
-  }
-  .day.is-today{border-color:var(--accent);}
-  .day-header{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:15px 18px;cursor:pointer;user-select:none;gap:10px;flex-wrap:wrap;
-  }
-  .day-header:hover{background:var(--card-hover);}
-  .day-title{font-family:var(--serif);font-weight:500;font-size:1.05rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-  .day-progress{font-size:0.8rem;color:var(--muted-2);white-space:nowrap;font-family:var(--sans);}
-  .day-body{padding:0 18px 16px;display:none;}
-  .day.open .day-body{display:block;}
-  .chevron{transition:transform .2s;color:var(--muted-2);margin-left:10px;font-size:0.8rem;}
-  .day.open .chevron{transform:rotate(90deg);}
+/* Subject signatures — jasne ikonice po predmetu */
+.group-title{position:relative;min-height:42px;padding:8px 12px;border-top:1px solid var(--line);border-bottom:1px solid var(--soft);overflow:hidden;background:rgba(255,255,255,.24);display:flex;align-items:center;gap:10px}
+.group-title .subj-dot{display:none}
+.group-title .subject-symbol{width:30px;height:30px;flex:0 0 30px}
+.group-title .subject-symbol svg{width:28px;height:28px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.group.sig-eng .group-title{color:#1f6170;background:linear-gradient(90deg,rgba(31,97,112,.10),transparent 58%)}
+.group.sig-spi .group-title{color:#8c3f5c;background:linear-gradient(90deg,rgba(140,63,92,.10),transparent 58%)}
+.group.sig-ess .group-title{color:#5d7a52;background:linear-gradient(90deg,rgba(93,122,82,.10),transparent 58%)}
+.group.sig-ibo .group-title{color:#b15f43;background:linear-gradient(90deg,rgba(177,95,67,.10),transparent 58%)}
+.group.sig-pseu .group-title{color:#b79518;background:linear-gradient(90deg,rgba(183,149,24,.12),transparent 58%)}
+.group.sig-spt .group-title{color:#625c96;background:linear-gradient(90deg,rgba(98,92,150,.10),transparent 58%)}
+.group.sig-pseu .subject-symbol svg{stroke:#d4b018;fill:none}.group.sig-pseu .subject-symbol .eu-star{fill:#d4b018;stroke:#d4b018}
+.group.sig-ess .subject-symbol .down{stroke:#9a4b41}.group.sig-ess .subject-symbol .up{stroke:#567b5d}
 
-  .exam-flag{
-    display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;font-family:var(--sans);
-    background:rgba(224,101,90,0.15);color:var(--red);padding:3px 10px;border-radius:999px;
-  }
-  .day-tag{
-    display:inline-flex;align-items:center;font-size:0.68rem;font-weight:600;font-family:var(--sans);
-    padding:3px 10px;border-radius:999px;
-  }
-  .day-tag.past{background:rgba(107,103,121,0.2);color:var(--muted-2);}
-  .day-tag.projected{background:rgba(138,143,240,0.12);color:var(--accent);}
-  .day-tag.rest{background:rgba(92,184,151,0.12);color:var(--green);}
+/* v5 — Ispitni radar kao šest vizuelnih kartica */
+.overall{padding:0;border:1px solid var(--ink);background:var(--panel)}
+.overall-top{padding:16px 18px 13px;margin:0;border-bottom:1px solid var(--ink)}
+.overall>.bar-bg{height:4px;margin:0;background:var(--paper-2)}
+.subject-mini{display:grid;grid-template-columns:repeat(3,1fr)}
+.subject-mini-row{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;gap:8px 10px;padding:16px 16px 14px;border:0;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:132px;overflow:hidden}
+.subject-mini-row:nth-child(3n){border-right:0}.subject-mini-row:nth-last-child(-n+3){border-bottom:0}
+.subject-mini-row:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--subject-color)}
+.subj-name{grid-column:1/3;font-family:var(--serif);font-size:.93rem;font-weight:600;line-height:1.18;gap:10px;color:var(--ink)}
+.subj-name .subject-symbol{width:34px;height:34px;flex:0 0 34px;color:var(--subject-color)}
+.subj-name .subject-symbol svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.subj-name .subject-symbol.pseu svg .eu-star{fill:#d4b018;stroke:#d4b018}
+.subj-name .subject-symbol.ess svg .up{stroke:#567b5d}
+.mini-bar-bg{grid-column:1/3;height:5px;background:var(--paper-2);align-self:end}.mini-bar-fill{height:100%;display:block;background:var(--subject-color)!important}
+.subj-frac{grid-column:1;font-family:var(--serif);font-size:1.05rem;color:var(--ink);text-align:left;font-variant-numeric:tabular-nums}
+.subj-status{grid-column:2;text-align:right;align-self:center;border:1px solid currentColor;padding:3px 6px;font-size:.57rem;letter-spacing:.07em}
+@media(max-width:720px){.subject-mini{grid-template-columns:repeat(2,1fr)}.subject-mini-row:nth-child(3n){border-right:1px solid var(--soft)}.subject-mini-row:nth-child(2n){border-right:0}.subject-mini-row:nth-last-child(-n+3){border-bottom:1px solid var(--soft)}.subject-mini-row:nth-last-child(-n+2){border-bottom:0}}
+@media(max-width:480px){.subject-mini{grid-template-columns:1fr}.subject-mini-row,.subject-mini-row:nth-child(2n),.subject-mini-row:nth-child(3n){border-right:0;border-bottom:1px solid var(--soft)}.subject-mini-row:last-child{border-bottom:0}}
 
-  .note{
-    font-size:0.8rem;color:var(--muted);background:var(--bg-2);border-radius:10px;
-    padding:9px 12px;margin:10px 0;border-left:2px solid var(--card-border);
-  }
-
-  .group{margin-top:16px;}
-  .group-title{
-    font-size:0.83rem;font-weight:600;
-    margin:0 0 8px;padding:0;display:flex;align-items:center;gap:7px;color:var(--text);
-  }
-  .group-title .subj-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-  .group-count{color:var(--muted-2);font-weight:400;font-size:0.74rem;}
-
-  .area-group{margin-top:10px;margin-left:4px;}
-  .area-title{
-    font-size:0.76rem;font-weight:600;color:var(--muted);
-    margin:8px 0 4px;padding-left:2px;
-  }
-  .area-count{color:var(--muted-2);font-weight:400;}
-
-  label.item{
-    display:flex;align-items:flex-start;gap:10px;padding:7px 8px;border-radius:8px;
-    cursor:pointer;font-size:0.87rem;line-height:1.4;
-  }
-  label.item:hover{background:var(--card-hover);}
-  label.item input{margin-top:3px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
-  label.item span.txt{transition:color .15s,opacity .15s;}
-  label.item input:checked ~ span.txt{color:var(--muted-2);text-decoration:line-through;opacity:0.7;}
-  label.item.review span.txt{font-weight:500;}
-  label.item.locked{cursor:default;opacity:0.6;}
-  label.item.locked input{cursor:default;}
-
-  .examcheck-block{
-    display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;
-  }
-  .examcheck-block label.item{
-    flex:1;min-width:150px;justify-content:center;text-align:center;font-weight:600;font-size:0.82rem;
-    background:var(--bg-2);border:1px solid var(--card-border);border-radius:10px;padding:9px 10px;
-  }
-  .examcheck-block label.item input{display:none;}
-  .examcheck-block label.item span.txt{opacity:1;color:var(--muted);}
-  .examcheck-block label.item input:checked ~ span.txt{
-    color:var(--text);opacity:1;text-decoration:none;
-  }
-  .examcheck-block label.item:has(input:checked){
-    background:rgba(138,143,240,0.15);border-color:var(--accent);
-  }
-  .examcheck-block label.item:hover{background:var(--card-hover);}
-
-  .loading{text-align:center;color:var(--muted);padding:30px;font-size:0.85rem;}
-  .empty-note{font-size:0.8rem;color:var(--muted-2);font-style:italic;padding:6px 8px;}
 </style>
+
+
 </head>
 <body>
 <div class="wrap">
-  <h1>Plan učenja</h1>
-  <div class="sub">7–26. septembar 2026</div>
+  <header class="command-header">
+        <h1 class="command-title"><span>Septembarski</span><span>rok ’26</span></h1>
+    <div class="command-meta"><span>07—26 SEPTEMBAR</span><span>6 PREDMETA</span><span>20 DANA</span></div>
+    <div class="command-mark" aria-hidden="true"><svg viewBox="0 0 220 90" fill="none"><path d="M2 72 L30 55 L55 62 L78 38 L104 47 L130 24 L156 34 L181 15 L218 28" stroke="currentColor" stroke-width="2"/><path d="M2 80H218M2 53H218M2 26H218" stroke="currentColor" stroke-width=".7" opacity=".35"/></svg></div>
+  </header>
+  <div id="missionStrip"></div>
 
   <div class="storage-warning" id="storageWarning">⚠️ Čuvanje napretka trenutno ne radi — ono što štikliraš možda neće ostati sačuvano. Ne oslanjaj se na ovo dok se poruka ne sakrije.</div>
 
@@ -250,7 +144,7 @@
 
   <div class="overall">
     <div class="overall-top">
-      <div>Ukupan napredak</div>
+      <div class="overall-title-wrap"><div class="eyebrow">Status svih frontova</div><div class="title">Ispitni radar</div></div>
       <div class="pct" id="overallPct">0%</div>
     </div>
     <div class="bar-bg"><div class="bar-fill" id="overallBar" style="width:0%"></div></div>
@@ -262,6 +156,18 @@
 </div>
 
 <script>
+function subjectIcon(subj){
+  const icons={
+    eng:`<span class="subject-symbol eng" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 7.5h14a5 5 0 0 1 5 5v4a5 5 0 0 1-5 5h-7l-5 4v-4H5a5 5 0 0 1-5-5v-4a5 5 0 0 1 5-5Z" transform="translate(2 0)"/><path d="M17 10.5h5a5 5 0 0 1 5 5v3a5 5 0 0 1-5 5h-2v3l-4-3"/></svg></span>`,
+    spi:`<span class="subject-symbol spi" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 5v22" stroke-width="2.6"/><path d="M5.8 12h20.4M5.8 20h20.4" opacity=".55"/><path d="M11 6.3c-2.2 3.2-3.3 6.4-3.3 9.7s1.1 6.5 3.3 9.7M21 6.3c2.2 3.2 3.3 6.4 3.3 9.7s-1.1 6.5-3.3 9.7" opacity=".55"/></svg></span>`,
+    ess:`<span class="subject-symbol ess" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 26V6M4 26h24"/><path d="M7 22l5-7 5 4 8-11" class="up"/><path d="M24 8h3v3" class="up"/></svg></span>`,
+    ibo:`<span class="subject-symbol ibo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M11 4l5 2 3 4 5 2-1 4 3 3-4 3 1 5-5-2-3 3-3-4-4-1 2-4-3-3 4-3-1-4 3-2Z"/></svg></span>`,
+    pseu:`<span class="subject-symbol pseu" aria-hidden="true"><svg viewBox="0 0 32 32"><path class="eu-star" d="M16 4.8l2.1 6.1h6.5l-5.3 3.8 2 6.2-5.3-3.8-5.3 3.8 2-6.2-5.3-3.8h6.5Z"/></svg></span>`,
+    spt:`<span class="subject-symbol spt" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 5v20M9 8h14M9 26h14"/><path d="M8 9l-4 8h8L8 9ZM24 9l-4 8h8l-4-8Z"/><path d="M4 17c0 2.1 1.8 3.8 4 3.8s4-1.7 4-3.8M20 17c0 2.1 1.8 3.8 4 3.8s4-1.7 4-3.8"/></svg></span>`
+  };
+  return icons[subj]||'';
+}
+
 const STORAGE_KEY = 'plan-sept-2026-v5';
 const YEAR = 2026, MONTH = 8; // septembar
 const DAY_COUNT = 20; // indeksi 0..19 = 7..26. septembar
@@ -1107,12 +1013,37 @@ function itemLookup(id){
   return ITEM_POOL[subj].find(it => it.id === id);
 }
 
+function subjectCode(subj){ return ({eng:'ENG',spi:'SPI',ess:'ESS',ibo:'IBO',pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
+function examClock(subj){ return ({eng:'',spi:'09:00',ess:'10:00',ibo:'09:00',pseu:'09:00',spt:'09:00'})[subj] || ''; }
+function calendarDateForIndex(i){ return new Date(YEAR, MONTH, 7+i, 12, 0, 0); }
+function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
+function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,7+i); return Math.ceil((e-t)/86400000); }
+
+function renderMissionStrip(){
+  const el=document.getElementById('missionStrip');
+  if(!el) return;
+  const ordered=['eng','spi','ess','ibo','pseu','spt'];
+  const next=ordered.find(s=>daysUntilIndex(SUBJECTS[s].examDay)>=0) || ordered[ordered.length-1];
+  const nextDays=daysUntilIndex(SUBJECTS[next].examDay);
+  const endDays=daysUntilIndex(SUBJECTS.spt.examDay);
+  const nextText=nextDays===0 ? 'DANAS' : (nextDays===1 ? 'SUTRA' : `ZA ${nextDays} DANA`);
+  const endText=endDays<0 ? 'ROK ZAVRŠEN' : (endDays===0 ? 'POSLEDNJI DAN' : `${endDays} DANA`);
+  const stops=ordered.map(s=>{
+    const d=daysUntilIndex(SUBJECTS[s].examDay);
+    const cls=d<0?'past':(s===next?'next':'');
+    const date=7+SUBJECTS[s].examDay;
+    return `<div class="route-stop ${cls}" style="color:${SUBJECTS[s].color}"><div class="route-dot"></div><div class="route-code">${subjectCode(s)}</div><div class="route-date">${date}. SEP${examClock(s)?' · '+examClock(s):''}</div></div>`;
+  }).join('');
+  el.innerHTML=`<section class="mission-strip"><div class="mission-top"><div class="mission-next"><div class="label">Sledeći checkpoint</div><div class="value">${subjectCode(next)} · ${7+SUBJECTS[next].examDay}. septembar ${examClock(next)?'· '+examClock(next):''} · ${nextText}</div></div><div class="mission-days"><div class="label">Do kraja roka</div><div class="value">${endText}</div></div></div><div class="route">${stops}</div></section>`;
+}
+
 // ---------- Render ----------
 function render(){
   const todayIdx = effectiveTodayIndex();
   ensureTodayCache();
   const {schedule, missed} = simulateForward(todayIdx);
 
+  renderMissionStrip();
   renderTodayCard(todayIdx, missed);
   renderOverall(missed);
   renderDays(todayIdx, schedule);
@@ -1120,70 +1051,52 @@ function render(){
 
 function renderTodayCard(todayIdx, missed){
   const el = document.getElementById('todayCard');
-
   const cacheItems = state.todayCache.items || {};
   let totalItems = 0, doneItems = 0;
-  Object.keys(cacheItems).forEach(subj=>{
-    cacheItems[subj].forEach(id=>{
-      totalItems++;
-      if(state.progress[id] && state.progress[id].done) doneItems++;
-    });
-  });
-
+  Object.keys(cacheItems).forEach(subj=>cacheItems[subj].forEach(id=>{totalItems++;if(state.progress[id]&&state.progress[id].done)doneItems++;}));
   const missedEntries = Object.keys(missed);
   let missedHtml = '';
   if(missedEntries.length){
     missedHtml = missedEntries.map(subj=>{
-      const m = missed[subj];
-      return `<div class="deficit-banner"><b>${SUBJECTS[subj].label}</b> neće stići da obradi sve teme do ${dayLabel(SUBJECTS[subj].examDay)} — nedostaje otprilike ${m} ${m===1?'tema':'tema'}. Stvarno zaostaješ za planom za ovaj predmet.</div>`;
+      const m=missed[subj];
+      return `<div class="deficit-banner"><span class="drift-label">Plan drift +${m}</span><b>${subjectCode(subj)}</b> · ${m} ${m===1?'tema':'tema'} izvan projektovane putanje do roka.</div>`;
     }).join('');
   }
-
   const finalizeBlock = state.todayFinalized
-    ? `<div class="finalized-note">✅ Dan zaključen — spisak za danas je zatvoren.</div>`
-    : `<button class="finalize-btn" data-action="finalize">Završila za danas</button>`;
-
-  el.innerHTML = `
-    <div class="today-card">
-      <div class="today-top">
-        <div class="today-date">${dayLabel(todayIdx)} — danas</div>
-      </div>
-      <div class="today-stats">
-        <div>Plan za danas: <b>${doneItems}/${totalItems}</b> stavki</div>
-      </div>
-      ${missedHtml}
-      ${finalizeBlock}
-    </div>
-  `;
+    ? `<div class="finalized-note">✓ ON TRACK · dan zaključen</div>`
+    : `<button class="finalize-btn" data-action="finalize">Završila za danas · zaključi dan</button>`;
+  const pct=totalItems?Math.round(doneItems/totalItems*100):0;
+  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(todayIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${missedHtml}${finalizeBlock}</div>`;
 }
 
 function renderOverall(missed){
-  let totalAll = 0, doneAll = 0;
-  const mini = document.getElementById('subjectMini');
-  mini.innerHTML = '';
+  let totalAll=0,doneAll=0;
+  const mini=document.getElementById('subjectMini');mini.innerHTML='';
   Object.keys(SUBJECTS).forEach(subj=>{
-    const s = SUBJECTS[subj];
-    const items = ITEM_POOL[subj];
-    const doneCount = items.filter(it => state.progress[it.id] && state.progress[it.id].done).length;
-    totalAll += items.length; doneAll += doneCount;
-    const pct = items.length ? Math.round((doneCount/items.length)*100) : 0;
-    const isMissed = !!missed[subj];
-    const statusHtml = isMissed
-      ? `<span class="subj-status risk">zaostaje ~${missed[subj]} tema</span>`
-      : `<span class="subj-status ok">na vreme</span>`;
-    const row = document.createElement('div');
-    row.className = 'subject-mini-row';
-    row.innerHTML = `
-      <span class="subj-name">${s.label}</span>
-      <span class="mini-bar-bg"><span class="mini-bar-fill" style="width:${pct}%;background:${s.color}"></span></span>
-      <span class="subj-frac">${doneCount}/${items.length}</span>
-      ${statusHtml}
-    `;
+    const s=SUBJECTS[subj],items=ITEM_POOL[subj];
+    const doneCount=items.filter(it=>state.progress[it.id]&&state.progress[it.id].done).length;
+    totalAll+=items.length;doneAll+=doneCount;
+    const pct=items.length?Math.round(doneCount/items.length*100):0;
+    const regular=items.filter(it=>!it.review);
+    const regularDone=regular.filter(it=>state.progress[it.id]&&state.progress[it.id].done).length;
+    let status='STABILNO',statusClass='ok';
+    if(doneCount===items.length){status='ZAVRŠENO';statusClass='done';}
+    else if(missed[subj]){status=`KRITIČNO · +${missed[subj]}`;statusClass='risk';}
+    else {
+      const remaining=Math.max(0,regular.length-regularDone);
+      const days=Math.max(1,daysUntilIndex(REGULAR_DEADLINE[subj]));
+      const load=remaining/days;
+      if(load>12){status='PRITISAK';statusClass='risk';}
+      else status='STABILNO';
+    }
+    const row=document.createElement('div');row.className='subject-mini-row';
+    row.style.setProperty("--subject-color", s.color);
+    row.innerHTML=`<span class="subj-name">${subjectIcon(subj)}<span>${subjectCode(subj)} · ${s.label}</span></span><span class="mini-bar-bg"><span class="mini-bar-fill" style="width:${pct}%"></span></span><span class="subj-frac">${doneCount}/${items.length}</span><span class="subj-status ${statusClass}">${status}</span>`;
     mini.appendChild(row);
   });
-  const overallPct = totalAll ? Math.round((doneAll/totalAll)*100) : 0;
-  document.getElementById('overallPct').textContent = overallPct + '%';
-  document.getElementById('overallBar').style.width = overallPct + '%';
+  const overallPct=totalAll?Math.round(doneAll/totalAll*100):0;
+  document.getElementById('overallPct').textContent=overallPct+'%';
+  document.getElementById('overallBar').style.width=overallPct+'%';
 }
 
 function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
@@ -1198,7 +1111,8 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
     const doneCount = visibleIds.filter(id => state.progress[id] && state.progress[id].done).length;
     const grp = document.createElement('div');
     grp.className = 'group';
-    grp.innerHTML = `<div class="group-title"><span class="subj-dot" style="background:${s.color}"></span>${s.label} <span class="group-count">(${doneCount}/${visibleIds.length})</span></div>`;
+    grp.classList.add(`sig-${subj}`);
+    grp.innerHTML = `<div class="group-title">${subjectIcon(subj)}<span class="group-label">${s.label}</span> <span class="group-count">(${doneCount}/${visibleIds.length})</span></div>`;
 
     const locked = mode !== 'today';
     const hasAreas = visibleIds.some(id => itemLookup(id).area);
@@ -1259,6 +1173,7 @@ function renderDays(todayIdx, schedule){
 
     const header = document.createElement('div');
     header.className = 'day-header';
+    header.dataset.short = String(7+d).padStart(2,'0') + ' SEP';
     const exam = EXAMS[d];
     let examFlagHtml = '';
     let examSubjLabel = '';
@@ -1295,7 +1210,7 @@ function renderDays(todayIdx, schedule){
     }
 
     header.innerHTML = `
-      <div class="day-title">${dayLabel(d)}${examFlagHtml}${tagHtml}</div>
+      <div class="day-title" data-short="${String(7+d).padStart(2,'0')} SEP">${dayLabel(d)}${examFlagHtml}${tagHtml}</div>
       <div style="display:flex;align-items:center;">
         <div class="day-progress">${dayTotal? `${dayDone}/${dayTotal}`:''}</div>
         <span class="chevron">▶</span>
