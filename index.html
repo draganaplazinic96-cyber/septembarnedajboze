@@ -914,21 +914,69 @@ function getDayPlan(d){
   return {type:'radni', workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO};
 }
 
-function studySuggestionText(d){
+// Subjektivna težina predmeta (1=najteže, korisno samo za odluku ko dobija
+// jutarnji/svežiji termin kad se dan deli na dva prozora — ne utiče na to
+// koliko je čega raspoređeno niti na redosled tema, to je već fiksirano
+// datumima ispita i granicama tematskih blokova).
+const DIFFICULTY_RANK = {pseu:1, ess:2, spi:3, spt:4, ibo:5, eng:6};
+
+function subjectListForSplit(itemsBySubj){
+  const list = [];
+  Object.keys(SUBJECTS).forEach(s=>{
+    if(itemsBySubj[s] && itemsBySubj[s].length){
+      list.push({subj:s, count:itemsBySubj[s].length});
+    }
+  });
+  list.sort((a,b)=> (DIFFICULTY_RANK[a.subj]||99) - (DIFFICULTY_RANK[b.subj]||99));
+  return list;
+}
+
+// Deli predmete tog dana na jutarnji/večernji prozor proporcionalno dužini
+// prozora (u minutima) — pošto ne postoji procena koliko traje jedna tema,
+// ovo je podela po BROJU stavki, ne po stvarnom vremenu. Cele predmete, ne seče.
+function splitSubjectsByWindows(list, morningMin, eveningMin){
+  if(!list.length) return {morning:[], evening:[]};
+  if(morningMin <= 0) return {morning:[], evening:list.map(x=>x.subj)};
+  if(eveningMin <= 0) return {morning:list.map(x=>x.subj), evening:[]};
+  const total = list.reduce((a,b)=>a+b.count,0);
+  const morningTarget = total * (morningMin/(morningMin+eveningMin));
+  let acc=0; const morning=[]; const evening=[];
+  list.forEach(item=>{
+    if(acc < morningTarget){ morning.push(item.subj); acc += item.count; }
+    else evening.push(item.subj);
+  });
+  if(!morning.length){ morning.push(evening.shift()); }
+  if(!evening.length && morning.length>1){ evening.push(morning.pop()); }
+  return {morning, evening};
+}
+
+function studySuggestionText(d, itemsBySubj){
   const p = getDayPlan(d);
+  const fullList = subjectListForSplit(itemsBySubj || {});
+  const hasEng = fullList.some(x=>x.subj==='eng');
+  const list = fullList.filter(x=>x.subj!=='eng'); // eng ne ulazi u proporciju — dodaje se automatski, ne oduzima vreme
+  const codes = arr => arr.map(subjectCode).join(', ');
   if(p.type === 'slobodan'){
-    return `Predlog: učenje ${FREE_WAKE}–${FREE_SLEEP} (+ pauze, ručak, obaveze)`;
+    const suf = fullList.length ? ` (${codes(fullList.map(x=>x.subj))})` : '';
+    return `Predlog: učenje ${FREE_WAKE}–${FREE_SLEEP}${suf} (+ pauze, ručak, obaveze)`;
   }
   const wakeMin = timeToMinutes(WAKE_TIME);
   const workFromMin = timeToMinutes(p.workFrom || DEFAULT_WORK_FROM);
   const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
-  const parts = [];
-  if(workFromMin > wakeMin){
-    parts.push(`jutro ${minutesToTime(wakeMin)}–${minutesToTime(workFromMin)}`);
-  }
+  const morningMin = Math.max(0, workFromMin - wakeMin);
   const sleepMin = 24*60;
-  if(workToMin < sleepMin && (sleepMin - workToMin) >= 30){
-    parts.push(`veče ${minutesToTime(workToMin)}–00:00`);
+  const eveningMin = (workToMin < sleepMin && (sleepMin - workToMin) >= 30) ? (sleepMin - workToMin) : 0;
+  const {morning, evening} = splitSubjectsByWindows(list, morningMin, eveningMin);
+  if(hasEng){
+    if(eveningMin > 0) evening.unshift('eng');
+    else if(morningMin > 0) morning.unshift('eng');
+  }
+  const parts = [];
+  if(morningMin > 0){
+    parts.push(`jutro ${minutesToTime(wakeMin)}–${minutesToTime(workFromMin)}${morning.length?` (${codes(morning)})`:''}`);
+  }
+  if(eveningMin > 0){
+    parts.push(`veče ${minutesToTime(workToMin)}–00:00${evening.length?` (${codes(evening)})`:''}`);
   }
   if(!parts.length) return 'Predlog: danas realno nema prozora za učenje — samo brzi pregled ako stigneš.';
   return 'Predlog: učenje — ' + parts.join(' i ');
@@ -1141,7 +1189,7 @@ function renderDays(todayIdx, schedule){
         <label><input type="radio" name="daytype-${d}" data-plan-day="${d}" data-plan-field="type" value="slobodan" ${plan.type==='slobodan'?'checked':''}/> Slobodan dan</label>
       </div>
       ${plan.type!=='slobodan' ? `<div class="plan-times">Posao od <input type="time" data-plan-day="${d}" data-plan-field="workFrom" value="${plan.workFrom||DEFAULT_WORK_FROM}"/> do <input type="time" data-plan-day="${d}" data-plan-field="workTo" value="${plan.workTo||DEFAULT_WORK_TO}"/></div>` : ''}
-      <div class="plan-suggestion">${studySuggestionText(d)}</div>
+      <div class="plan-suggestion">${studySuggestionText(d, itemsForDay)}</div>
     `;
     body.appendChild(planEl);
 
