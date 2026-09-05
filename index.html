@@ -761,7 +761,7 @@ function daysLeftAvailable(fromDay, toDayInclusive){
 //    (daysLeftAvailable, koja isključuje tuđe blokirajuće dane). Na sam
 //    regularni rok (poslednji mogući dan), pokupi se BAŠ SVE što je
 //    ostalo — nema "ostavi za sutra", jer sutra je već review dan.
-const SCHEDULER_VERSION = 'priority-route-v6-sep5-thematic';
+const SCHEDULER_VERSION = 'priority-route-v8-eng6-ibo-spt-rotation';
 const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
 
 // Zaključana osnovna ruta. Engleski je VAN ove računice.
@@ -771,15 +771,15 @@ const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
 // drugi kriterijum. Zaostaci se proporcionalno razlivaju na preostale dane.
 const BASE_TARGETS = {
   0:  {ess:3, pseu:7},                                      // 5.9.
-  1:  {spi:4, ess:3, ibo:2, pseu:3, spt:2},               // 6.9. smanjen dan
-  2:  {spi:7, ess:3, ibo:3, pseu:8, spt:2},               // 7.9.
-  3:  {spi:4, ess:3, ibo:2, pseu:9, spt:2},               // 8.9.
-  4:  {spi:5, ess:3, ibo:2, pseu:9, spt:2},               // 9.9.
-  5:  {spi:5, ess:3, ibo:3, pseu:8, spt:2},               // 10.9.
-  6:  {spi:5, ess:2, ibo:2, pseu:8, spt:2},               // 11.9.
-  7:  {spi:4, ess:4, ibo:2, pseu:8, spt:3},               // 12.9.
-  8:  {spi:4, ess:4, ibo:2, pseu:8, spt:2},               // 13.9.
-  9:  {spi:7, ess:3, ibo:3, pseu:8, spt:2},               // 14.9.
+  1:  {spi:4, ess:3, pseu:3, spt:4},                      // 6.9. smanjen dan — SPT
+  2:  {spi:7, ess:3, ibo:6, pseu:8},                      // 7.9. — IBO
+  3:  {spi:4, ess:3, pseu:9, spt:4},                      // 8.9. — SPT
+  4:  {spi:5, ess:3, ibo:5, pseu:9},                      // 9.9. — IBO
+  5:  {spi:5, ess:3, pseu:8, spt:4},                      // 10.9. — SPT
+  6:  {spi:5, ess:2, ibo:5, pseu:8},                      // 11.9. — IBO
+  7:  {spi:4, ess:4, pseu:8, spt:4},                      // 12.9. — SPT
+  8:  {spi:4, ess:4, ibo:5, pseu:8},                      // 13.9. — IBO
+  9:  {spi:7, ess:3, pseu:8, spt:3},                      // 14.9. — SPT
   11: {ess:4, ibo:3, pseu:9, spt:4},                      // 16.9. SPI ispit
   12: {ess:5, ibo:3, pseu:8, spt:7},                      // 17.9.
   14: {ibo:4, pseu:12, spt:7},                            // 19.9. ESS ispit
