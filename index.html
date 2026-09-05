@@ -3,164 +3,217 @@
 <head>
 <meta charset="UTF-8">
 <title>Plan učenja — rok septembar 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0f1115;
-    --card:#171a21;
-    --card-border:#262a34;
-    --text:#eef0f4;
-    --muted:#9aa1ac;
-    --red:#e5484d;
-    --orange:#f2994a;
-    --yellow:#e8c547;
-    --blue:#4fa3f7;
-    --green:#3ecf8e;
-    --accent:#6e9bff;
-    --purple:#c084fc;
-    --teal:#2dd4bf;
-    --warn-bg:#3a1418;
-    --warn-text:#ff8a8f;
+    --bg:#100f16;
+    --bg-2:#17151f;
+    --card:#1b1926;
+    --card-hover:#211f2d;
+    --card-border:#2c2938;
+    --text:#f2eee6;
+    --muted:#9490a3;
+    --muted-2:#6b6779;
+    --ess:#d3a256;
+    --ibo:#c2634a;
+    --spt:#8b8fe0;
+    --eng:#5fa8b0;
+    --spi:#c17a9e;
+    --pseu:#7fb069;
+    --red:#e0645a;
+    --green:#5cb897;
+    --accent:#8a8ff0;
+    --warn-bg:#341a1a;
+    --warn-text:#f0958c;
+    --serif:'Fraunces',Georgia,serif;
+    --sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-family:var(--sans);
     background:var(--bg);
+    background-image:radial-gradient(ellipse 900px 500px at 50% -10%, rgba(138,143,240,0.09), transparent);
     color:var(--text);
-    padding:20px 14px 60px;
+    padding:28px 16px 70px;
+    -webkit-font-smoothing:antialiased;
   }
-  .wrap{max-width:760px;margin:0 auto;}
-  h1{font-size:1.35rem;margin:0 0 4px;}
-  .sub{color:var(--muted);font-size:0.9rem;margin-bottom:18px;}
+  .wrap{max-width:720px;margin:0 auto;}
+  h1{
+    font-family:var(--serif);font-weight:600;font-size:1.7rem;letter-spacing:-0.01em;
+    margin:0 0 3px;color:var(--text);
+  }
+  .sub{color:var(--muted);font-size:0.88rem;margin:0 0 22px;}
 
   .storage-warning{
     display:none;
-    background:var(--warn-bg);color:var(--warn-text);border:1px solid var(--red);
-    border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:0.82rem;font-weight:600;
+    background:var(--warn-bg);color:var(--warn-text);border:1px solid rgba(224,101,90,0.4);
+    border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:0.82rem;font-weight:500;
   }
   .storage-warning.show{display:block;}
 
   .exams{
-    display:flex;flex-direction:column;gap:6px;
+    display:flex;flex-direction:column;gap:5px;
     background:var(--card);border:1px solid var(--card-border);
-    border-radius:12px;padding:14px 16px;margin-bottom:8px;font-size:0.88rem;
+    border-radius:14px;padding:16px 18px;margin-bottom:16px;font-size:0.87rem;
   }
-  .exams b{color:var(--accent);}
-  .exams .cat-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin-top:6px;}
+  .exams b{color:var(--text);font-weight:600;}
+  .exams .cat-title{
+    font-size:0.72rem;font-weight:600;letter-spacing:.02em;color:var(--muted-2);margin-top:8px;
+  }
   .exams .cat-title:first-child{margin-top:0;}
-  .fix-note{
-    font-size:0.72rem;color:var(--muted);margin-bottom:18px;font-style:italic;
+  .exams > div:not(.cat-title){color:var(--muted);padding:2px 0;}
+
+  .daily-plans{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;
   }
+  .daily-plan-col{
+    background:var(--card);border:1px solid var(--card-border);
+    border-radius:14px;padding:14px 16px;
+  }
+  .daily-plan-title{
+    font-family:var(--serif);font-weight:600;font-size:0.95rem;margin-bottom:10px;color:var(--text);
+  }
+  .daily-plan-row{
+    display:flex;gap:10px;font-size:0.82rem;padding:4px 0;line-height:1.4;
+  }
+  .daily-plan-row .time{
+    flex:0 0 46px;color:var(--accent);font-weight:600;font-family:var(--sans);
+  }
+  .daily-plan-row .act{color:var(--muted);}
+  @media (max-width:480px){
+    .daily-plans{grid-template-columns:1fr;}
+  }
+
+  /* Today card */
+  .today-card{
+    background:var(--card);border:1px solid var(--accent);border-radius:16px;
+    padding:18px 20px;margin-bottom:16px;
+  }
+  .today-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+  .today-date{font-family:var(--serif);font-weight:600;font-size:1.15rem;}
+  .today-stats{display:flex;flex-direction:column;gap:6px;font-size:0.85rem;color:var(--muted);margin-bottom:12px;}
+  .today-stats b{color:var(--text);}
+  .finalize-btn{
+    font-family:var(--sans);font-size:0.85rem;font-weight:600;padding:10px 16px;border-radius:10px;
+    border:none;background:var(--accent);color:#0e0d14;cursor:pointer;
+  }
+  .finalize-btn:hover{opacity:0.9;}
+  .finalized-note{font-size:0.82rem;color:var(--green);font-weight:500;}
+
+  .deficit-banner{
+    background:var(--warn-bg);color:var(--warn-text);border-radius:10px;padding:10px 14px;
+    font-size:0.82rem;margin-top:4px;line-height:1.5;
+  }
+  .deficit-banner b{color:var(--warn-text);}
 
   .overall{
     background:var(--card);border:1px solid var(--card-border);
-    border-radius:14px;padding:16px 18px;margin-bottom:20px;
+    border-radius:16px;padding:18px 20px;margin-bottom:22px;
   }
-  .overall-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;}
-  .overall-top .pct{font-size:1.5rem;font-weight:700;color:var(--green);}
-  .bar-bg{height:10px;border-radius:6px;background:#262a34;overflow:hidden;margin-bottom:12px;}
-  .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:6px;transition:width .3s;}
-  .subject-mini{display:flex;gap:10px;flex-wrap:wrap;font-size:0.78rem;color:var(--muted);}
-  .subject-mini span.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;}
+  .overall-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;}
+  .overall-top div:first-child{font-size:0.9rem;color:var(--muted);}
+  .overall-top .pct{font-family:var(--serif);font-size:1.9rem;font-weight:600;color:var(--text);}
+  .bar-bg{height:8px;border-radius:6px;background:var(--bg-2);overflow:hidden;margin-bottom:16px;}
+  .bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:6px;transition:width .4s ease;}
+  .subject-mini{display:flex;flex-direction:column;gap:8px;}
+  .subject-mini-row{display:flex;align-items:center;gap:9px;font-size:0.78rem;color:var(--muted);flex-wrap:wrap;}
+  .subject-mini-row .subj-name{flex:0 0 150px;color:var(--text);}
+  .subject-mini-row .mini-bar-bg{flex:1;height:5px;border-radius:4px;background:var(--bg-2);overflow:hidden;min-width:60px;}
+  .subject-mini-row .mini-bar-fill{height:100%;border-radius:4px;transition:width .4s ease;}
+  .subject-mini-row .subj-frac{flex:0 0 auto;color:var(--muted-2);white-space:nowrap;}
+  .subject-mini-row .subj-status{flex:0 0 auto;white-space:nowrap;font-weight:600;font-size:0.72rem;}
+  .subject-mini-row .subj-status.ok{color:var(--green);}
+  .subject-mini-row .subj-status.risk{color:var(--red);}
 
   .day{
     background:var(--card);border:1px solid var(--card-border);
-    border-radius:14px;margin-bottom:14px;overflow:hidden;
+    border-radius:14px;margin-bottom:10px;overflow:hidden;
   }
+  .day.is-today{border-color:var(--accent);}
   .day-header{
     display:flex;justify-content:space-between;align-items:center;
-    padding:14px 16px;cursor:pointer;user-select:none;
+    padding:15px 18px;cursor:pointer;user-select:none;gap:10px;flex-wrap:wrap;
   }
-  .day-header:hover{background:#1c2029;}
-  .day-title{font-weight:600;font-size:0.98rem;display:flex;align-items:center;gap:8px;}
-  .day-progress{font-size:0.8rem;color:var(--muted);white-space:nowrap;}
-  .day-body{padding:0 16px 14px;display:none;}
+  .day-header:hover{background:var(--card-hover);}
+  .day-title{font-family:var(--serif);font-weight:500;font-size:1.05rem;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .day-progress{font-size:0.8rem;color:var(--muted-2);white-space:nowrap;font-family:var(--sans);}
+  .day-body{padding:0 18px 16px;display:none;}
   .day.open .day-body{display:block;}
-  .chevron{transition:transform .2s;color:var(--muted);margin-left:8px;}
+  .chevron{transition:transform .2s;color:var(--muted-2);margin-left:10px;font-size:0.8rem;}
   .day.open .chevron{transform:rotate(90deg);}
 
   .exam-flag{
-    display:inline-block;margin-left:8px;font-size:0.72rem;font-weight:700;
-    background:#3a1418;color:var(--red);padding:2px 8px;border-radius:6px;
+    display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:600;font-family:var(--sans);
+    background:rgba(224,101,90,0.15);color:var(--red);padding:3px 10px;border-radius:999px;
   }
-  .note{
-    font-size:0.8rem;color:var(--muted);background:#1c1f26;border-radius:8px;
-    padding:8px 10px;margin:8px 0;
+  .day-tag{
+    display:inline-flex;align-items:center;font-size:0.68rem;font-weight:600;font-family:var(--sans);
+    padding:3px 10px;border-radius:999px;
   }
-  .note.done{color:var(--green);font-weight:600;}
+  .day-tag.past{background:rgba(107,103,121,0.2);color:var(--muted-2);}
+  .day-tag.projected{background:rgba(138,143,240,0.12);color:var(--accent);}
+  .day-tag.rest{background:rgba(92,184,151,0.12);color:var(--green);}
 
-  .group{margin-top:10px;}
-  .group-title{
-    font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;
-    margin:0 0 6px;padding:3px 0;display:flex;align-items:center;gap:6px;
+  .note{
+    font-size:0.8rem;color:var(--muted);background:var(--bg-2);border-radius:10px;
+    padding:9px 12px;margin:10px 0;border-left:2px solid var(--card-border);
   }
-  .group-title.ess{color:var(--red);}
-  .group-title.ibo{color:var(--orange);}
-  .group-title.spt{color:var(--yellow);}
-  .group-title.eng{color:var(--blue);}
-  .group-title.spi{color:var(--purple);}
-  .group-title.pseu{color:var(--teal);}
-  .group-count{color:var(--muted);font-weight:500;font-size:0.72rem;}
-  .group-note{color:var(--muted);font-weight:500;font-size:0.7rem;text-transform:none;}
+
+  .group{margin-top:16px;}
+  .group-title{
+    font-size:0.83rem;font-weight:600;
+    margin:0 0 8px;padding:0;display:flex;align-items:center;gap:7px;color:var(--text);
+  }
+  .group-title .subj-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .group-count{color:var(--muted-2);font-weight:400;font-size:0.74rem;}
+
+  .area-group{margin-top:10px;margin-left:4px;}
+  .area-title{
+    font-size:0.76rem;font-weight:600;color:var(--muted);
+    margin:8px 0 4px;padding-left:2px;
+  }
+  .area-count{color:var(--muted-2);font-weight:400;}
 
   label.item{
-    display:flex;align-items:flex-start;gap:9px;padding:6px 8px;border-radius:8px;
-    cursor:pointer;font-size:0.86rem;line-height:1.35;
+    display:flex;align-items:flex-start;gap:10px;padding:7px 8px;border-radius:8px;
+    cursor:pointer;font-size:0.87rem;line-height:1.4;
   }
-  label.item:hover{background:#1c2029;}
-  label.item input{margin-top:3px;accent-color:var(--green);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
+  label.item:hover{background:var(--card-hover);}
+  label.item input{margin-top:3px;accent-color:var(--accent);width:16px;height:16px;flex-shrink:0;cursor:pointer;}
   label.item span.txt{transition:color .15s,opacity .15s;}
-  label.item input:checked ~ span.txt{color:var(--muted);text-decoration:line-through;opacity:0.75;}
-
-  .review-block{
-    border:1px dashed var(--card-border);border-radius:10px;padding:10px 12px;margin-top:8px;
-  }
-  .review-block label.item{font-weight:600;}
+  label.item input:checked ~ span.txt{color:var(--muted-2);text-decoration:line-through;opacity:0.7;}
+  label.item.review span.txt{font-weight:500;}
+  label.item.locked{cursor:default;opacity:0.6;}
+  label.item.locked input{cursor:default;}
 
   .examcheck-block{
-    border:1px solid var(--red);background:#1c1215;border-radius:10px;padding:10px 12px;margin-bottom:10px;
+    display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;
   }
-  .examcheck-block label.item{font-weight:700;color:var(--red);}
-  .examcheck-block label.item input:checked ~ span.txt{color:var(--muted);}
+  .examcheck-block label.item{
+    flex:1;min-width:150px;justify-content:center;text-align:center;font-weight:600;font-size:0.82rem;
+    background:var(--bg-2);border:1px solid var(--card-border);border-radius:10px;padding:9px 10px;
+  }
+  .examcheck-block label.item input{display:none;}
+  .examcheck-block label.item span.txt{opacity:1;color:var(--muted);}
+  .examcheck-block label.item input:checked ~ span.txt{
+    color:var(--text);opacity:1;text-decoration:none;
+  }
+  .examcheck-block label.item:has(input:checked){
+    background:rgba(138,143,240,0.15);border-color:var(--accent);
+  }
+  .examcheck-block label.item:hover{background:var(--card-hover);}
 
   .loading{text-align:center;color:var(--muted);padding:30px;font-size:0.85rem;}
-
-  .planned-min{color:var(--muted);font-weight:400;}
-  .actual-row{
-    display:flex;align-items:center;gap:7px;margin:2px 0 6px 30px;font-size:11px;color:var(--muted);flex-wrap:wrap;
-  }
-  .actual-row input[type="number"]{
-    background:#1c1f26;border:1px solid var(--card-border);color:var(--text);border-radius:6px;
-    padding:3px 6px;font-size:11px;width:56px;font-family:inherit;
-  }
-  .actual-row input[type="number"]:focus{outline:none;border-color:var(--accent);}
-  .diff-badge{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;white-space:nowrap;}
-  .diff-badge.late{background:rgba(229,72,77,0.14);color:var(--red);}
-  .diff-badge.early{background:rgba(62,207,142,0.14);color:var(--green);}
-  .diff-badge.ontime{background:rgba(79,163,247,0.14);color:var(--blue);}
-  .roast{font-size:10.5px;font-style:italic;white-space:normal;}
-  .roast.late{color:var(--red);}
-  .roast.early{color:var(--green);}
-  .roast.ontime{color:var(--blue);}
-
-  .comment-row{margin:0 0 10px 30px;}
-  .comment-input{
-    width:100%;max-width:440px;background:#1c1f26;border:1px solid var(--card-border);color:var(--text);
-    border-radius:8px;padding:6px 9px;font-size:11.5px;font-family:inherit;resize:vertical;min-height:30px;
-    box-sizing:border-box;
-  }
-  .comment-input:focus{outline:none;border-color:var(--accent);}
-  .comment-reply{margin-top:4px;font-size:11.5px;font-style:italic;color:var(--accent);}
-
-  .subject-drift-line{font-size:0.72rem;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--card-border);}
-  .late{color:var(--red);font-weight:700;}
-  .early{color:var(--green);font-weight:700;}
-  .ontime{color:var(--blue);font-weight:700;}
+  .empty-note{font-size:0.8rem;color:var(--muted-2);font-style:italic;padding:6px 8px;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>📚 Plan učenja — septembar 2026.</h1>
+  <h1>Plan učenja</h1>
+  <div class="sub">7–26. septembar 2026</div>
 
   <div class="storage-warning" id="storageWarning">⚠️ Čuvanje napretka trenutno ne radi — ono što štikliraš možda neće ostati sačuvano. Ne oslanjaj se na ovo dok se poruka ne sakrije.</div>
 
@@ -174,6 +227,26 @@
     <div><b>23. septembar, 9:00</b> — Politički sistem Evropske unije</div>
     <div><b>26. septembar, 9:00</b> — Savremena politička teorija</div>
   </div>
+
+  <div class="daily-plans">
+    <div class="daily-plan-col">
+      <div class="daily-plan-title">Plan radnog dana</div>
+      <div class="daily-plan-row"><span class="time">7:30</span><span class="act">Ustajanje i doručak</span></div>
+      <div class="daily-plan-row"><span class="time">8:00</span><span class="act">Učenje</span></div>
+      <div class="daily-plan-row"><span class="time">13:00</span><span class="act">Posao i ručak</span></div>
+      <div class="daily-plan-row"><span class="time">23:30</span><span class="act">Večera</span></div>
+      <div class="daily-plan-row"><span class="time">0:00</span><span class="act">Spavanje</span></div>
+    </div>
+    <div class="daily-plan-col">
+      <div class="daily-plan-title">Plan slobodnog dana</div>
+      <div class="daily-plan-row"><span class="time">11:00</span><span class="act">Ustajanje i doručak</span></div>
+      <div class="daily-plan-row"><span class="time">12:00</span><span class="act">Učenje + pauze + ručak + dnevne obaveze</span></div>
+      <div class="daily-plan-row"><span class="time">23:00</span><span class="act">Večera</span></div>
+      <div class="daily-plan-row"><span class="time">0:00</span><span class="act">Spavanje</span></div>
+    </div>
+  </div>
+
+  <div id="todayCard"><div class="loading">Učitavanje...</div></div>
 
   <div class="overall">
     <div class="overall-top">
@@ -189,683 +262,942 @@
 </div>
 
 <script>
-const STORAGE_KEY = 'plan-septembar-2026-progress';
+const STORAGE_KEY = 'plan-sept-2026-v5';
+const YEAR = 2026, MONTH = 8; // septembar
+const DAY_COUNT = 20; // indeksi 0..19 = 7..26. septembar
 
 const SUBJECTS = {
-  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--red)"},
-  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--orange)"},
-  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--yellow)"},
-  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--blue)"},
-  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--purple)"},
-  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--teal)"}
+  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:7},
+  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:9},
+  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:12},
+  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:14},
+  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:16},
+  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:19}
 };
 
-const itemLateComments = ["Alo, ovo kasni više nego što bi trebalo.", "Bre, sat otkucava brže nego što ti okrećeš stranice.", "Ajde, da nisi zaspala nad skriptom.", "Slušaj, manje zurenja, više učenja.", "Realno, vreme ti curi kao voda kroz prste.", "Ma daj, ovo kasni više nego tvoja motivacija jutros.", "Pazi, fokus ti je otišao na pauzu bez tebe.", "Iskreno, ovo pitanje te je savladalo, ne obrnuto."];
-const itemOnTimeComments = ["Ovako se to radi, nastavi u tom ritmu.", "Tačno na vreme, bravo.", "Dobro, drži tempo do kraja.", "Solidno, upravo kako treba.", "Fino, ni brzo ni sporo.", "Odlično, disciplina se isplati.", "Bravo, poštuješ raspored."];
-const itemEarlyComments = ["Brzo si to sredila — jesi li stvarno naučila ili samo prelistala.", "Hitro, samo proveri da ti je ostalo u glavi.", "Munjevito, nadam se da nije bilo brzinsko čitanje.", "Turbo, ne žrtvuj razumevanje zarad tempa.", "Rekordno, ali nemoj da se hvališ ako ne znaš detalje."];
-const commentReplies = ["Aha, primljeno k znanju, sad glavu u tekst.", "Zvuči uverljivo, sad nazad na učenje.", "Zapisano, hajde dalje.", "Razumem, ali gradivo se samo ne uči.", "Ok, sad ozbiljno, dalje.", "Jasno, diši i vrati se tekstu."];
+const EXAMS = {
+  7:  {type:'kolokvijum', subj:'eng'},
+  9:  {type:'ispit', subj:'spi'},
+  12: {type:'ispit', subj:'ess'},
+  14: {type:'ispit', subj:'ibo'},
+  16: {type:'ispit', subj:'pseu'},
+  19: {type:'ispit', subj:'spt'}
+};
 
-function hashStr(s){
-  let h = 0;
-  for(let i=0;i<s.length;i++){ h = (h*31 + s.charCodeAt(i)) | 0; }
-  return Math.abs(h);
-}
-function pickComment(arrv, seed){
-  if(!arrv || !arrv.length) return '';
-  return arrv[hashStr(String(seed)) % arrv.length];
-}
-// Deterministička procena planiranog vremena za temu (nema ručno unetih minuta u DAYS,
-// pa se planirano vreme računa iz teksta teme — isti tekst uvek daje isti broj).
-function estimateMinutes(text, factor){
-  factor = factor || 1;
-  const words = text.split(/\s+/).length;
-  const base = 14 + (hashStr(text) % 18) + Math.round(words*0.9);
-  return Math.round(Math.max(15, Math.min(45, base)) * factor);
-}
-function diffInfo(planned, actualVal){
-  if(actualVal === undefined || actualVal === null || actualVal === '') return null;
-  const diff = actualVal - planned;
-  if(diff === 0) return {text:"tačno", cls:"ontime", diff:0};
-  if(diff > 0) return {text:`+${diff} min`, cls:"late", diff};
-  return {text:`${diff} min`, cls:"early", diff};
-}
-function itemComment(cls, seed){
-  const map = {late:itemLateComments, ontime:itemOnTimeComments, early:itemEarlyComments};
-  return pickComment(map[cls], seed);
-}
-// Engleski: fiksno 10 min po temi (ukupno pola sata za 3 teme dnevno), bez obzira na dužinu teksta.
-function getPlanned(subj, text, factor){
-  if(subj === 'eng') return 10;
-  return estimateMinutes(text, factor);
+// Pool gradiva po predmetu, u pedagoškom redosledu. Poslednja stavka (ili
+// dve, kod PSEU) svakog predmeta je zbirni pregled/ponavljanje (review:true).
+// PSEU stavke dodatno nose "area" (oblast iz zvaničnog spiska od 24 oblasti)
+// radi grupisanja u prikazu i area-aware zaokruživanja u schedule-ru.
+const POOLS = {
+  eng: [
+    'Kvantifikatori: many/much, a lot of, few/a little, plenty of, enough',
+    'Kvantifikatori: too much/too many, both/either/neither, ostali (each, every, several, quite a few...)',
+    'Reported speech: potvrdne i odrične izjave, backshift tabela',
+    'Reported speech: promene vremena i mesta, say vs tell',
+    'Reported speech: reported questions, reported commands/requests, reporting verbs',
+    'Adding emphasis (naglašavanje)',
+    'Second conditional (hipotetička sadašnjost/budućnost)',
+    'Third conditional (hipotetička prošlost)',
+    'Mixed conditionals (mešoviti kondicionali)',
+    '-ing form vs infinitive: glagoli + -ing, + to infinitiv, + osoba + to infinitiv',
+    'Causative have (have something done)',
+    '7.1 Vrste TV programa i osnovni termini',
+    '7.2 The Press/Media — detaljan vokabular',
+    '7.3 Glagoli govorenja u novinarstvu (reporting verbs — nijanse)',
+    '7.4 Multi-word verbs (medijski/opšti kontekst)',
+    '7.5 Dodatni TV/media vokabular',
+    '7.6 Adding emphasis — vokabular',
+    '7.7 When things go wrong — fraze za prepričavanje vesti',
+    '8.1 Ličnost i karakter — parovi koji NISU sinonimi',
+    '8.2 Compound adjectives (složeni pridevi)',
+    '8.3 Values — vrednosti',
+    '8.4 Decisions — kolokacije sa nijansama',
+    '8.5 Behaviour — glagoli, izrazi i idiomi',
+    '8.6 Handling an awkward situation — functional language',
+    '8.7 Idioms connected to time',
+    'Najčešće zamke na testu (Unit 7 & 8) — pregled',
+    'Dodatni opšti vokabular + pregled glagolskih konstrukcija + brza referenca za prepoznavanje oblika',
+    'Prvo čitanje tekstova (bez literature, samo tekstovi)',
+    {review:true, text:'Kompletan pregled: cela skripta Unit 7 & 8 (gramatika + vokabular) + drugo čitanje tekstova + rešavanje svih vežbi iz zbirke (Verzije A–F, kondicionali, reported speech)'}
+  ],
+  spi: [
+    'Prva faza Drugog svetskog rata 1939-1941',
+    'Druga faza Drugog svetskog rata 1941-1943',
+    'Treća faza Drugog svetskog rata',
+    'Pokreti otpora u Evropi',
+    'Podela Nemačke nakon Drugog svetskog rata',
+    'Stvaranje socijalističkih država u Evropi',
+    'Početak Hladnog rata',
+    'Stvaranje i delatnost Ujedinjenih nacija',
+    'Prve hladnoratovske krize — Iran, Turska i Grčka',
+    'Trumanova doktrina i Maršalov plan',
+    'Stvaranje paktova i trka u naoružanju',
+    'Kineski građanski rat',
+    'Japan pod okupacijom',
+    'Rat u Koreji',
+    'Ajzenhauerova era',
+    'Dekolonizacija nakon Drugog svetskog rata',
+    'Nezavisnost Indije',
+    'Rat na prostoru Indokine (1945-1954)',
+    'Bliski istok i stvaranje Izraela',
+    'Sueska kriza 1956.',
+    'SSSR za vreme Nikite Hruščova',
+    'Revolucija u Mađarskoj 1956.',
+    'Nastanak Pete republike u Francuskoj',
+    'Integracija Zapadne Evrope i stvaranje EEZ',
+    'Pokret nesvrstanih',
+    'Dekolonizacija Afrike',
+    'Kubanska revolucija i sukobi dve supersile',
+    'Sukobi na Bliskom istoku 60-ih godina',
+    'Kulturna revolucija u Kini',
+    'Detant i ograničavanje trke u naoružanju',
+    'SAD u Vijetnamu',
+    'Studentski protesti',
+    'Istočna politika Vilija Branta',
+    'Sukobi na Bliskom istoku 70-ih godina',
+    'Rat u Avganistanu',
+    'VB za vreme Margaret Tačer',
+    'SAD za vreme Ronalda Regana',
+    'Kraj Hladnog rata',
+    'Amerika 90-ih godina',
+    'Slom socijalizma u Evropi',
+    'Zalivski rat',
+    'Daleki istok 90-ih godina',
+    'Stanje u Evropi 90-ih godina',
+    'Rusija za vreme Borisa Jeljcina',
+    'Bliski istok 90-ih godina',
+    {review:true, text:'Ponovljeno svih 45 pitanja'}
+  ],
+  ess: [
+    'Privredni sistem - osnovno određenje i definisanje',
+    'Sadržaj i osnovne komponente privrednog sistema',
+    'Grupisanje (tipologija) privrednih sistema',
+    'Vrednovanje uspešnosti privrednih sistema',
+    'Uporedni metod i poređenje privrednih sistema',
+    'Razvoj privrednog sistema Srbije',
+    'Merenje makroekonomske aktivnosti - BDP',
+    'Merenje makroekonomske aktivnosti - stopa inflacije i stopa nezaposlenosti',
+    'Merenje makroekonomske aktivnosti - kamatna stopa i devizni kurs',
+    'Privredni rast - značaj; stabilnost vs. rast',
+    'Privredni razvoj - značaj; osnovne komponente; razvijenost i nerazvijenost',
+    'Razlikovanje pojmova razvoja i rasta',
+    'Ekonomske funkcije države u savremenoj robnoj privredi',
+    'Institucionalna teorija države - tržišni neuspesi i uloga države',
+    'Politička makroekonomija - loše i dobre institucije',
+    'Pojam, elementi i vrste ekonomske politike',
+    'Politika i ekonomska politika na našem državnom prostoru',
+    'Formalni i stvarni ciljevi ekonomske politike',
+    'Proces tranzicije: pojam i sadržaj',
+    'Tranzicija i ideološke predrasude; ekonomska nauka i tranzicija',
+    'Privatizacija i efikasnost - problem odnosa principala i agenta',
+    'Makroekonomska osnova privatizacije',
+    'Modeli privatizacije',
+    'Specifičnosti privatizacije društvene svojine - nastanak i efikasnost društvene svojine',
+    'Mešovita preduzeća kao privatizacija društvene svojine',
+    'Privatizacija u Jugoslaviji (Srbiji) do 2000. godine',
+    'Privatizacija u Srbiji posle 2000. godine',
+    'Privatizacija i institucionalno okruženje',
+    'Ekonomsko stanje poljoprivrede od 1945. do 1957. godine',
+    'Seljačko gazdinstvo u agrarnoj politici i samoupravljanju od 1957. godine',
+    'Poljoprivreda u srednjoročnim planovima razvoja Jugoslavije od 1976. do 1985. godine',
+    'Tempo i dinamika spoljnotrgovinske razmene Srbije',
+    'Spoljni dug Srbije',
+    'Strane direktne investicije u Srbiji',
+    'Međunarodne ekonomske integracije - primer CEFTA-e',
+    'Merenje nivoa razvijenosti',
+    'Dinamika razvoja industrije u Srbiji - zaposlenost i investicije u industriji',
+    'Efekti privatizacije u Srbiji i industrija',
+    'Restrukturiranje javnih preduzeća',
+    'Koncept privatizacije javnih preduzeća',
+    {review:true, text:'Ponovljeno svih 40 tema'}
+  ],
+  ibo: [
+    'Sanstefanski mir i stvaranje bugarske države (1878-1908)',
+    'Velika istočna kriza i Berlinski kongres',
+    'Nastanak i razvoj hrvatskog nacionalnog pitanja u 19. veku',
+    'Prizrenska liga i stvaranje albanskog nacionalnog pokreta (1878-1913)',
+    'Makedonsko pitanje u balkanskim i evropskim odnosima',
+    'Ideje o ujedinjenju južnoslovenskih naroda u 19. veku',
+    'Crna Gora u vreme Nikole Petrovića',
+    'Srbija pod vlašću poslednjih Obrenovića',
+    'Mladoturska revolucija i stvaranje turske nacije',
+    'Majski prevrat i vlast Petra I (1903-1912)',
+    'Aneksiona kriza i odnosi AU i Srbije',
+    'Balkanski ratovi i njihove posledice',
+    'Prvi svetski rat na Balkanu od 1914. do kraja 1915. godine',
+    'Prvi svetski rat na Balkanu od 1916. do 1918. godine',
+    'Versajska mirovna konferencija i geopolitičke promene na Balkanu posle Prvog svetskog rata',
+    'Kraljevina SHS/Jugoslavija između dva svetska rata',
+    'Kemal Ataturk i turska država između dva svetska rata',
+    'Balkan u politici sila tokom Drugog svetskog rata',
+    'Grčka pod Venizelosom i Metaksisom',
+    'Albanija pod Ahmedom Zoguom',
+    'Britanija i pokreti otpora na Balkanu tokom Drugog svetskog rata',
+    'Rumunija u međuratnom periodu',
+    'Bugarska u međuratnom periodu',
+    'Balkanska multilateralna saradnja između dva svetska rata',
+    'Francuski i italijanski sistem saveza na Balkanu između dva svetska rata i Mala antanta',
+    'Uticaj fašizma i nacizma na Balkanu tridesetih godina XX veka',
+    'Prodor Musolinija i Hitlera na Balkan 1939-1941.',
+    'Pokreti otpora na Balkanu tokom Drugog svetskog rata',
+    'Uzroci i posledice sporazuma Staljina i Čerčila o podeli interesnih sfera na Balkanu posle Drugog svetskog rata',
+    'Mirovni sporazumi i početak hladnoratovskih podela interesnih sfera na Balkanu nakon Drugog svetskog rata',
+    'Građanski rat u Grčkoj 1945-1949.',
+    {review:true, text:'Ponovljeno svih 31 pitanje'}
+  ],
+  pseu:   [
+    {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Klasična teorija političkog sistema'},
+    {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Primena koncepta političkog sistema na Evropsku zajednicu/uniju'},
+    {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Evolucija Evropskih zajednica – od osnivanja do krize „prazne stolice“'},
+    {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Stabilizovanje poretka evropske integracije – od sredine šezdesetih do Ugovora iz Mastrihta (1993)'},
+    {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Stabilizovanje poretka evropske integracije – Ugovori o Evropskoj uniji (od 1993. do 2009)'},
+    {area: '3. Politički sistem i država – na primeru EU', text: 'Nedržavni tip političkog sistema'},
+    {area: '3. Politički sistem i država – na primeru EU', text: 'Postdržavni tip političkog sistema'},
+    {area: '4. Ugovorna i ustavna strana političkog sistema EU', text: 'Ugovorna strana političkog sistema EU'},
+    {area: '4. Ugovorna i ustavna strana političkog sistema EU', text: 'Ustavna strana političkog sistema EU'},
+    {area: '4. Ugovorna i ustavna strana političkog sistema EU', text: 'Ko je gospodar osnivačkih ugovora?'},
+    {area: '5. Kvazifederalna raspodela materijalnih nadležnosti', text: 'Federalno iskustvo u vertikalnoj podeli nadležnosti – američki uzor'},
+    {area: '5. Kvazifederalna raspodela materijalnih nadležnosti', text: 'Evolucija podele nadležnosti'},
+    {area: '5. Kvazifederalna raspodela materijalnih nadležnosti', text: 'Današnje stanje nadležnosti EU – opšta pitanja'},
+    {area: '5. Kvazifederalna raspodela materijalnih nadležnosti', text: 'Ugovorna sistematizacija nadležnosti EU'},
+    {area: '6. Teorije o evropskim integracijama', text: 'Teorije o evropskim integracijama; rano shvatanje „evropskog federalizma“'},
+    {area: '6. Teorije o evropskim integracijama', text: 'Neofunkcionalistički pristup evropskim integracijama'},
+    {area: '6. Teorije o evropskim integracijama', text: 'Teorija o međuvladinim odnosima na primeru evropske integracije'},
+    {area: '6. Teorije o evropskim integracijama', text: 'Teorije o upravljanju na više nivoa i novi institucionalizam'},
+    {area: '7. Politički sistem EU u vremenu krize', text: 'Kriza integracionog procesa'},
+    {area: '7. Politički sistem EU u vremenu krize', text: 'Strukturni problem ekonomske i monetarne unije'},
+    {area: '7. Politički sistem EU u vremenu krize', text: 'Antikrizna prekompozicija političkog sistema EU'},
+    {area: '8. Podela vlasti i institucionalni balans', text: 'Podela vlasti i institucionalni balans'},
+    {area: '8. Podela vlasti i institucionalni balans', text: 'Klasični koncept granske podele vlasti'},
+    {area: '8. Podela vlasti i institucionalni balans', text: 'Podela vlasti u institucionalnom sistemu EZ/EU'},
+    {area: '8. Podela vlasti i institucionalni balans', text: 'Institucije EU – opšti pristup'},
+    {area: '9. Evropski savet', text: 'Evropski savet – nastanak i sastav'},
+    {area: '9. Evropski savet', text: 'Evropski savet – zadaci, način rada i odlučivanja'},
+    {area: '10. Savet ministara', text: 'Savet ministara – opšte karakteristike i nadležnosti'},
+    {area: '10. Savet ministara', text: 'Struktura Saveta ministara'},
+    {area: '10. Savet ministara', text: 'Način rada i odlučivanja Saveta ministara'},
+    {area: '11. Komisija', text: 'Komisija – položaj i uloga u sistemu odlučivanja'},
+    {area: '11. Komisija', text: 'Nadležnosti Komisije'},
+    {area: '11. Komisija', text: 'Kolegijum i predsednik Komisije'},
+    {area: '11. Komisija', text: 'Kabineti predsednika i komesara i službenički sastav Komisije'},
+    {area: '11. Komisija', text: 'Izbori/imenovanje članova Komisije'},
+    {area: '11. Komisija', text: 'Način rada i odlučivanja Komisije'},
+    {area: '12. Evropski parlament', text: 'Evolucija Evropskog parlamenta'},
+    {area: '12. Evropski parlament', text: 'Struktura i način delovanja Evropskog parlamenta'},
+    {area: '12. Evropski parlament', text: 'Nadležnosti Evropskog parlamenta'},
+    {area: '12. Evropski parlament', text: 'Izbori za Evropski parlament'},
+    {area: '13. Sud pravde Evropske unije', text: 'Sud pravde EU – značaj i položaj'},
+    {area: '13. Sud pravde Evropske unije', text: 'Struktura Suda pravde EU i način rada'},
+    {area: '13. Sud pravde Evropske unije', text: 'Nadležnosti Suda pravde EU'},
+    {area: '13. Sud pravde Evropske unije', text: 'Aktivistička uloga Suda pravde EU'},
+    {area: '14. Monetarna unija / Evropska centralna banka', text: 'Monetarna unija i Evropska centralna banka'},
+    {area: '14. Monetarna unija / Evropska centralna banka', text: 'Struktura Evropske centralne banke i način odlučivanja'},
+    {area: '14. Monetarna unija / Evropska centralna banka', text: 'Nadležnosti i prošireni zadaci Evropske centralne banke'},
+    {area: '14. Monetarna unija / Evropska centralna banka', text: 'Autonomija i odgovornost Evropske centralne banke'},
+    {area: '15. Nepolitičke institucije', text: 'Ekonomski i socijalni komitet'},
+    {area: '15. Nepolitičke institucije', text: 'Komitet regiona'},
+    {area: '15. Nepolitičke institucije', text: 'Revizorski sud i regulatorna tela'},
+    {area: '16. Različitost modela upravljanja u EU', text: 'Modeli upravljanja u EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Poreklo i početak komunitarnog modela'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Evolucija zakonodavne politike'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Od saodlučivanja do redovnog zakonskog postupka; pitanje efikasnosti'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Vrste pravnih propisa u EZ/EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Zakonska inicijativa'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Priroda izvršne vlasti; Moneov metod izvršne vlasti u EZ/EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Komisija: kontrola sprovođenja zakona u državama članicama'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Komisija: donošenje izvršnih akata i postupak „komitologije“'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Pravosudna politika EU'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Sud pravde kao politički akter'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Načela komunitarnog prava (prava EU) proizašla iz prakse Suda pravde'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Fenomen konstitucionalizacije'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Tri osnovna mehanizma konstitucionalizacije'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Načelo nadređenosti/prvenstva prava EU u političkom procesu integracije'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Alternativna sudska praksa nacionalnih sudova'},
+    {area: '17. Politički proces u okviru komunitarnog metoda', text: 'Dinamički karakter pitanja o nadređenosti/prvenstvu prava EU'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Opšte karakteristike međuvladinog modela upravljanja'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Međuvladine konferencije'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Policijska i pravosudna saradnja; prostor slobode, bezbednosti i pravde'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Instrumenti delovanja u policijskoj i pravosudnoj saradnji'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Saradnja država članica u spoljnoj politici kao preteča zajedničke spoljne i bezbednosne politike'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Prva faza spoljne i bezbednosne politike – ciljevi i sredstva'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Druga faza spoljne i bezbednosne politike – reformska nastojanja'},
+    {area: '18. Politički proces u okviru međuvladinog metoda', text: 'Fuzija spoljne, bezbednosne i odbrambene politike EU'},
+    {area: '19. Otvoreni metod koordinacije', text: 'Otvoreni metod koordinacije; „meko pravo“ EU'},
+    {area: '19. Otvoreni metod koordinacije', text: 'Osmišljavanje otvorenog metoda koordinacije i njegov domašaj'},
+    {area: '20. Model upravljanja krizom', text: 'Model upravljanja krizom; uzroci i tokovi kriza'},
+    {area: '20. Model upravljanja krizom', text: 'Antikrizne intervencije u oblasti ekonomske politike'},
+    {area: '20. Model upravljanja krizom', text: 'Antikrizne intervencije u oblasti monetarne politike'},
+    {area: '20. Model upravljanja krizom', text: 'Politički proces u okruženju antikriznih upravljačkih mehanizama'},
+    {area: '20. Model upravljanja krizom', text: 'Kriza u medijumu prava'},
+    {area: '20. Model upravljanja krizom', text: 'Institucionalne posledice kriznog upravljanja: Evropski savet, Evrogrupa, Savet ministara'},
+    {area: '20. Model upravljanja krizom', text: 'Institucionalne posledice kriznog upravljanja: Komisija, Evropska centralna banka, Evropski parlament, Sud pravde EU'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Politički život u EU; opšti pristup'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Javnost kao kategorija političkog društva'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Javno mnjenje u EU i njegovo praćenje'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Evropeizacija nacionalnih javnosti'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Građanstvo Evropske unije'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Pitanje o evropskom identitetu'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Ustavni patriotizam i hrišćanski identitet Evrope kao antipodi'},
+    {area: '21. Pitanje o evropskoj javnosti', text: 'Evroskepticizam'},
+    {area: '22. Političke stranke u EU', text: 'Dilema predstavničke demokratije u EU i mesto političkih stranaka'},
+    {area: '22. Političke stranke u EU', text: 'Stranke u EU – nacionalne i evropske'},
+    {area: '22. Političke stranke u EU', text: 'Stranačka regulativa na nivou EU'},
+    {area: '22. Političke stranke u EU', text: 'Specifičnost izbora za Evropski parlament i uloga stranaka'},
+    {area: '22. Političke stranke u EU', text: 'Izbori 2019. godine i mogući pravci reformi'},
+    {area: '23. Interesne grupe u EU', text: 'Pluralistički pogled na demokratiju'},
+    {area: '23. Interesne grupe u EU', text: 'Interesne grupe u EU'},
+    {area: '23. Interesne grupe u EU', text: 'Zastupanje i lobiranje u EU'},
+    {area: '24. Demokratija u EU / demokratski deficit', text: 'Načela moderne demokratije i pitanje demokratije u EU'},
+    {area: '24. Demokratija u EU / demokratski deficit', text: 'Strukturni manjak demokratije'},
+    {area: '24. Demokratija u EU / demokratski deficit', text: 'Da li EU pretpostavlja novi tip demokratije?'},
+    {area: '24. Demokratija u EU / demokratski deficit', text: 'Krizni ishod legitimnosti i demokratije'},
+    {review:true, reviewRound:1, area: 'Ponavljanje — krug 1', text: 'Prvi krug ponavljanja: brzi pregled svih 105 pitanja, fokus na slabije oblasti'},
+    {review:true, reviewRound:2, area: 'Ponavljanje — krug 2', text: 'Drugi krug ponavljanja: detaljan pregled svih 105 pitanja, neposredno pred ispit'},
+  ],
+  spt: [
+    'Pozitivna i negativna sloboda',
+    'Sloboda kao autonomija',
+    'Dž. S. Mil i vrednost slobode',
+    'Pravo, moral, paternalizam',
+    'Utilitarizam i njegova privlačnost',
+    'Mere korisnosti: hedonizam blagostanja i nehedonistička korisnost',
+    'Mere korisnosti: zadovoljenje preferencija i preferencije zasnovane na potpunim informacijama',
+    'Maksimiranje koristi: U-agent i posebni odnosi',
+    'Maksimiranje koristi: problem nelegitimnih preferencija',
+    'Argumenti u prilog maksimiranja koristi',
+    'Utilitarizam i jednakost: spoljne i sebične preferencije',
+    'Politika utilitarizma',
+    'Rolsova teorija pravde',
+    'Rolsov argument jednakosti mogućnosti',
+    'Rolsov argument društvenog ugovora',
+    'Dvorkinova teorija jednakosti resursa',
+    'Primena Dvorkinove teorije jednakosti resursa',
+    'Politika liberalne jednakosti i država blagostanja',
+    'Nova desnica i država blagostanja',
+    'Komunitarizam i granice pravde: zajednička značenja',
+    'Komunitarizam: individualna prava, opšte dobro, neutralna država',
+    'Politički liberalizam: autonomija i tolerancija',
+    'Politički liberalizam vs. obuhvatni liberalizam: Rolsova revizija',
+    'Društvena uslovljenost autonomije i dužnost održanja kulture',
+    'Modeli multikulturalizma: nacionalne manjine',
+    'Liberalizam i problem kolektivne deliberacije izvan politike',
+    'Politički liberalizam: zajedničke vrednosti, solidarnost, legitimitet',
+    'Liberalni nacionalizam',
+    'Nacionalizam i kosmopolitizam',
+    'Modeli multikulturalizma: imigrantske grupe',
+    'Vrline demokratskih građana',
+    'Javna razloženost: agregativna i deliberativna demokratija',
+    'Građanski republikanizam',
+    'Liberalni republikanizam i instrumentalne vrline',
+    'Polna jednakost i polna diskriminacija',
+    'Izvori građanskih vrlina',
+    'Obrazovanje za građanske vrline',
+    'Kosmopolitansko građanstvo',
+    'Multikulturalna kritika „građanstva kao prava"',
+    'Politika preraspodele i politika priznanja',
+    'Komunitarni i liberalni multikulturalizam',
+    'Grupno-diferencirana prava',
+    'Multikulturalizam i izgradnja nacije',
+    'Javno i privatno: država i civilno društvo',
+    'Javno i privatno: lično i društveno',
+    'Etika brige i etika pravde: moralne sposobnosti i rasuđivanje',
+    'Etika brige i etika pravde: univerzalnost vs. očuvanje odnosa',
+    'Etika brige i etika pravde: čovečanstvo vs. individualnost',
+    'Etika brige i etika pravde: prava i odgovornosti',
+    'Izbori i demokratija: Šmitova kritika',
+    'Javnost i demokratija (Lipman)',
+    'Problem legitimnosti u parlamentarnim demokratijama',
+    'Demokratija kao forma i suština (Marks)',
+    'Marksov odnos prema izborima i demokratiji',
+    'Politička forma komune',
+    'Marksizam i demokratija',
+    'Centralističke i anarhističke težnje unutar demokratije',
+    'Napeti odnos kapitalizma i demokratije (Laski)',
+    'Normativna privlačnost i kriza demokratije: Kelzen i Lipman',
+    'Demokratski elitizam kao revizija pojma demokratije',
+    'Realistički pojam demokratije',
+    'Trijumf demokratije i postdemokratija',
+    'Postdemokratija kao dijagnoza stanja realne demokratije',
+    'Postdemokratija kao otklon od realne demokratije',
+    {review:true, text:'Ponovljeno svih 64 pitanja'}
+  ]
+};
+
+// Normalizacija: svaka stavka u pool-u dobija stabilan id subj-index, review
+// flag, i (opciono) area — oblast kojoj pripada (trenutno samo PSEU).
+const ITEM_POOL = {};
+Object.keys(POOLS).forEach(subj=>{
+  ITEM_POOL[subj] = POOLS[subj].map((it, idx)=>{
+    const isObj = typeof it === 'object';
+    return {
+      id:`${subj}-${idx}`,
+      text: isObj ? it.text : it,
+      review: isObj ? !!it.review : false,
+      reviewRound: isObj ? (it.reviewRound || null) : null,
+      area: isObj ? (it.area || null) : null
+    };
+  });
+});
+
+function dayLabel(i){ return `${7+i}. septembar`; }
+function dayDate(i){ return new Date(YEAR, MONTH, 7+i); }
+
+function effectiveTodayIndex(){
+  const now = new Date();
+  const start = new Date(YEAR, MONTH, 7);
+  const diff = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - start)/86400000);
+  return Math.min(Math.max(diff,0), DAY_COUNT-1);
 }
 
-// Each day: {date, examFlag, note, afterNotes: [...], groups: [{subj, groupNote, items: [...]}], review: {subj, label}}
-const DAYS = [
-{date:"4. septembar", groups:[
-  {subj:"eng", items:[
-    "Kvantifikatori: many/much, a lot of, few/a little, plenty of, enough",
-    "Kvantifikatori: too much/too many, both/either/neither, ostali (each, every, several, quite a few...)",
-    "Reported speech: potvrdne i odrične izjave, backshift tabela"
-  ]},
-  {subj:"spi", items:[
-    "Prva faza Drugog svetskog rata 1939-1941",
-    "Druga faza Drugog svetskog rata 1941-1943",
-    "Treća faza Drugog svetskog rata",
-    "Pokreti otpora u Evropi",
-    "Podela Nemačke nakon Drugog svetskog rata"
-  ]},
-  {subj:"ess", items:[
-    "Privredni sistem - osnovno određenje i definisanje",
-    "Sadržaj i osnovne komponente privrednog sistema",
-    "Grupisanje (tipologija) privrednih sistema"
-  ]},
-  {subj:"ibo", items:[
-    "Sanstefanski mir i stvaranje bugarske države (1878-1908)",
-    "Velika istočna kriza i Berlinski kongres"
-  ]},
-  {subj:"pseu", items:[
-    "Koncept političkog sistema i njegova primena na EU",
-    "Evolucija od međunarodne organizacije ka političkom sistemu"
-  ]},
-  {subj:"spt", items:[
-    "Pozitivna i negativna sloboda",
-    "Sloboda kao autonomija",
-    "Dž. S. Mil i vrednost slobode"
-  ]}
-]},
-{date:"5. septembar", groups:[
-  {subj:"eng", items:[
-    "Reported speech: promene vremena i mesta, say vs tell",
-    "Reported speech: reported questions, reported commands/requests, reporting verbs",
-    "Adding emphasis (naglašavanje)"
-  ]},
-  {subj:"spi", items:[
-    "Stvaranje socijalističkih država u Evropi",
-    "Početak Hladnog rata",
-    "Stvaranje i delatnost Ujedinjenih nacija",
-    "Prve hladnoratovske krize — Iran, Turska i Grčka"
-  ]},
-  {subj:"ess", items:[
-    "Vrednovanje uspešnosti privrednih sistema",
-    "Uporedni metod i poređenje privrednih sistema",
-    "Razvoj privrednog sistema Srbije",
-    "Merenje makroekonomske aktivnosti - BDP"
-  ]},
-  {subj:"ibo", items:[
-    "Nastanak i razvoj hrvatskog nacionalnog pitanja u 19. veku",
-    "Prizrenska liga i stvaranje albanskog nacionalnog pokreta (1878-1913)"
-  ]},
-  {subj:"pseu", items:[
-    "Politički sistem i država — na primeru Evropske unije",
-    "Ugovorna i ustavna strana političkog sistema EU"
-  ]},
-  {subj:"spt", items:[
-    "Pravo, moral, paternalizam",
-    "Utilitarizam i njegova privlačnost",
-    "Mere korisnosti: hedonizam blagostanja i nehedonistička korisnost"
-  ]}
-]},
-{date:"6. septembar", groups:[
-  {subj:"eng", items:[
-    "Second conditional (hipotetička sadašnjost/budućnost)",
-    "Third conditional (hipotetička prošlost)",
-    "Mixed conditionals (mešoviti kondicionali)"
-  ]},
-  {subj:"spi", items:[
-    "Trumanova doktrina i Maršalov plan",
-    "Stvaranje paktova i trka u naoružanju",
-    "Kineski građanski rat",
-    "Japan pod okupacijom"
-  ]},
-  {subj:"ess", items:[
-    "Merenje makroekonomske aktivnosti - stopa inflacije i stopa nezaposlenosti",
-    "Merenje makroekonomske aktivnosti - kamatna stopa i devizni kurs",
-    "Privredni rast - značaj; stabilnost vs. rast",
-    "Privredni razvoj - značaj; osnovne komponente; razvijenost i nerazvijenost"
-  ]},
-  {subj:"ibo", items:[
-    "Makedonsko pitanje u balkanskim i evropskim odnosima",
-    "Ideje o ujedinjenju južnoslovenskih naroda u 19. veku"
-  ]},
-  {subj:"pseu", items:[
-    "Kvazifederalna raspodela materijalnih nadležnosti",
-    "Teorije o evropskim integracijama"
-  ]},
-  {subj:"spt", items:[
-    "Mere korisnosti: zadovoljenje preferencija i preferencije zasnovane na potpunim informacijama",
-    "Maksimiranje koristi: U-agent i posebni odnosi",
-    "Maksimiranje koristi: problem nelegitimnih preferencija"
-  ]}
-]},
-{date:"7. septembar", groups:[
-  {subj:"eng", items:[
-    "-ing form vs infinitive: glagoli + -ing, + to infinitiv, + osoba + to infinitiv",
-    "Causative have (have something done)",
-    "7.1 Vrste TV programa i osnovni termini"
-  ]},
-  {subj:"spi", items:[
-    "Rat u Koreji",
-    "Ajzenhauerova era",
-    "Dekolonizacija nakon Drugog svetskog rata",
-    "Nezavisnost Indije"
-  ]},
-  {subj:"ess", items:[
-    "Razlikovanje pojmova razvoja i rasta",
-    "Ekonomske funkcije države u savremenoj robnoj privredi",
-    "Institucionalna teorija države - tržišni neuspesi i uloga države",
-    "Politička makroekonomija - loše i dobre institucije"
-  ]},
-  {subj:"ibo", items:[
-    "Crna Gora u vreme Nikole Petrovića",
-    "Srbija pod vlašću poslednjih Obrenovića",
-    "Mladoturska revolucija i stvaranje turske nacije"
-  ]},
-  {subj:"pseu", items:[
-    "Politički sistem EU u vremenu krize",
-    "Osnovna pitanja: podela vlasti i institucionalni balans"
-  ]},
-  {subj:"spt", items:[
-    "Argumenti u prilog maksimiranja koristi",
-    "Utilitarizam i jednakost: spoljne i sebične preferencije",
-    "Politika utilitarizma"
-  ]}
-]},
-{date:"8. septembar", groups:[
-  {subj:"eng", items:[
-    "7.2 The Press/Media — detaljan vokabular",
-    "7.3 Glagoli govorenja u novinarstvu (reporting verbs — nijanse)",
-    "7.4 Multi-word verbs (medijski/opšti kontekst)"
-  ]},
-  {subj:"spi", items:[
-    "Rat na prostoru Indokine (1945-1954)",
-    "Bliski istok i stvaranje Izraela",
-    "Sueska kriza 1956.",
-    "SSSR za vreme Nikite Hruščova",
-    "Revolucija u Mađarskoj 1956."
-  ]},
-  {subj:"ess", items:[
-    "Pojam, elementi i vrste ekonomske politike",
-    "Politika i ekonomska politika na našem državnom prostoru",
-    "Formalni i stvarni ciljevi ekonomske politike",
-    "Proces tranzicije: pojam i sadržaj"
-  ]},
-  {subj:"ibo", items:[
-    "Majski prevrat i vlast Petra I (1903-1912)",
-    "Aneksiona kriza i odnosi AU i Srbije",
-    "Balkanski ratovi i njihove posledice"
-  ]},
-  {subj:"pseu", items:[
-    "Evropski savet",
-    "Savet ministara (Savet Evropske unije)"
-  ]},
-  {subj:"spt", items:[
-    "Rolsova teorija pravde",
-    "Rolsov argument jednakosti mogućnosti",
-    "Rolsov argument društvenog ugovora"
-  ]}
-]},
-{date:"9. septembar", groups:[
-  {subj:"eng", items:[
-    "7.5 Dodatni TV/media vokabular",
-    "7.6 Adding emphasis — vokabular",
-    "7.7 When things go wrong — fraze za prepričavanje vesti"
-  ]},
-  {subj:"spi", items:[
-    "Nastanak Pete republike u Francuskoj",
-    "Integracija Zapadne Evrope i stvaranje EEZ",
-    "Pokret nesvrstanih",
-    "Dekolonizacija Afrike",
-    "Kubanska revolucija i sukobi dve supersile"
-  ]},
-  {subj:"ess", items:[
-    "Tranzicija i ideološke predrasude; ekonomska nauka i tranzicija",
-    "Privatizacija i efikasnost - problem odnosa principala i agenta",
-    "Makroekonomska osnova privatizacije"
-  ]},
-  {subj:"ibo", items:[
-    "Prvi svetski rat na Balkanu od 1914. do kraja 1915. godine",
-    "Prvi svetski rat na Balkanu od 1916. do 1918. godine"
-  ]},
-  {subj:"pseu", items:[
-    "Komisija",
-    "Evropski parlament"
-  ]},
-  {subj:"spt", items:[
-    "Dvorkinova teorija jednakosti resursa",
-    "Primena Dvorkinove teorije jednakosti resursa",
-    "Politika liberalne jednakosti i država blagostanja"
-  ]}
-]},
-{date:"10. septembar", groups:[
-  {subj:"eng", items:[
-    "8.1 Ličnost i karakter — parovi koji NISU sinonimi",
-    "8.2 Compound adjectives (složeni pridevi)",
-    "8.3 Values — vrednosti"
-  ]},
-  {subj:"spi", items:[
-    "Sukobi na Bliskom istoku 60-ih godina",
-    "Kulturna revolucija u Kini",
-    "Detant i ograničavanje trke u naoružanju",
-    "SAD u Vijetnamu"
-  ]},
-  {subj:"ess", items:[
-    "Modeli privatizacije",
-    "Specifičnosti privatizacije društvene svojine - nastanak i efikasnost društvene svojine",
-    "Mešovita preduzeća kao privatizacija društvene svojine"
-  ]},
-  {subj:"ibo", items:[
-    "Versajska mirovna konferencija i geopolitičke promene na Balkanu posle Prvog svetskog rata",
-    "Kraljevina SHS/Jugoslavija između dva svetska rata",
-    "Kemal Ataturk i turska država između dva svetska rata"
-  ]},
-  {subj:"pseu", items:[
-    "Sud pravde Evropske unije",
-    "Evropska centralna banka"
-  ]},
-  {subj:"spt", items:[
-    "Nova desnica i država blagostanja",
-    "Komunitarizam i granice pravde: zajednička značenja"
-  ]}
-]},
-{date:"11. septembar", groups:[
-  {subj:"eng", items:[
-    "8.4 Decisions — kolokacije sa nijansama",
-    "8.5 Behaviour — glagoli, izrazi i idiomi",
-    "8.6 Handling an awkward situation — functional language"
-  ]},
-  {subj:"spi", items:[
-    "Studentski protesti",
-    "Istočna politika Vilija Branta",
-    "Sukobi na Bliskom istoku 70-ih godina",
-    "Rat u Avganistanu"
-  ]},
-  {subj:"ess", items:[
-    "Privatizacija u Jugoslaviji (Srbiji) do 2000. godine",
-    "Privatizacija u Srbiji posle 2000. godine",
-    "Privatizacija i institucionalno okruženje",
-    "Ekonomsko stanje poljoprivrede od 1945. do 1957. godine"
-  ]},
-  {subj:"ibo", items:[
-    "Balkan u politici sila tokom Drugog svetskog rata",
-    "Grčka pod Venizelosom i Metaksisom"
-  ]},
-  {subj:"pseu", items:[
-    "Nepolitičke institucije",
-    "Različitost modela upravljanja u EU"
-  ]},
-  {subj:"spt", items:[
-    "Komunitarizam: individualna prava, opšte dobro, neutralna država",
-    "Politički liberalizam: autonomija i tolerancija",
-    "Politički liberalizam vs. obuhvatni liberalizam: Rolsova revizija"
-  ]}
-]},
-{date:"12. septembar", note:"✅ Ovim se završava prva runda engleskog (gramatika + vokabular Unit 7 & 8).", groups:[
-  {subj:"eng", items:[
-    "8.7 Idioms connected to time",
-    "Najčešće zamke na testu (Unit 7 & 8) — pregled",
-    "Dodatni opšti vokabular + pregled glagolskih konstrukcija + brza referenca za prepoznavanje oblika",
-    "Prvo čitanje tekstova (bez literature, samo tekstovi)"
-  ]},
-  {subj:"spi", items:[
-    "VB za vreme Margaret Tačer",
-    "SAD za vreme Ronalda Regana",
-    "Kraj Hladnog rata",
-    "Amerika 90-ih godina",
-    "Slom socijalizma u Evropi"
-  ]},
-  {subj:"ess", items:[
-    "Seljačko gazdinstvo u agrarnoj politici i samoupravljanju od 1957. godine",
-    "Poljoprivreda u srednjoročnim planovima razvoja Jugoslavije od 1976. do 1985. godine",
-    "Tempo i dinamika spoljnotrgovinske razmene Srbije"
-  ]},
-  {subj:"ibo", items:[
-    "Albanija pod Ahmedom Zoguom",
-    "Britanija i pokreti otpora na Balkanu tokom Drugog svetskog rata"
-  ]},
-  {subj:"pseu", items:[
-    "Politički proces u okviru komunitarnog metoda",
-    "Obeležja političkog procesa u okviru međuvladinog modela"
-  ]},
-  {subj:"spt", items:[
-    "Društvena uslovljenost autonomije i dužnost održanja kulture",
-    "Modeli multikulturalizma: nacionalne manjine"
-  ]}
-]},
-{date:"13. septembar", note:"🔵 SAMO ENGLESKI JEZIK 2 — celodnevni finalni pregled OBE skripte pred kolokvijum. Ne uči se ESS, ni IBO, ni SPT.", review:{subj:"eng", label:"Kompletan pregled: cela skripta Unit 7 & 8 (gramatika + vokabular) + drugo čitanje tekstova + rešavanje svih vežbi iz zbirke (Verzije A–F, kondicionali, reported speech)"}},
-{date:"14. septembar", examFlag:"KOLOKVIJUM — Engleski jezik 2", examCheck:"Izašla sam na kolokvijum — Engleski jezik 2", note:"🚨 poslednji dan novog gradiva iz SPI", groups:[
-  {subj:"spi", items:[
-    "Zalivski rat",
-    "Daleki istok 90-ih godina",
-    "Stanje u Evropi 90-ih godina",
-    "Rusija za vreme Borisa Jeljcina",
-    "Bliski istok 90-ih godina"
-  ]},
-  {subj:"ess", items:[
-    "Spoljni dug Srbije",
-    "Strane direktne investicije u Srbiji",
-    "Međunarodne ekonomske integracije - primer CEFTA-e",
-    "Merenje nivoa razvijenosti"
-  ]},
-  {subj:"ibo", items:[
-    "Rumunija u međuratnom periodu",
-    "Bugarska u međuratnom periodu"
-  ]},
-  {subj:"pseu", items:[
-    "Otvoreni metod koordinacije",
-    "Model upravljanja krizom"
-  ]},
-  {subj:"spt", items:[
-    "Liberalizam i problem kolektivne deliberacije izvan politike",
-    "Politički liberalizam: zajedničke vrednosti, solidarnost, legitimitet",
-    "Liberalni nacionalizam"
-  ]}
-]},
-{date:"15. septembar", note:"🟢 SAMO SAVREMENA POLITIČKA ISTORIJA — celodnevno ponavljanje svih 45 pitanja. Ne uči se ništa drugo.", review:{subj:"spi", label:"Ponovljeno svih 45 pitanja"}},
-{date:"16. septembar", examFlag:"ISPIT — Savremena politička istorija", examCheck:"Izašla sam na ispit — Savremena politička istorija", note:"🚨 poslednji dan novog gradiva iz ESS", groups:[
-  {subj:"ess", doneNote:"✅ Prvi prolaz ESS završen", items:[
-    "Dinamika razvoja industrije u Srbiji - zaposlenost i investicije u industriji",
-    "Efekti privatizacije u Srbiji i industrija",
-    "Restrukturiranje javnih preduzeća",
-    "Koncept privatizacije javnih preduzeća"
-  ]},
-  {subj:"ibo", items:[
-    "Balkanska multilateralna saradnja između dva svetska rata",
-    "Francuski i italijanski sistem saveza na Balkanu između dva svetska rata i Mala antanta",
-    "Uticaj fašizma i nacizma na Balkanu tridesetih godina XX veka"
-  ]},
-  {subj:"pseu", items:[
-    "Pitanje o evropskoj javnosti"
-  ]},
-  {subj:"spt", items:[
-    "Nacionalizam i kosmopolitizam",
-    "Modeli multikulturalizma: imigrantske grupe",
-    "Vrline demokratskih građana"
-  ]}
-]},
-{date:"17. septembar", note:"🚨 poslednji dan novog gradiva iz IBO. Plus: dodatni dan za ESS — aktivno ponavljanje, ne samo prelistavanje (ESS nije lak predmet).", groups:[
-  {subj:"ess", groupNote:"dodatni dan pre „čisto ponavljanje“ dana — iskoristi ga puno", items:[
-    "Aktivno ponavljanje svih dosadašnjih tema ESS (zaključno sa 16.9) — reši svako pitanje kao na ispitu, ne samo pročitaj naslov",
-    "Izdvoji i ponovo pregledaj teme koje ti nisu bile jasne iz prve"
-  ]},
-  {subj:"ibo", doneNote:"✅ Prvi prolaz IBO završen", items:[
-    "Prodor Musolinija i Hitlera na Balkan 1939-1941.",
-    "Pokreti otpora na Balkanu tokom Drugog svetskog rata",
-    "Uzroci i posledice sporazuma Staljina i Čerčila o podeli interesnih sfera na Balkanu posle Drugog svetskog rata",
-    "Mirovni sporazumi i početak hladnoratovskih podela interesnih sfera na Balkanu nakon Drugog svetskog rata",
-    "Građanski rat u Grčkoj 1945-1949."
-  ]},
-  {subj:"pseu", items:[
-    "Političko predstavljanje — uloga političkih stranaka"
-  ]},
-  {subj:"spt", items:[
-    "Javna razloženost: agregativna i deliberativna demokratija",
-    "Građanski republikanizam",
-    "Liberalni republikanizam i instrumentalne vrline",
-    "Polna jednakost i polna diskriminacija",
-    "Izvori građanskih vrlina"
-  ]}
-]},
-{date:"18. septembar", note:"🔴 GLAVNI FOKUS: EKONOMSKI SISTEM SRBIJE — celodnevno ponavljanje svih 40 tema. Plus: IBO dobija lagano prelistavanje (~15 min), da dan ne ostane mrtav za njega. Ne uči se SPT. Ne uči se novo gradivo.", groups:[
-  {subj:"ibo", groupNote:"lagano, samo prelistavanje — fokus dana je ESS", items:[
-    "Lagano prelistavanje svih 31 pitanja IBO (naslovi i kratki odgovori, ~15 min)"
-  ]}
-], review:{subj:"ess", label:"Ponovljeno svih 40 tema"}},
-{date:"19. septembar", examFlag:"ISPIT — Ekonomski sistem Srbije", examCheck:"Izašla sam na ispit — Ekonomski sistem Srbije", note:"🚨 poslednji dan novog gradiva iz PSEU", groups:[
-  {subj:"ibo", groupNote:"ispit za 2 dana", items:[
-    "Ponavljanje svih 31 pitanja"
-  ]},
-  {subj:"pseu", doneNote:"✅ Prvi prolaz svih 24 pitanja PSEU završen", items:[
-    "Interesna i korporativna strana političkog života",
-    "Pitanje o demokratiji u EU"
-  ]},
-  {subj:"spt", items:[
-    "Obrazovanje za građanske vrline",
-    "Kosmopolitansko građanstvo",
-    "Multikulturalna kritika „građanstva kao prava\"",
-    "Politika preraspodele i politika priznanja",
-    "Komunitarni i liberalni multikulturalizam",
-    "Grupno-diferencirana prava",
-    "Multikulturalizam i izgradnja nacije",
-    "Javno i privatno: država i civilno društvo",
-    "Javno i privatno: lično i društveno",
-    "Etika brige i etika pravde: moralne sposobnosti i rasuđivanje"
-  ]}
-]},
-{date:"20. septembar", note:"🔵 SAMO POLITIČKI SISTEM EVROPSKE UNIJE (PSEU) — ponavljanje, prvi krug, celodnevno. Ne uči se ništa drugo.", review:{subj:"pseu", label:"Prvi krug ponavljanja: svih 24 pitanja PSEU"}},
-{date:"21. septembar", examFlag:"ISPIT — Istorija balkanskih odnosa", examCheck:"Izašla sam na ispit — Istorija balkanskih odnosa", groups:[
-  {subj:"spt", items:[
-    "Etika brige i etika pravde: univerzalnost vs. očuvanje odnosa",
-    "Etika brige i etika pravde: čovečanstvo vs. individualnost",
-    "Etika brige i etika pravde: prava i odgovornosti",
-    "Izbori i demokratija: Šmitova kritika",
-    "Javnost i demokratija (Lipman)",
-    "Problem legitimnosti u parlamentarnim demokratijama",
-    "Demokratija kao forma i suština (Marks)",
-    "Marksov odnos prema izborima i demokratiji",
-    "Politička forma komune",
-    "Marksizam i demokratija"
-  ]}
-]},
-{date:"22. septembar", note:"🔵 SAMO POLITIČKI SISTEM EVROPSKE UNIJE (PSEU) — ponavljanje, drugi krug, fokus na slabije tačke. Plus: SPT dobija svoju sledeću turu (3 teme), da dan ne ostane mrtav za njega.", review:{subj:"pseu", label:"Drugi krug ponavljanja: svih 24 pitanja PSEU"}},
-{date:"23. septembar", examFlag:"ISPIT — Politički sistem Evropske unije", examCheck:"Izašla sam na ispit — Politički sistem Evropske unije"},
-{date:"24. septembar", note:"🚨 Poslednji dan novog gradiva iz SPT", groups:[
-  {subj:"spt", doneNote:"✅ Prvi prolaz svih 64 pitanja SPT završen", items:[
-    "Centralističke i anarhističke težnje unutar demokratije",
-    "Napeti odnos kapitalizma i demokratije (Laski)",
-    "Normativna privlačnost i kriza demokratije: Kelzen i Lipman",
-    "Demokratski elitizam kao revizija pojma demokratije",
-    "Realistički pojam demokratije",
-    "Trijumf demokratije i postdemokratija",
-    "Postdemokratija kao dijagnoza stanja realne demokratije",
-    "Postdemokratija kao otklon od realne demokratije"
-  ]}
-]},
-{date:"25. septembar", note:"🟡 SAMO SAVREMENA POLITIČKA TEORIJA — celodnevno ponavljanje svih 64 pitanja. Ne uči se ništa drugo.", review:{subj:"spt", label:"Ponovljeno svih 64 pitanja"}},
-{date:"26. septembar", examFlag:"ISPIT — Savremena politička teorija", examCheck:"Izašla sam na ispit — Savremena politička teorija"}
-];
-
-let progress = {};
-let actualMin = {};
-let itemComments = {};
-let itemIndex = []; // {id, subj, text, planned}
-let storageOk = true;
+let state = {
+  progress: {},        // itemId -> {done:true, completedAt: iso}
+  examAnswers: {},      // examDay(string) -> 'yes' | 'no'
+  todayCache: null,     // {dayIndex, items:{subj:[ids]}}
+  todayFinalized: false,
+  pendingCarryover: null // {fromDay, ids:[itemId,...]} — nedovršeno sa "Završila za danas"
+};
 let openDays = new Set();
+let storageOk = true;
 
-function buildIndex(){
-  DAYS.forEach((day, di)=>{
-    if(day.groups){
-      day.groups.forEach((g, gi)=>{
-        g.items.forEach((text, ii)=>{
-          itemIndex.push({id:`d${di}-g${gi}-i${ii}`, subj:g.subj, text, planned:getPlanned(g.subj, text)});
+function verifyStorageWorks(){
+  const k = STORAGE_KEY + '-canary';
+  const v = String(Date.now());
+  try{
+    localStorage.setItem(k, v);
+    const r = localStorage.getItem(k);
+    localStorage.removeItem(k);
+    return r === v;
+  }catch(err){ return false; }
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const data = JSON.parse(raw);
+      state = Object.assign({progress:{}, examAnswers:{}, todayCache:null, todayFinalized:false, pendingCarryover:null}, data);
+    }
+  }catch(err){
+    console.error('Load error', err);
+  }
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    if(!storageOk){ storageOk = true; showStorageWarning(false); }
+  }catch(err){
+    storageOk = false;
+    showStorageWarning(true);
+    console.error('Save error', err);
+  }
+}
+
+function showStorageWarning(show){
+  document.getElementById('storageWarning').classList.toggle('show', !!show);
+}
+
+// ---------- Area-aware zaokruživanje ----------
+// Kad predmet ima stavke grupisane po "oblastima" (trenutno samo PSEU), broj
+// stavki koje dan dobija se zaokružuje na granicu oblasti umesto da se seče
+// nasred oblasti. Cilj: nikad ne ostaviti samo 1 stavku oblasti odvojenu od
+// ostatka. Ako oblast mora da se deli (prevelika za jedan dan), deli se na
+// približno jednake dve polovine.
+function areaAwareCount(poolArr, rawCount){
+  if(rawCount <= 0) return 0;
+  if(rawCount >= poolArr.length) return poolArr.length;
+  if(!poolArr[0] || !poolArr[0].area){
+    // predmet nema koncept oblasti — obično zaokruživanje
+    return Math.round(rawCount);
+  }
+  // segmenti uzastopnih stavki iste oblasti, od početka pool-a
+  const segments = [];
+  let i = 0;
+  while(i < poolArr.length){
+    const area = poolArr[i].area;
+    let j = i;
+    while(j < poolArr.length && poolArr[j].area === area) j++;
+    segments.push({start:i, end:j, len:j-i});
+    i = j;
+  }
+  for(const seg of segments){
+    if(rawCount <= seg.start) return seg.start;
+    if(rawCount < seg.end){
+      const posInSeg = rawCount - seg.start;      // 1..len-1
+      const remainInSeg = seg.end - rawCount;      // 1..len-1
+      if(seg.len <= 3){
+        // dužina 2 ili 3 se ne može podeliti bez da jedna strana dobije
+        // samo 1 (3 = 1+2 je jedina moguća podela) — ne deli, snapuj na bliži kraj
+        return (posInSeg <= remainInSeg) ? seg.start : seg.end;
+      }
+      if(posInSeg === 1 || remainInSeg === 1){
+        // izbegni da 1 stavka ostane odvojena — podeli oblast na pola
+        // (dužina je ovde >=4, pa je i najmanja polovina bar 2)
+        let half = Math.round(seg.len / 2);
+        half = Math.max(2, Math.min(seg.len - 2, half));
+        return seg.start + half;
+      }
+      return (posInSeg <= remainInSeg) ? seg.start : seg.end;
+    }
+  }
+  return poolArr.length;
+}
+
+// ---------- Scheduler: čisto brojanje tema, bez procene trajanja ----------
+// Za svaki predmet: dan(i) review-a, i da li je taj dan BLOKIRAJUĆI (ceo dan
+// ide samo tom predmetu, svi ostali dobijaju nulu) ili DELJEN (predmet uzima
+// svoj review, ostali nastavljaju svoj normalan raspored isti dan).
+// Regularni rok predmeta = dan PRE njegovog PRVOG review dana — posle tog
+// dana se za taj predmet više nikad ne otvara nova (neregularna) tema.
+const REVIEW_PLAN = {
+  eng:  [{day: SUBJECTS.eng.examDay - 1, round: null, blocking: false}],
+  spi:  [{day: SUBJECTS.spi.examDay - 1, round: null, blocking: true}],
+  ess:  [{day: SUBJECTS.ess.examDay - 1, round: null, blocking: true}],
+  ibo:  [{day: SUBJECTS.ibo.examDay - 1, round: null, blocking: true}],
+  pseu: [
+    {day: SUBJECTS.pseu.examDay - 2, round: 1, blocking: false},
+    {day: SUBJECTS.pseu.examDay - 1, round: 2, blocking: true}
+  ],
+  spt:  [{day: SUBJECTS.spt.examDay - 1, round: null, blocking: true}]
+};
+
+// Dani koji su nečiji BLOKIRAJUĆI review dan — na te dane svi OSTALI
+// predmeti dobijaju nula, bez izuzetka.
+const BLOCKED_DAYS = new Set();
+Object.values(REVIEW_PLAN).forEach(rounds=>{
+  rounds.forEach(r=>{ if(r.blocking) BLOCKED_DAYS.add(r.day); });
+});
+
+// Regularni rok svakog predmeta = dan pre njegovog prvog review dana.
+const REGULAR_DEADLINE = {};
+Object.keys(REVIEW_PLAN).forEach(s=>{
+  REGULAR_DEADLINE[s] = REVIEW_PLAN[s][0].day - 1;
+});
+
+// Broj STVARNO iskoristivih dana za regularno gradivo, u rasponu
+// [fromDay, toDayInclusive] — isključujući dane koji su BLOKIRANI tuđim
+// review danom (tog dana predmet ionako dobija nulu, pa se ne računa kao
+// raspoloživ). Ovo je razlog zašto npr. PSEU mora da završi 19. septembra
+// a ne 20. — 20. je IBO-in blokirajući dan, pa je stvarni poslednji
+// upotrebljivi dan za PSEU 19. septembar, bez obzira na nominalni rok.
+function daysLeftAvailable(fromDay, toDayInclusive){
+  let count = 0;
+  for(let t = fromDay; t <= toDayInclusive; t++){
+    if(!BLOCKED_DAYS.has(t)) count++;
+  }
+  return Math.max(1, count);
+}
+
+// ---------- Scheduler ----------
+// Svaki dan, u ovom redosledu:
+// 1) Ako je ovo nečiji BLOKIRAJUĆI review dan — taj predmet uzima svoj
+//    review (samo taj krug, ako ih ima više), niko drugi ovog dana ne
+//    dobija ništa, dan je gotov.
+// 2) Inače, za predmet(e) čiji je ovo DELJENI review dan — uzima se
+//    njegov review, i dan se nastavlja normalno za sve ostale.
+// 3) Normalna raspodela REGULARNOG gradiva (review stavke se ovde nikad ne
+//    diraju — već su rezervisane za svoj review dan). Kapacitet (18/28) je
+//    čisto informativan, ne ograničava — svaki predmet dobija tačno
+//    onoliko koliko mu treba da stigne do SVOG regularnog roka
+//    (REGULAR_DEADLINE), računato preko STVARNO raspoloživih dana
+//    (daysLeftAvailable, koja isključuje tuđe blokirajuće dane). Na sam
+//    regularni rok (poslednji mogući dan), pokupi se BAŠ SVE što je
+//    ostalo — nema "ostavi za sutra", jer sutra je već review dan.
+function simulateForward(startDay){
+  const pools = {};
+  Object.keys(SUBJECTS).forEach(subj=>{
+    pools[subj] = ITEM_POOL[subj].filter(it => !(state.progress[it.id] && state.progress[it.id].done));
+  });
+
+  // Rep prenesen klikom na "Završila za danas": ove stavke se PRIVREMENO
+  // izvade iz svog pool-a (da ih normalna raspodela ne bi opet zakazala na
+  // dan finalizacije ili bilo koji dan pre svog prvog sledećeg pojavljivanja)
+  // i drže na strani dok se, po predmetu, ne stigne do prvog dana POSLE
+  // dana finalizacije na koji se taj predmet ionako prirodno pominje —
+  // tu se prikače na početak tog dana. Ne forsira se poseban dan; čeka se
+  // dan kad predmet stvarno dođe na red.
+  const carryoverFromDay = state.pendingCarryover ? state.pendingCarryover.fromDay : -1;
+  const carryoverBySubj = {};
+  Object.keys(SUBJECTS).forEach(s=> carryoverBySubj[s] = []);
+  if(state.pendingCarryover){
+    state.pendingCarryover.ids.forEach(id=>{
+      const subj = id.split('-')[0];
+      const idx = pools[subj] ? pools[subj].findIndex(it => it.id === id) : -1;
+      if(idx !== -1){
+        carryoverBySubj[subj].push(pools[subj][idx]);
+        pools[subj].splice(idx, 1);
+      }
+    });
+  }
+
+  const schedule = {};
+  for(let d = Math.max(startDay,0); d < DAY_COUNT; d++){
+    schedule[d] = {};
+
+    // 1) blokirajući review dan?
+    let blockingSubj = null, blockingRound = null;
+    Object.keys(REVIEW_PLAN).forEach(s=>{
+      REVIEW_PLAN[s].forEach(r=>{
+        if(r.blocking && r.day === d){ blockingSubj = s; blockingRound = r.round; }
+      });
+    });
+    if(blockingSubj){
+      const s = blockingSubj;
+      const poolS = pools[s];
+      const reviewItems = poolS.filter(it => it.review && (blockingRound ? it.reviewRound === blockingRound : true));
+      if(reviewItems.length){
+        schedule[d][s] = (schedule[d][s] || []).concat(reviewItems.map(t=>t.id));
+        const ids = new Set(reviewItems.map(t=>t.id));
+        pools[s] = poolS.filter(it => !ids.has(it.id));
+      }
+      attachCarryoverIfDue(s, d);
+      continue; // svi ostali predmeti dobijaju nulu ovog dana
+    }
+
+    // 2) deljeni review dan(i) danas — uzmi review stavku(e) tog kruga
+    Object.keys(REVIEW_PLAN).forEach(s=>{
+      REVIEW_PLAN[s].forEach(r=>{
+        if(!r.blocking && r.day === d){
+          const poolS = pools[s];
+          const reviewItems = poolS.filter(it => it.review && (r.round ? it.reviewRound === r.round : true));
+          if(reviewItems.length){
+            schedule[d][s] = (schedule[d][s] || []).concat(reviewItems.map(t=>t.id));
+            const ids = new Set(reviewItems.map(t=>t.id));
+            pools[s] = poolS.filter(it => !ids.has(it.id));
+          }
+        }
+      });
+    });
+
+    // 3) normalna raspodela regularnog gradiva
+    const eligible = Object.keys(SUBJECTS).filter(s =>
+      d <= REGULAR_DEADLINE[s] && pools[s].some(it => !it.review)
+    );
+    eligible.forEach(s=>{
+      const regularItems = pools[s].filter(it => !it.review);
+      let items;
+      if(d === REGULAR_DEADLINE[s]){
+        // poslednji mogući dan za regularno gradivo — pokupi baš sve
+        items = regularItems.length;
+      } else {
+        const daysLeft = daysLeftAvailable(d, REGULAR_DEADLINE[s]);
+        const rate = regularItems.length / daysLeft;
+        const rounded = Math.min(Math.ceil(rate), regularItems.length);
+        items = areaAwareCount(regularItems, rounded);
+      }
+      if(items > 0){
+        const taken = regularItems.slice(0, items);
+        const takenIds = new Set(taken.map(t=>t.id));
+        schedule[d][s] = (schedule[d][s] || []).concat(taken.map(t=>t.id));
+        pools[s] = pools[s].filter(it => !takenIds.has(it.id));
+      }
+    });
+
+    // 4) Da li se neki predmet sa čekajućim repom danas prirodno pominje
+    //    (bilo kroz review iznad, bilo kroz regularnu raspodelu upravo
+    //    sad)? Ako da — rep mu se prikači na početak, ovde, prvi put.
+    Object.keys(SUBJECTS).forEach(s=> attachCarryoverIfDue(s, d));
+  }
+
+  function attachCarryoverIfDue(s, d){
+    if(d <= carryoverFromDay) return;
+    if(!carryoverBySubj[s] || carryoverBySubj[s].length === 0) return;
+    if(schedule[d][s] && schedule[d][s].length){
+      const ids = carryoverBySubj[s].map(it => it.id);
+      schedule[d][s] = ids.concat(schedule[d][s]);
+      carryoverBySubj[s] = [];
+    }
+  }
+
+  // Ako je predmetov ispit stigao a rep se nikad nije prikačio (predmet se
+  // više uopšte ne pominje) — vrati ga u pool da ispravno uđe u "missed".
+  Object.keys(carryoverBySubj).forEach(s=>{
+    if(carryoverBySubj[s].length){
+      pools[s] = pools[s].concat(carryoverBySubj[s]);
+    }
+  });
+
+  // Šta god ostane u pool-u — bilo zato što je rok prošao, bilo zato što
+  // korisnik stvarno kasni u odnosu na plan — je zaostatak.
+  const missed = {};
+  Object.keys(SUBJECTS).forEach(subj=>{
+    if(pools[subj].length > 0){
+      missed[subj] = pools[subj].length;
+    }
+  });
+
+  return {schedule, missed};
+}
+
+function ensureTodayCache(){
+  const idx = effectiveTodayIndex();
+  if(!state.todayCache || state.todayCache.dayIndex !== idx){
+    const {schedule} = simulateForward(idx);
+    state.todayCache = {dayIndex: idx, items: schedule[idx] || {}};
+    state.todayFinalized = false;
+    saveState();
+  }
+}
+
+function itemLookup(id){
+  const subj = id.split('-')[0];
+  return ITEM_POOL[subj].find(it => it.id === id);
+}
+
+// ---------- Render ----------
+function render(){
+  const todayIdx = effectiveTodayIndex();
+  ensureTodayCache();
+  const {schedule, missed} = simulateForward(todayIdx);
+
+  renderTodayCard(todayIdx, missed);
+  renderOverall(missed);
+  renderDays(todayIdx, schedule);
+}
+
+function renderTodayCard(todayIdx, missed){
+  const el = document.getElementById('todayCard');
+
+  const cacheItems = state.todayCache.items || {};
+  let totalItems = 0, doneItems = 0;
+  Object.keys(cacheItems).forEach(subj=>{
+    cacheItems[subj].forEach(id=>{
+      totalItems++;
+      if(state.progress[id] && state.progress[id].done) doneItems++;
+    });
+  });
+
+  const missedEntries = Object.keys(missed);
+  let missedHtml = '';
+  if(missedEntries.length){
+    missedHtml = missedEntries.map(subj=>{
+      const m = missed[subj];
+      return `<div class="deficit-banner"><b>${SUBJECTS[subj].label}</b> neće stići da obradi sve teme do ${dayLabel(SUBJECTS[subj].examDay)} — nedostaje otprilike ${m} ${m===1?'tema':'tema'}. Stvarno zaostaješ za planom za ovaj predmet.</div>`;
+    }).join('');
+  }
+
+  const finalizeBlock = state.todayFinalized
+    ? `<div class="finalized-note">✅ Dan zaključen — spisak za danas je zatvoren.</div>`
+    : `<button class="finalize-btn" data-action="finalize">Završila za danas</button>`;
+
+  el.innerHTML = `
+    <div class="today-card">
+      <div class="today-top">
+        <div class="today-date">${dayLabel(todayIdx)} — danas</div>
+      </div>
+      <div class="today-stats">
+        <div>Plan za danas: <b>${doneItems}/${totalItems}</b> stavki</div>
+      </div>
+      ${missedHtml}
+      ${finalizeBlock}
+    </div>
+  `;
+}
+
+function renderOverall(missed){
+  let totalAll = 0, doneAll = 0;
+  const mini = document.getElementById('subjectMini');
+  mini.innerHTML = '';
+  Object.keys(SUBJECTS).forEach(subj=>{
+    const s = SUBJECTS[subj];
+    const items = ITEM_POOL[subj];
+    const doneCount = items.filter(it => state.progress[it.id] && state.progress[it.id].done).length;
+    totalAll += items.length; doneAll += doneCount;
+    const pct = items.length ? Math.round((doneCount/items.length)*100) : 0;
+    const isMissed = !!missed[subj];
+    const statusHtml = isMissed
+      ? `<span class="subj-status risk">zaostaje ~${missed[subj]} tema</span>`
+      : `<span class="subj-status ok">na vreme</span>`;
+    const row = document.createElement('div');
+    row.className = 'subject-mini-row';
+    row.innerHTML = `
+      <span class="subj-name">${s.label}</span>
+      <span class="mini-bar-bg"><span class="mini-bar-fill" style="width:${pct}%;background:${s.color}"></span></span>
+      <span class="subj-frac">${doneCount}/${items.length}</span>
+      ${statusHtml}
+    `;
+    mini.appendChild(row);
+  });
+  const overallPct = totalAll ? Math.round((doneAll/totalAll)*100) : 0;
+  document.getElementById('overallPct').textContent = overallPct + '%';
+  document.getElementById('overallBar').style.width = overallPct + '%';
+}
+
+function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
+  // mode: 'today' (interactive), 'projected' (locked), 'history' (locked, only done shown)
+  Object.keys(SUBJECTS).forEach(subj=>{
+    const ids = itemsBySubj[subj];
+    if(!ids || !ids.length) return;
+    const s = SUBJECTS[subj];
+    let visibleIds = ids;
+    if(mode === 'history') visibleIds = ids.filter(id => state.progress[id] && state.progress[id].done);
+    if(!visibleIds.length) return;
+    const doneCount = visibleIds.filter(id => state.progress[id] && state.progress[id].done).length;
+    const grp = document.createElement('div');
+    grp.className = 'group';
+    grp.innerHTML = `<div class="group-title"><span class="subj-dot" style="background:${s.color}"></span>${s.label} <span class="group-count">(${doneCount}/${visibleIds.length})</span></div>`;
+
+    const locked = mode !== 'today';
+    const hasAreas = visibleIds.some(id => itemLookup(id).area);
+
+    if(hasAreas){
+      // grupiši dodatno po oblasti, redosled po prvom pojavljivanju tog dana
+      const byArea = [];
+      const areaIndex = {};
+      visibleIds.forEach(id=>{
+        const it = itemLookup(id);
+        const key = it.area || '';
+        if(!(key in areaIndex)){
+          areaIndex[key] = byArea.length;
+          byArea.push({area:key, ids:[]});
+        }
+        byArea[areaIndex[key]].ids.push(id);
+      });
+      byArea.forEach(bucket=>{
+        const areaDone = bucket.ids.filter(id => state.progress[id] && state.progress[id].done).length;
+        const areaDiv = document.createElement('div');
+        areaDiv.className = 'area-group';
+        if(bucket.area){
+          areaDiv.innerHTML = `<div class="area-title">${bucket.area} <span class="area-count">(${areaDone}/${bucket.ids.length})</span></div>`;
+        }
+        bucket.ids.forEach(id=>{
+          const it = itemLookup(id);
+          const done = !!(state.progress[id] && state.progress[id].done);
+          const lab = document.createElement('label');
+          lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
+          lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : ''}${it.text}</span>`;
+          areaDiv.appendChild(lab);
         });
+        grp.appendChild(areaDiv);
+      });
+    } else {
+      visibleIds.forEach(id=>{
+        const it = itemLookup(id);
+        const done = !!(state.progress[id] && state.progress[id].done);
+        const lab = document.createElement('label');
+        lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
+        lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : ''}${it.text}</span>`;
+        grp.appendChild(lab);
       });
     }
-    if(day.review){
-      itemIndex.push({id:`d${di}-review`, subj:day.review.subj, text:day.review.label, planned:estimateMinutes(day.review.label, 6)});
-    }
-    if(day.examCheck){
-      itemIndex.push({id:`d${di}-examcheck`, subj:null, text:day.examCheck, planned:null});
-    }
+
+    container.appendChild(grp);
   });
 }
 
-function render(){
+function renderDays(todayIdx, schedule){
   const container = document.getElementById('days');
   container.innerHTML = '';
-  DAYS.forEach((day, di)=>{
-    const dayEl = document.createElement('div');
-    dayEl.className = 'day';
-    dayEl.dataset.day = di;
 
-    let dayTotal = 0, dayChecked = 0;
-    if(day.groups) day.groups.forEach((g, gi)=>{
-      g.items.forEach((_, ii)=>{
-        dayTotal++;
-        if(progress[`d${di}-g${gi}-i${ii}`]) dayChecked++;
-      });
-    });
-    if(day.review){
-      dayTotal++;
-      if(progress[`d${di}-review`]) dayChecked++;
-    }
-    if(day.examCheck){
-      dayTotal++;
-      if(progress[`d${di}-examcheck`]) dayChecked++;
-    }
+  for(let d=0; d<DAY_COUNT; d++){
+    const dayEl = document.createElement('div');
+    dayEl.className = 'day' + (d===todayIdx ? ' open is-today' : '') + (openDays.has(String(d)) ? ' open' : '');
+    dayEl.dataset.day = d;
 
     const header = document.createElement('div');
     header.className = 'day-header';
+    const exam = EXAMS[d];
+    let examFlagHtml = '';
+    let examSubjLabel = '';
+    if(exam){
+      examSubjLabel = SUBJECTS[exam.subj].label;
+      examFlagHtml = `<span class="exam-flag">🎓 ${exam.type.toUpperCase()} — ${examSubjLabel}</span>`;
+    }
+    let tagHtml = '';
+    if(d < todayIdx) tagHtml = `<span class="day-tag past">prošlo</span>`;
+    else if(d > todayIdx) tagHtml = `<span class="day-tag projected">projekcija</span>`;
+
+    let dayTotal=0, dayDone=0;
+    const itemsForDay = (d===todayIdx) ? (state.todayCache.items||{}) : (schedule[d]||{});
+    if(d < todayIdx){
+      // istorijski prikaz: broji samo stvarno završeno tog datuma
+      Object.keys(SUBJECTS).forEach(subj=>{
+        ITEM_POOL[subj].forEach(it=>{
+          const p = state.progress[it.id];
+          if(p && p.done && p.completedAt){
+            const dt = new Date(p.completedAt);
+            if(dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===7+d){
+              dayTotal++; dayDone++;
+            }
+          }
+        });
+      });
+    } else {
+      Object.keys(itemsForDay).forEach(subj=>{
+        itemsForDay[subj].forEach(id=>{
+          dayTotal++;
+          if(state.progress[id] && state.progress[id].done) dayDone++;
+        });
+      });
+    }
+
     header.innerHTML = `
-      <div class="day-title">${day.date}${day.examFlag ? `<span class="exam-flag">🎓 ${day.examFlag}</span>`:''}</div>
+      <div class="day-title">${dayLabel(d)}${examFlagHtml}${tagHtml}</div>
       <div style="display:flex;align-items:center;">
-        <div class="day-progress">${dayTotal? `${dayChecked}/${dayTotal}` : ''}</div>
+        <div class="day-progress">${dayTotal? `${dayDone}/${dayTotal}`:''}</div>
         <span class="chevron">▶</span>
       </div>
     `;
-    header.addEventListener('click', ()=>{
-      dayEl.classList.toggle('open');
-    });
+    header.addEventListener('click', ()=>{ dayEl.classList.toggle('open'); trackOpenState(); });
 
     const body = document.createElement('div');
     body.className = 'day-body';
 
-    if(day.examCheck){
-      const id = `d${di}-examcheck`;
+    if(exam){
+      const answer = state.examAnswers[d];
+      const verb = exam.type === 'kolokvijum' ? 'kolokvijum' : 'ispit';
       const ec = document.createElement('div');
       ec.className = 'examcheck-block';
-      ec.innerHTML = `<label class="item"><input type="checkbox" data-id="${id}" ${progress[id]?'checked':''}/><span class="txt">${day.examCheck}</span></label>`;
+      ec.innerHTML = `
+        <label class="item"><input type="checkbox" data-examcheck="${d}" data-examval="yes" ${answer==='yes'?'checked':''}/><span class="txt">Izašla sam na ${verb} — ${examSubjLabel}</span></label>
+        <label class="item"><input type="checkbox" data-examcheck="${d}" data-examval="no" ${answer==='no'?'checked':''}/><span class="txt">Nisam izašla na ${verb} — ${examSubjLabel}</span></label>
+      `;
       body.appendChild(ec);
     }
 
-    if(day.note){
-      const n = document.createElement('div');
-      n.className = 'note';
-      n.textContent = day.note;
-      body.appendChild(n);
-    }
-
-    if(day.groups){
-      day.groups.forEach((g, gi)=>{
-        const s = SUBJECTS[g.subj];
-        const checkedInGroup = g.items.filter((_,ii)=>progress[`d${di}-g${gi}-i${ii}`]).length;
-        const grp = document.createElement('div');
-        grp.className = 'group';
-        grp.innerHTML = `<div class="group-title ${s.cls}">${s.label}${g.groupNote ? ` <span class="group-note">(${g.groupNote})</span>`:''} <span class="group-count">(${checkedInGroup}/${g.items.length})</span></div>`;
-        g.items.forEach((text, ii)=>{
-          const id = `d${di}-g${gi}-i${ii}`;
-          const planned = getPlanned(g.subj, text);
-          const lab = document.createElement('label');
-          lab.className = 'item';
-          lab.innerHTML = `<input type="checkbox" data-id="${id}" ${progress[id]?'checked':''}/><span class="txt">${text} <span class="planned-min">(~${planned} min)</span></span>`;
-          grp.appendChild(lab);
-
-          const info = diffInfo(planned, actualMin[id]);
-          const cmt = info ? itemComment(info.cls, id+':'+actualMin[id]) : '';
-          const actualRow = document.createElement('div');
-          actualRow.className = 'actual-row';
-          actualRow.innerHTML = `
-            <span>Potrošeno vremena:</span>
-            <input type="number" min="0" placeholder="min" data-actual-id="${id}" value="${actualMin[id] !== undefined ? actualMin[id] : ''}">
-            ${info ? `<span class="diff-badge ${info.cls}">${info.text}</span><span class="roast ${info.cls}">${cmt}</span>` : ''}
-          `;
-          grp.appendChild(actualRow);
-
-          const commentRow = document.createElement('div');
-          commentRow.className = 'comment-row';
-          commentRow.innerHTML = `
-            <textarea class="comment-input" placeholder="komentar (opciono)" data-comment-id="${id}">${itemComments[id] || ''}</textarea>
-            ${itemComments[id] ? `<div class="comment-reply">${pickComment(commentReplies, id+':'+itemComments[id])}</div>` : ''}
-          `;
-          grp.appendChild(commentRow);
-        });
-        body.appendChild(grp);
-        if(g.doneNote){
-          const n = document.createElement('div');
-          n.className = 'note done';
-          n.textContent = g.doneNote;
-          body.appendChild(n);
-        }
-      });
-    }
-
-    if(day.review){
-      const id = `d${di}-review`;
-      const s = SUBJECTS[day.review.subj];
-      const planned = estimateMinutes(day.review.label, 6);
-      const rb = document.createElement('div');
-      rb.className = 'review-block';
-      rb.innerHTML = `<label class="item"><input type="checkbox" data-id="${id}" ${progress[id]?'checked':''}/><span class="txt" style="color:${s.color}">${day.review.label} <span class="planned-min">(~${planned} min)</span></span></label>`;
-
-      const info = diffInfo(planned, actualMin[id]);
-      const cmt = info ? itemComment(info.cls, id+':'+actualMin[id]) : '';
-      const actualRow = document.createElement('div');
-      actualRow.className = 'actual-row';
-      actualRow.innerHTML = `
-        <span>Potrošeno vremena:</span>
-        <input type="number" min="0" placeholder="min" data-actual-id="${id}" value="${actualMin[id] !== undefined ? actualMin[id] : ''}">
-        ${info ? `<span class="diff-badge ${info.cls}">${info.text}</span><span class="roast ${info.cls}">${cmt}</span>` : ''}
-      `;
-      rb.appendChild(actualRow);
-
-      const commentRow = document.createElement('div');
-      commentRow.className = 'comment-row';
-      commentRow.innerHTML = `
-        <textarea class="comment-input" placeholder="komentar (opciono)" data-comment-id="${id}">${itemComments[id] || ''}</textarea>
-        ${itemComments[id] ? `<div class="comment-reply">${pickComment(commentReplies, id+':'+itemComments[id])}</div>` : ''}
-      `;
-      rb.appendChild(commentRow);
-
-      body.appendChild(rb);
+    if(d < todayIdx){
+      const beforeCount = body.children.length;
+      renderGroupsForDay(body, d, itemsForDayHistory(d), 'history');
+      if(body.children.length === beforeCount){
+        const n = document.createElement('div');
+        n.className = 'empty-note';
+        n.textContent = 'Ništa evidentirano ovog dana.';
+        body.appendChild(n);
+      }
+    } else if(d === todayIdx){
+      renderGroupsForDay(body, d, state.todayCache.items || {}, 'today');
+    } else {
+      const beforeCount = body.children.length;
+      renderGroupsForDay(body, d, schedule[d] || {}, 'projected');
+      if(body.children.length === beforeCount){
+        const n = document.createElement('div');
+        n.className = 'empty-note';
+        n.textContent = 'Za sada ništa raspoređeno (ili je sve gradivo do ovog dana već završeno).';
+        body.appendChild(n);
+      }
     }
 
     dayEl.appendChild(header);
     dayEl.appendChild(body);
     container.appendChild(dayEl);
-  });
+  }
 
-  container.querySelectorAll('input[type=checkbox]').forEach(cb=>{
-    cb.addEventListener('change', async (e)=>{
-      const id = e.target.dataset.id;
-      progress[id] = e.target.checked;
-      trackOpenState();
-      saveProgress();
-      render();
-      restoreOpenState(openDays);
-      updateOverall();
-    });
-  });
+  attachDayListeners();
+}
 
-  container.querySelectorAll('input[data-actual-id]').forEach(inp=>{
-    inp.addEventListener('click', e=>e.stopPropagation());
-    inp.addEventListener('change', (e)=>{
-      e.stopPropagation();
-      const id = e.target.dataset.actualId;
-      const v = e.target.value;
-      if(v !== '' && v !== null) actualMin[id] = parseInt(v,10);
-      else delete actualMin[id];
-      trackOpenState();
-      saveProgress();
-      render();
-      restoreOpenState(openDays);
-      updateOverall();
-    });
+function itemsForDayHistory(d){
+  // vraća {subj:[ids]} svih stavki koje su završene tog kalendarskog dana
+  const out = {};
+  Object.keys(SUBJECTS).forEach(subj=>{
+    const ids = ITEM_POOL[subj].filter(it=>{
+      const p = state.progress[it.id];
+      if(!p || !p.done || !p.completedAt) return false;
+      const dt = new Date(p.completedAt);
+      return dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===7+d;
+    }).map(it=>it.id);
+    if(ids.length) out[subj] = ids;
   });
-
-  container.querySelectorAll('textarea[data-comment-id]').forEach(ta=>{
-    ta.addEventListener('click', e=>e.stopPropagation());
-    ta.addEventListener('change', (e)=>{
-      e.stopPropagation();
-      const id = e.target.dataset.commentId;
-      const v = e.target.value;
-      if(v && v.trim() !== '') itemComments[id] = v;
-      else delete itemComments[id];
-      trackOpenState();
-      saveProgress();
-      render();
-      restoreOpenState(openDays);
-      updateOverall();
-    });
-  });
+  return out;
 }
 
 function trackOpenState(){
@@ -874,140 +1206,75 @@ function trackOpenState(){
     else openDays.delete(d.dataset.day);
   });
 }
-function restoreOpenState(set){
+
+function attachDayListeners(){
+  document.querySelectorAll('input[data-item-id]').forEach(cb=>{
+    cb.addEventListener('click', e=>e.stopPropagation());
+    cb.addEventListener('change', (e)=>{
+      const id = e.target.dataset.itemId;
+      if(e.target.checked){
+        state.progress[id] = {done:true, completedAt: new Date().toISOString()};
+      } else {
+        state.progress[id] = {done:false, completedAt:null};
+      }
+      saveState();
+      render();
+    });
+  });
+
+  document.querySelectorAll('input[data-examcheck]').forEach(cb=>{
+    cb.addEventListener('click', e=>e.stopPropagation());
+    cb.addEventListener('change', (e)=>{
+      const d = e.target.dataset.examcheck;
+      const val = e.target.dataset.examval;
+      state.examAnswers[d] = e.target.checked ? val : null;
+      saveState();
+      render();
+      restoreOpenState();
+    });
+  });
+}
+
+function restoreOpenState(){
   document.querySelectorAll('.day').forEach(d=>{
-    if(set.has(d.dataset.day)) d.classList.add('open');
+    if(openDays.has(d.dataset.day)) d.classList.add('open');
   });
 }
 
 document.addEventListener('click', (e)=>{
-  if(e.target.closest('.day-header')){
-    setTimeout(trackOpenState, 0);
+  if(e.target.closest('[data-action="finalize"]')){
+    // Sve što je danas bilo na spisku a NIJE čekirano — prebacuje se na
+    // PRVI SLEDEĆI dan kad se taj predmet ponovo prirodno pomene u
+    // rasporedu (ne nužno sutra — čeka svoj red, po predmetu posebno).
+    // Spaja se sa eventualnim već čekajućim repom (ako je "završila za
+    // danas" kliknuto više dana zaredom pre nego što se prethodni rep
+    // stigao prikačiti), ne prepisuje ga.
+    const todayIdx = effectiveTodayIndex();
+    const cacheItems = (state.todayCache && state.todayCache.items) || {};
+    const uncheckedIds = [];
+    Object.keys(cacheItems).forEach(subj=>{
+      cacheItems[subj].forEach(id=>{
+        if(!(state.progress[id] && state.progress[id].done)) uncheckedIds.push(id);
+      });
+    });
+    const existingIds = (state.pendingCarryover && state.pendingCarryover.ids) || [];
+    const mergedIds = Array.from(new Set(existingIds.concat(uncheckedIds)));
+    state.pendingCarryover = mergedIds.length
+      ? {fromDay: todayIdx, ids: mergedIds}
+      : null;
+    state.todayFinalized = true;
+    saveState();
+    render();
+    restoreOpenState();
   }
 });
 
-function updateOverall(){
-  const total = itemIndex.length;
-  const checked = itemIndex.filter(it=>progress[it.id]).length;
-  const pct = total ? Math.round((checked/total)*100) : 0;
-  document.getElementById('overallPct').textContent = pct + '%';
-  document.getElementById('overallBar').style.width = pct + '%';
-
-  const mini = document.getElementById('subjectMini');
-  mini.innerHTML = '';
-  let grandDrift = 0, grandCount = 0;
-  Object.keys(SUBJECTS).forEach(key=>{
-    const s = SUBJECTS[key];
-    const items = itemIndex.filter(it=>it.subj===key);
-    if(items.length === 0) return;
-    const subChecked = items.filter(it=>progress[it.id]).length;
-
-    let drift = 0, dcount = 0;
-    items.forEach(it=>{
-      if(it.planned !== null && actualMin[it.id] !== undefined){
-        drift += actualMin[it.id] - it.planned;
-        dcount++;
-      }
-    });
-    grandDrift += drift; grandCount += dcount;
-
-    let driftTxt = '';
-    if(dcount > 0){
-      const cls = drift === 0 ? 'ontime' : (drift > 0 ? 'late' : 'early');
-      const label = drift === 0 ? 'tačno' : (drift > 0 ? `+${drift} min` : `${drift} min`);
-      driftTxt = ` · <span class="${cls}">${label}</span>`;
-    }
-
-    const span = document.createElement('span');
-    span.innerHTML = `<span class="dot" style="background:${s.color}"></span>${s.label}: ${subChecked}/${items.length}${driftTxt}`;
-    mini.appendChild(span);
-  });
-
-  let driftLine = document.getElementById('overallDriftLine');
-  if(!driftLine){
-    driftLine = document.createElement('div');
-    driftLine.id = 'overallDriftLine';
-    driftLine.className = 'subject-drift-line';
-    document.querySelector('.overall').appendChild(driftLine);
-  }
-  if(grandCount > 0){
-    const cls = grandDrift === 0 ? 'ontime' : (grandDrift > 0 ? 'late' : 'early');
-    const label = grandDrift === 0 ? 'tačno po planu' : (grandDrift > 0 ? `u minusu ${grandDrift} min` : `u plusu ${-grandDrift} min`);
-    driftLine.innerHTML = `Ukupno odstupanje od plana (${grandCount} uneto): <span class="${cls}">${label}</span>`;
-  } else {
-    driftLine.innerHTML = '';
-  }
-}
-
-function showStorageWarning(show){
-  const el = document.getElementById('storageWarning');
-  if(show) el.classList.add('show');
-  else el.classList.remove('show');
-}
-
-// This file is meant to be opened standalone / hosted externally (e.g.
-// GitHub Pages), not rendered inside Claude.ai — so it uses the browser's
-// own localStorage rather than Claude's window.storage API (which only
-// exists inside a Claude.ai artifact iframe and would otherwise make
-// this warning fire permanently on any external host).
-function verifyStorageWorks(){
-  const canaryKey = STORAGE_KEY + '-canary';
-  const canaryVal = String(Date.now());
-  try{
-    localStorage.setItem(canaryKey, canaryVal);
-    const readBack = localStorage.getItem(canaryKey);
-    localStorage.removeItem(canaryKey);
-    return readBack === canaryVal;
-  }catch(err){
-    return false;
-  }
-}
-
-function loadProgress(){
-  try{
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const data = raw ? JSON.parse(raw) : {};
-    if(data && (data.progress || data.actualMin || data.itemComments)){
-      progress = data.progress || {};
-      actualMin = data.actualMin || {};
-      itemComments = data.itemComments || {};
-    } else {
-      // stari format (samo checkbox-ovi, pre uvođenja praćenja vremena)
-      progress = data || {};
-      actualMin = {};
-      itemComments = {};
-    }
-  }catch(err){
-    progress = {};
-    actualMin = {};
-    itemComments = {};
-  }
-}
-
-function saveProgress(){
-  try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({progress, actualMin, itemComments}));
-    if(!storageOk){
-      storageOk = true;
-      showStorageWarning(false);
-    }
-  }catch(err){
-    storageOk = false;
-    showStorageWarning(true);
-    console.error('Storage save error', err);
-  }
-}
-
 (function init(){
-  buildIndex();
-  loadProgress();
-  const worksNow = verifyStorageWorks();
-  storageOk = worksNow;
-  showStorageWarning(!worksNow);
+  loadState();
+  storageOk = verifyStorageWorks();
+  showStorageWarning(!storageOk);
+  openDays.add(String(effectiveTodayIndex()));
   render();
-  updateOverall();
-  const firstDay = document.querySelector('.day');
-  if(firstDay){ firstDay.classList.add('open'); openDays.add('0'); }
 })();
 </script>
 </body>
