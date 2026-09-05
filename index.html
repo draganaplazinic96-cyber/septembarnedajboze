@@ -901,7 +901,7 @@ function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,
 // ---------- Dnevni plan zauzetosti (radni/slobodan dan) ----------
 const DEFAULT_WORK_FROM = '13:30';
 const DEFAULT_WORK_TO = '23:30';
-const WAKE_TIME = '07:30';
+const WAKE_TIME = '08:00';
 const FREE_WAKE = '12:00';
 const FREE_SLEEP = '23:00';
 
@@ -910,9 +910,31 @@ function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.flo
 
 function getDayPlan(d){
   const p = state.dayPlan && state.dayPlan[String(d)];
-  if(p && p.type) return p;
-  return {type:'radni', workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO};
+  if(p && p.type) return Object.assign({extra:{enabled:false,from:'16:00',to:'17:00'}}, p, {extra: Object.assign({enabled:false,from:'16:00',to:'17:00'}, p.extra||{})});
+  return {type:'radni', workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO, extra:{enabled:false,from:'16:00',to:'17:00'}};
 }
+
+// Oduzima period [busyStart,busyEnd) od intervala [winStart,winEnd) i vraća
+// preostale segmente (0, 1 ili 2 komada — ako je obaveza nasred prozora,
+// prozor se cepa na dva dela umesto da se ceo izgubi).
+function subtractBusy(winStart, winEnd, busyStart, busyEnd){
+  if(winEnd<=winStart) return [];
+  if(busyEnd==null || busyStart==null || busyEnd<=busyStart || busyEnd<=winStart || busyStart>=winEnd) return [[winStart,winEnd]];
+  const segs = [];
+  if(busyStart > winStart) segs.push([winStart, Math.min(busyStart,winEnd)]);
+  if(busyEnd < winEnd) segs.push([Math.max(busyEnd,winStart), winEnd]);
+  return segs.filter(([s,e])=>e>s);
+}
+function windowSegments(winStart, winEnd, extra){
+  let segs = [[winStart,winEnd]];
+  if(extra && extra.enabled && extra.from && extra.to){
+    const exStart = timeToMinutes(extra.from), exEnd = timeToMinutes(extra.to);
+    segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd));
+  }
+  return segs.filter(([s,e])=>e>s);
+}
+function segsTotalMin(segs){ return segs.reduce((a,[s,e])=>a+(e-s),0); }
+function segsLabel(segs){ return segs.map(([s,e])=>`${minutesToTime(s)}–${minutesToTime(e)}`).join(' i '); }
 
 // Subjektivna težina predmeta (1=najteže, korisno samo za odluku ko dobija
 // jutarnji/svežiji termin kad se dan deli na dva prozora — ne utiče na to
@@ -920,11 +942,20 @@ function getDayPlan(d){
 // datumima ispita i granicama tematskih blokova).
 const DIFFICULTY_RANK = {pseu:1, ess:2, spi:3, spt:4, ibo:5, eng:6};
 
+// Stvarni obim gradiva (izmereno iz priloženih skripti — broj reči po
+// predmetu / broj tema = prosečna dužina jedne teme). Koristi se da se
+// jutro/veče ne dele po broju stavki nego po stvarnoj količini teksta.
+const AVG_WORDS_PER_TOPIC = {ess:424, ibo:610, spi:981, pseu:430, spt:561};
+
+// Ispod ovoga prozor NIJE realna sesija (npr. 30 min veče posle kasne
+// smene) — ne predlaže se kao "uči", samo se napomene da je prekratko.
+const MIN_VIABLE_WINDOW_MIN = 60;
+
 function subjectListForSplit(itemsBySubj){
   const list = [];
   Object.keys(SUBJECTS).forEach(s=>{
     if(itemsBySubj[s] && itemsBySubj[s].length){
-      list.push({subj:s, count:itemsBySubj[s].length});
+      list.push({subj:s, count:itemsBySubj[s].length, weight: itemsBySubj[s].length * (AVG_WORDS_PER_TOPIC[s]||500)});
     }
   });
   list.sort((a,b)=> (DIFFICULTY_RANK[a.subj]||99) - (DIFFICULTY_RANK[b.subj]||99));
@@ -932,17 +963,17 @@ function subjectListForSplit(itemsBySubj){
 }
 
 // Deli predmete tog dana na jutarnji/večernji prozor proporcionalno dužini
-// prozora (u minutima) — pošto ne postoji procena koliko traje jedna tema,
-// ovo je podela po BROJU stavki, ne po stvarnom vremenu. Cele predmete, ne seče.
+// prozora (u minutima) I stvarnom obimu teksta (weight, ne broj stavki).
+// Cele predmete, ne seče.
 function splitSubjectsByWindows(list, morningMin, eveningMin){
   if(!list.length) return {morning:[], evening:[]};
   if(morningMin <= 0) return {morning:[], evening:list.map(x=>x.subj)};
   if(eveningMin <= 0) return {morning:list.map(x=>x.subj), evening:[]};
-  const total = list.reduce((a,b)=>a+b.count,0);
+  const total = list.reduce((a,b)=>a+b.weight,0);
   const morningTarget = total * (morningMin/(morningMin+eveningMin));
   let acc=0; const morning=[]; const evening=[];
   list.forEach(item=>{
-    if(acc < morningTarget){ morning.push(item.subj); acc += item.count; }
+    if(acc < morningTarget){ morning.push(item.subj); acc += item.weight; }
     else evening.push(item.subj);
   });
   if(!morning.length){ morning.push(evening.shift()); }
@@ -953,31 +984,71 @@ function splitSubjectsByWindows(list, morningMin, eveningMin){
 function studySuggestionText(d, itemsBySubj){
   const p = getDayPlan(d);
   const fullList = subjectListForSplit(itemsBySubj || {});
-  const hasEng = fullList.some(x=>x.subj==='eng');
-  const list = fullList.filter(x=>x.subj!=='eng'); // eng ne ulazi u proporciju — dodaje se automatski, ne oduzima vreme
   const codes = arr => arr.map(subjectCode).join(', ');
+
+  if(EXAMS[d]){
+    const subs = fullList.map(x=>x.subj);
+    const hasExtra = p.extra && p.extra.enabled && p.extra.from && p.extra.to;
+    const extraNote = hasExtra ? `${p.extra.from}–${p.extra.to}` : null;
+    if(p.type === 'slobodan'){
+      // Ne znamo koliko ispit traje, pa nema jutro/veče — samo predmeti posle ispita.
+      // Dodatna obaveza se ne može tačno oduzeti (nema od čega), samo se napominje.
+      const base = subs.length ? `Predlog: posle ispita — ${codes(subs)}` : 'Predlog: posle ispita — nema novih tema raspoređenih.';
+      return hasExtra ? `${base} (pazi, obaveza ${extraNote})` : base;
+    }
+    // Radni dan + ispit: jutro ne postoji uopšte, veče je otvoreno (koliko izdržiš),
+    // ali se dodatna obaveza ipak oduzima/cepa ako upadne u to veče.
+    const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
+    const OPEN_END = 100000;
+    let segs = [[workToMin, OPEN_END]];
+    if(hasExtra){
+      const exStart = timeToMinutes(p.extra.from), exEnd = timeToMinutes(p.extra.to);
+      segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd));
+    }
+    const label = segs.map(([s,e])=> e===OPEN_END ? `${minutesToTime(s)}–...` : `${minutesToTime(s)}–${minutesToTime(e)}`).join(' i ');
+    const suf = subs.length ? ` (${codes(subs)})` : '';
+    return `Predlog: učenje — veče ${label}${suf}`;
+  }
+
+  const hasEng = fullList.some(x=>x.subj==='eng');
+  const list = fullList.filter(x=>x.subj!=='eng');
   if(p.type === 'slobodan'){
+    const segs = windowSegments(timeToMinutes(FREE_WAKE), timeToMinutes(FREE_SLEEP), p.extra);
     const suf = fullList.length ? ` (${codes(fullList.map(x=>x.subj))})` : '';
-    return `Predlog: učenje ${FREE_WAKE}–${FREE_SLEEP}${suf} (+ pauze, ručak, obaveze)`;
+    if(!segs.length) return 'Predlog: danas realno nema prozora za učenje (dodatne obaveze pojele ceo dan).';
+    return `Predlog: učenje ${segsLabel(segs)}${suf} (+ pauze, ručak, obaveze)`;
   }
   const wakeMin = timeToMinutes(WAKE_TIME);
   const workFromMin = timeToMinutes(p.workFrom || DEFAULT_WORK_FROM);
   const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
-  const morningMin = Math.max(0, workFromMin - wakeMin);
-  const sleepMin = 24*60;
-  const eveningMin = (workToMin < sleepMin && (sleepMin - workToMin) >= 30) ? (sleepMin - workToMin) : 0;
-  const {morning, evening} = splitSubjectsByWindows(list, morningMin, eveningMin);
+  const sleepMin = 24*60 + 30;
+  const morningSegs = workFromMin > wakeMin ? windowSegments(wakeMin, workFromMin, p.extra) : [];
+  const eveningSegs = workToMin < sleepMin ? windowSegments(workToMin, sleepMin, p.extra) : [];
+  const morningMinRaw = segsTotalMin(morningSegs);
+  const eveningMinRaw = segsTotalMin(eveningSegs);
+  const morningViable = morningMinRaw >= MIN_VIABLE_WINDOW_MIN;
+  const eveningViable = eveningMinRaw >= MIN_VIABLE_WINDOW_MIN;
+  const {morning, evening} = splitSubjectsByWindows(list, morningViable?morningMinRaw:0, eveningViable?eveningMinRaw:0);
+
+  // Engleski ide baš u prozor koji je PREKRATAK za ozbiljne predmete —
+  // njemu to ne smeta, njemu ionako ne treba puna sesija ni koncentracija.
+  let engMorning=false, engEvening=false;
   if(hasEng){
-    if(eveningMin > 0) evening.unshift('eng');
-    else if(morningMin > 0) morning.unshift('eng');
+    const morningShort = morningMinRaw>0 && !morningViable;
+    const eveningShort = eveningMinRaw>0 && !eveningViable;
+    if(eveningShort) engEvening = true;
+    else if(morningShort) engMorning = true;
+    else if(eveningViable) engEvening = true;
+    else if(morningViable) engMorning = true;
   }
+  if(engMorning) morning.unshift('eng');
+  if(engEvening) evening.unshift('eng');
+
   const parts = [];
-  if(morningMin > 0){
-    parts.push(`jutro ${minutesToTime(wakeMin)}–${minutesToTime(workFromMin)}${morning.length?` (${codes(morning)})`:''}`);
-  }
-  if(eveningMin > 0){
-    parts.push(`veče ${minutesToTime(workToMin)}–00:00${evening.length?` (${codes(evening)})`:''}`);
-  }
+  if(morningViable) parts.push(`jutro ${segsLabel(morningSegs)}${morning.length?` (${codes(morning)})`:''}`);
+  else if(engMorning) parts.push(`jutro ${segsLabel(morningSegs)} (ENG)`);
+  if(eveningViable) parts.push(`veče ${segsLabel(eveningSegs)}${evening.length?` (${codes(evening)})`:''}`);
+  else if(engEvening) parts.push(`veče ${segsLabel(eveningSegs)} (ENG)`);
   if(!parts.length) return 'Predlog: danas realno nema prozora za učenje — samo brzi pregled ako stigneš.';
   return 'Predlog: učenje — ' + parts.join(' i ');
 }
@@ -1189,6 +1260,10 @@ function renderDays(todayIdx, schedule){
         <label><input type="radio" name="daytype-${d}" data-plan-day="${d}" data-plan-field="type" value="slobodan" ${plan.type==='slobodan'?'checked':''}/> Slobodan dan</label>
       </div>
       ${plan.type!=='slobodan' ? `<div class="plan-times">Posao od <input type="time" data-plan-day="${d}" data-plan-field="workFrom" value="${plan.workFrom||DEFAULT_WORK_FROM}"/> do <input type="time" data-plan-day="${d}" data-plan-field="workTo" value="${plan.workTo||DEFAULT_WORK_TO}"/></div>` : ''}
+      <div class="plan-times">
+        <label><input type="checkbox" data-plan-day="${d}" data-plan-field="extraEnabled" ${plan.extra&&plan.extra.enabled?'checked':''}/> Dodatne obaveze</label>
+        ${(plan.extra&&plan.extra.enabled) ? ` od <input type="time" data-plan-day="${d}" data-plan-field="extraFrom" value="${plan.extra.from||'16:00'}"/> do <input type="time" data-plan-day="${d}" data-plan-field="extraTo" value="${plan.extra.to||'17:00'}"/>` : ''}
+      </div>
       <div class="plan-suggestion">${studySuggestionText(d, itemsForDay)}</div>
     `;
     body.appendChild(planEl);
@@ -1263,8 +1338,13 @@ function attachDayListeners(){
       const d = e.target.dataset.planDay;
       const field = e.target.dataset.planField;
       if(!state.dayPlan) state.dayPlan = {};
-      const cur = Object.assign({type:'radni', workFrom:DEFAULT_WORK_FROM, workTo:DEFAULT_WORK_TO}, state.dayPlan[d] || {});
-      cur[field] = e.target.value;
+      const prev = state.dayPlan[d] || {};
+      const cur = Object.assign({type:'radni', workFrom:DEFAULT_WORK_FROM, workTo:DEFAULT_WORK_TO}, prev);
+      cur.extra = Object.assign({enabled:false, from:'16:00', to:'17:00'}, prev.extra||{});
+      if(field === 'extraEnabled') cur.extra.enabled = e.target.checked;
+      else if(field === 'extraFrom') cur.extra.from = e.target.value;
+      else if(field === 'extraTo') cur.extra.to = e.target.value;
+      else cur[field] = e.target.value;
       state.dayPlan[d] = cur;
       saveState();
       render();
