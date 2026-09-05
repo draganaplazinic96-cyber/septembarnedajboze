@@ -899,8 +899,8 @@ function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.g
 function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,START_DAY+i); return Math.ceil((e-t)/86400000); }
 
 // ---------- Dnevni plan zauzetosti (radni/slobodan dan) ----------
-const DEFAULT_WORK_FROM = '13:00';
-const DEFAULT_WORK_TO = '22:00';
+const DEFAULT_WORK_FROM = '13:30';
+const DEFAULT_WORK_TO = '23:30';
 const WAKE_TIME = '07:30';
 const FREE_WAKE = '12:00';
 const FREE_SLEEP = '23:00';
