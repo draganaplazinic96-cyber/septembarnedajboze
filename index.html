@@ -60,6 +60,14 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:pointer;font-size:.82rem;line-height:1.42;border-bottom:1px dotted rgba(117,111,102,.22)}label.item:hover{background:rgba(23,32,29,.035)}label.item input{margin-top:2px;accent-color:var(--ink);width:15px;height:15px;flex-shrink:0;cursor:pointer}label.item input:checked~span.txt{color:#918b82;text-decoration:line-through;opacity:.72}label.item.review span.txt{font-weight:650}label.item.locked{cursor:default;opacity:.62}label.item.locked input{cursor:default}.examcheck-block{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}.examcheck-block label.item{flex:1;min-width:180px;justify-content:center;text-align:center;font-weight:700;font-size:.74rem;background:transparent;border:1px solid var(--line);padding:8px}.examcheck-block label.item input{display:none}.examcheck-block label.item input:checked~span.txt{color:var(--ink);opacity:1;text-decoration:none}.examcheck-block label.item:has(input:checked){border-color:var(--ink);background:var(--paper-2)}
 .loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}.empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
 .footer-stamp{text-align:center;margin:28px 0 0;color:var(--muted);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}
+
+.day-plan-control{background:rgba(23,32,29,.035);border:1px solid var(--soft);padding:9px 11px;margin-bottom:12px;font-size:.76rem}
+.day-plan-control .plan-row{display:flex;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.day-plan-control label{display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600}
+.day-plan-control input[type="radio"]{accent-color:var(--ink);cursor:pointer}
+.day-plan-control .plan-times{display:flex;align-items:center;gap:6px;margin-bottom:6px;color:var(--muted);flex-wrap:wrap}
+.day-plan-control .plan-times input[type="time"]{border:1px solid var(--line);background:var(--panel);font-family:var(--sans);font-size:.76rem;padding:2px 4px}
+.day-plan-control .plan-suggestion{color:var(--accent);font-weight:650}
 @media(max-width:720px){body{padding:20px 12px 60px}.command-mark{display:none}.exams{grid-template-columns:1fr 1fr}.route-date{font-size:.56rem}.daily-plans{grid-template-columns:1fr}.subject-mini-row{grid-template-columns:1fr 1fr 45px}.subj-status{grid-column:2/4;text-align:right;margin-top:-5px}.mission-days{text-align:left}#days{margin-left:43px;padding-left:15px}.day-title:before{left:-65px;width:40px}.day:before{left:-22px}}
 @media(max-width:480px){.command-title{font-size:3.25rem}.exams{grid-template-columns:1fr}.mission-strip{padding:15px 13px}.route{gap:2px}.route-code{font-size:.58rem}.route-date{font-size:.5rem}.today-date{font-size:1.65rem}.subject-mini-row{grid-template-columns:1fr 58px}.mini-bar-bg{grid-column:1/3}.subj-frac{grid-column:2}.subj-status{grid-column:1;text-align:left;grid-row:3}.day-title{font-size:.95rem}}
 
@@ -118,24 +126,6 @@ label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:po
     <div><b>21. septembar, 9:00</b> — Istorija balkanskih odnosa</div>
     <div><b>23. septembar, 9:00</b> — Politički sistem Evropske unije</div>
     <div><b>26. septembar, 9:00</b> — Savremena politička teorija</div>
-  </div>
-
-  <div class="daily-plans">
-    <div class="daily-plan-col">
-      <div class="daily-plan-title">Plan radnog dana</div>
-      <div class="daily-plan-row"><span class="time">7:30</span><span class="act">Ustajanje i doručak</span></div>
-      <div class="daily-plan-row"><span class="time">8:00</span><span class="act">Učenje</span></div>
-      <div class="daily-plan-row"><span class="time">13:00</span><span class="act">Posao i ručak</span></div>
-      <div class="daily-plan-row"><span class="time">23:30</span><span class="act">Večera</span></div>
-      <div class="daily-plan-row"><span class="time">0:00</span><span class="act">Spavanje</span></div>
-    </div>
-    <div class="daily-plan-col">
-      <div class="daily-plan-title">Plan slobodnog dana</div>
-      <div class="daily-plan-row"><span class="time">11:00</span><span class="act">Ustajanje i doručak</span></div>
-      <div class="daily-plan-row"><span class="time">12:00</span><span class="act">Učenje + pauze + ručak + dnevne obaveze</span></div>
-      <div class="daily-plan-row"><span class="time">23:00</span><span class="act">Večera</span></div>
-      <div class="daily-plan-row"><span class="time">0:00</span><span class="act">Spavanje</span></div>
-    </div>
   </div>
 
   <div id="todayCard"><div class="loading">Učitavanje...</div></div>
@@ -602,7 +592,8 @@ let state = {
   examAnswers: {},
   todayCache: null,
   todayFinalized: false,
-  pendingCarryover: null
+  pendingCarryover: null,
+  dayPlan: {}
 };
 let openDays = new Set();
 let storageOk = true;
@@ -623,7 +614,7 @@ function loadState(){
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw){
       const data = JSON.parse(raw);
-      state = Object.assign({progress:{}, examAnswers:{}, todayCache:null, todayFinalized:false, pendingCarryover:null}, data);
+      state = Object.assign({progress:{}, examAnswers:{}, todayCache:null, todayFinalized:false, pendingCarryover:null, dayPlan:{}}, data);
     }
   }catch(err){
     console.error('Load error', err);
@@ -907,6 +898,42 @@ function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 
 function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
 function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,START_DAY+i); return Math.ceil((e-t)/86400000); }
 
+// ---------- Dnevni plan zauzetosti (radni/slobodan dan) ----------
+const DEFAULT_WORK_FROM = '13:00';
+const DEFAULT_WORK_TO = '22:00';
+const WAKE_TIME = '07:30';
+const FREE_WAKE = '12:00';
+const FREE_SLEEP = '23:00';
+
+function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
+function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
+
+function getDayPlan(d){
+  const p = state.dayPlan && state.dayPlan[String(d)];
+  if(p && p.type) return p;
+  return {type:'radni', workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO};
+}
+
+function studySuggestionText(d){
+  const p = getDayPlan(d);
+  if(p.type === 'slobodan'){
+    return `Predlog: učenje ${FREE_WAKE}–${FREE_SLEEP} (+ pauze, ručak, obaveze)`;
+  }
+  const wakeMin = timeToMinutes(WAKE_TIME);
+  const workFromMin = timeToMinutes(p.workFrom || DEFAULT_WORK_FROM);
+  const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
+  const parts = [];
+  if(workFromMin > wakeMin){
+    parts.push(`jutro ${minutesToTime(wakeMin)}–${minutesToTime(workFromMin)}`);
+  }
+  const sleepMin = 24*60;
+  if(workToMin < sleepMin && (sleepMin - workToMin) >= 30){
+    parts.push(`veče ${minutesToTime(workToMin)}–00:00`);
+  }
+  if(!parts.length) return 'Predlog: danas realno nema prozora za učenje — samo brzi pregled ako stigneš.';
+  return 'Predlog: učenje — ' + parts.join(' i ');
+}
+
 function renderMissionStrip(){
   const el=document.getElementById('missionStrip');
   if(!el) return;
@@ -1105,6 +1132,19 @@ function renderDays(todayIdx, schedule){
     const body = document.createElement('div');
     body.className = 'day-body';
 
+    const plan = getDayPlan(d);
+    const planEl = document.createElement('div');
+    planEl.className = 'day-plan-control';
+    planEl.innerHTML = `
+      <div class="plan-row">
+        <label><input type="radio" name="daytype-${d}" data-plan-day="${d}" data-plan-field="type" value="radni" ${plan.type!=='slobodan'?'checked':''}/> Radni dan</label>
+        <label><input type="radio" name="daytype-${d}" data-plan-day="${d}" data-plan-field="type" value="slobodan" ${plan.type==='slobodan'?'checked':''}/> Slobodan dan</label>
+      </div>
+      ${plan.type!=='slobodan' ? `<div class="plan-times">Posao od <input type="time" data-plan-day="${d}" data-plan-field="workFrom" value="${plan.workFrom||DEFAULT_WORK_FROM}"/> do <input type="time" data-plan-day="${d}" data-plan-field="workTo" value="${plan.workTo||DEFAULT_WORK_TO}"/></div>` : ''}
+      <div class="plan-suggestion">${studySuggestionText(d)}</div>
+    `;
+    body.appendChild(planEl);
+
     if(exam){
       const answer = state.examAnswers[d];
       const verb = exam.type === 'kolokvijum' ? 'kolokvijum' : 'ispit';
@@ -1169,6 +1209,21 @@ function trackOpenState(){
 }
 
 function attachDayListeners(){
+  document.querySelectorAll('input[data-plan-day]').forEach(el=>{
+    el.addEventListener('click', e=>e.stopPropagation());
+    el.addEventListener('change', (e)=>{
+      const d = e.target.dataset.planDay;
+      const field = e.target.dataset.planField;
+      if(!state.dayPlan) state.dayPlan = {};
+      const cur = Object.assign({type:'radni', workFrom:DEFAULT_WORK_FROM, workTo:DEFAULT_WORK_TO}, state.dayPlan[d] || {});
+      cur[field] = e.target.value;
+      state.dayPlan[d] = cur;
+      saveState();
+      render();
+      restoreOpenState();
+    });
+  });
+
   document.querySelectorAll('input[data-item-id]').forEach(cb=>{
     cb.addEventListener('click', e=>e.stopPropagation());
     cb.addEventListener('change', (e)=>{
