@@ -169,24 +169,25 @@ function subjectIcon(subj){
 
 const STORAGE_KEY = 'plan-sept-2026-v5';
 const YEAR = 2026, MONTH = 8; // septembar
-const DAY_COUNT = 20; // indeksi 0..19 = 7..26. septembar
+const START_DAY = 5;
+const DAY_COUNT = 22; // indeksi 0..21 = 5..26. septembar
 
 const SUBJECTS = {
-  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:7},
-  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:9},
-  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:12},
-  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:14},
-  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:16},
-  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:19}
+  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:9},
+  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:11},
+  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:14},
+  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:16},
+  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:18},
+  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:21}
 };
 
 const EXAMS = {
-  7:  {type:'kolokvijum', subj:'eng'},
-  9:  {type:'ispit', subj:'spi'},
-  12: {type:'ispit', subj:'ess'},
-  14: {type:'ispit', subj:'ibo'},
-  16: {type:'ispit', subj:'pseu'},
-  19: {type:'ispit', subj:'spt'}
+  9:  {type:'kolokvijum', subj:'eng'},
+  11: {type:'ispit', subj:'spi'},
+  14: {type:'ispit', subj:'ess'},
+  16: {type:'ispit', subj:'ibo'},
+  18: {type:'ispit', subj:'pseu'},
+  21: {type:'ispit', subj:'spt'}
 };
 
 // Pool gradiva po predmetu, u pedagoškom redosledu. Poslednja stavka (ili
@@ -528,8 +529,60 @@ const POOLS = {
   ]
 };
 
+// Tematske celine za sve ispitne predmete. ID pitanja ostaje isti (subj-index),
+// pa postojeći čekirani napredak ostaje kompatibilan.
+const THEMATIC_AREAS = {
+  spi: [
+    [1,4,'Drugi svetski rat'],
+    [5,11,'Posleratni poredak i početak Hladnog rata'],
+    [12,15,'Azija, Koreja i Ajzenhauer'],
+    [16,20,'Dekolonizacija, Indija, Indokina i Bliski istok'],
+    [21,25,'Hruščov, Mađarska, Francuska, EEZ i Nesvrstani'],
+    [26,30,'Afrika, Kuba, Bliski istok, Kina i detant'],
+    [31,34,'Vijetnam, protesti, Ostpolitik i Bliski istok 70-ih'],
+    [35,38,'Kasni Hladni rat'],
+    [39,45,'Svet devedesetih']
+  ],
+  ess: [
+    [1,6,'Privredni sistem'],
+    [7,12,'Makroekonomsko merenje, rast i razvoj'],
+    [13,18,'Država i ekonomska politika'],
+    [19,20,'Tranzicija'],
+    [21,24,'Privatizacija — teorija i modeli'],
+    [25,28,'Privatizacija — primena i institucionalni okvir'],
+    [29,31,'Poljoprivreda'],
+    [32,35,'Spoljni sektor i integracije'],
+    [36,40,'Razvijenost, industrija i javna preduzeća']
+  ],
+  ibo: [
+    [1,2,'Istočna kriza i Berlinski poredak'],
+    [3,5,'Nacionalna pitanja na Balkanu'],
+    [6,9,'Južnoslovenske ideje i balkanske države pred krize'],
+    [10,12,'Srbija, Aneksiona kriza i Balkanski ratovi'],
+    [13,15,'Prvi svetski rat i Versaj'],
+    [16,20,'Međuratni Balkan — Jugoslavija, Turska, Grčka i Albanija'],
+    [21,27,'Međuratni poredak, savezi i prodor fašizma/nacizma'],
+    [28,31,'Drugi svetski rat i posleratne podele']
+  ],
+  spt: [
+    [1,4,'Sloboda'],
+    [5,12,'Utilitarizam'],
+    [13,19,'Rols, Dvorkin i liberalna jednakost'],
+    [20,30,'Komunitarizam, politički liberalizam, nacionalizam i multikulturalizam'],
+    [31,38,'Građanstvo, vrline i republikanizam'],
+    [39,45,'Multikulturalizam i javno/privatno'],
+    [46,49,'Etika brige i etika pravde'],
+    [50,64,'Demokratija, marksizam, elitizam i postdemokratija']
+  ]
+};
+function thematicAreaFor(subj, oneBasedIndex){
+  const rows = THEMATIC_AREAS[subj] || [];
+  const hit = rows.find(r => oneBasedIndex >= r[0] && oneBasedIndex <= r[1]);
+  return hit ? hit[2] : null;
+}
+
 // Normalizacija: svaka stavka u pool-u dobija stabilan id subj-index, review
-// flag, i (opciono) area — oblast kojoj pripada (trenutno samo PSEU).
+// flag, i (opciono) area — oblast kojoj pripada (PSEU zvanično, ostali po logičnim tematskim celinama).
 const ITEM_POOL = {};
 Object.keys(POOLS).forEach(subj=>{
   ITEM_POOL[subj] = POOLS[subj].map((it, idx)=>{
@@ -539,17 +592,17 @@ Object.keys(POOLS).forEach(subj=>{
       text: isObj ? it.text : it,
       review: isObj ? !!it.review : false,
       reviewRound: isObj ? (it.reviewRound || null) : null,
-      area: isObj ? (it.area || null) : null
+      area: isObj ? (it.area || thematicAreaFor(subj, idx + 1)) : thematicAreaFor(subj, idx + 1)
     };
   });
 });
 
-function dayLabel(i){ return `${7+i}. septembar`; }
-function dayDate(i){ return new Date(YEAR, MONTH, 7+i); }
+function dayLabel(i){ return `${START_DAY+i}. septembar`; }
+function dayDate(i){ return new Date(YEAR, MONTH, START_DAY+i); }
 
 function effectiveTodayIndex(){
   const now = new Date();
-  const start = new Date(YEAR, MONTH, 7);
+  const start = new Date(YEAR, MONTH, START_DAY);
   const diff = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - start)/86400000);
   return Math.min(Math.max(diff,0), DAY_COUNT-1);
 }
@@ -603,7 +656,7 @@ function showStorageWarning(show){
 }
 
 // ---------- Area-aware zaokruživanje ----------
-// Kad predmet ima stavke grupisane po "oblastima" (trenutno samo PSEU), broj
+// Kad predmet ima stavke grupisane po "oblastima" (PSEU zvanično, ostali po logičnim tematskim celinama), broj
 // stavki koje dan dobija se zaokružuje na granicu oblasti umesto da se seče
 // nasred oblasti. Cilj: nikad ne ostaviti samo 1 stavku oblasti odvojenu od
 // ostatka. Ako oblast mora da se deli (prevelika za jedan dan), deli se na
@@ -708,161 +761,67 @@ function daysLeftAvailable(fromDay, toDayInclusive){
 //    (daysLeftAvailable, koja isključuje tuđe blokirajuće dane). Na sam
 //    regularni rok (poslednji mogući dan), pokupi se BAŠ SVE što je
 //    ostalo — nema "ostavi za sutra", jer sutra je već review dan.
-const SCHEDULER_VERSION = 'balanced-exams-v5-numbered-questions';
+const SCHEDULER_VERSION = 'priority-route-v6-sep5-thematic';
 const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
 
-// Minimalni zajednički dnevni kapacitet koji garantuje da svi predmeti mogu
-// da stignu do svojih regularnih rokova. Ne sabiramo više zasebne dnevne
-// kvote svakog predmeta. Umesto toga računamo JEDNU dnevnu kasu za sve.
-function computeBalancedCapacity(startDay, pools){
-  const deadlines = Array.from(new Set(EXAM_SUBJECTS.map(s => REGULAR_DEADLINE[s]))).sort((a,b)=>a-b);
-  let capacity = 1;
+// Zaključana osnovna ruta. Engleski je VAN ove računice.
+// Redosled prioriteta dok su svi aktivni: SPI > ESS > IBO > PSEU > SPT.
+// Kada ispit prođe, njegov prostor se preliva prema sledećim predmetima
+// upravo onako kako je dogovoreno. Brojevi su cilj, a tematske celine su
+// drugi kriterijum. Zaostaci se proporcionalno razlivaju na preostale dane.
+const BASE_TARGETS = {
+  0:  {ess:3, pseu:7},                                      // 5.9.
+  1:  {spi:4, ess:3, ibo:2, pseu:3, spt:2},               // 6.9. smanjen dan
+  2:  {spi:7, ess:3, ibo:3, pseu:8, spt:2},               // 7.9.
+  3:  {spi:4, ess:3, ibo:2, pseu:9, spt:2},               // 8.9.
+  4:  {spi:5, ess:3, ibo:2, pseu:9, spt:2},               // 9.9.
+  5:  {spi:5, ess:3, ibo:3, pseu:8, spt:2},               // 10.9.
+  6:  {spi:5, ess:2, ibo:2, pseu:8, spt:2},               // 11.9.
+  7:  {spi:4, ess:4, ibo:2, pseu:8, spt:3},               // 12.9.
+  8:  {spi:4, ess:4, ibo:2, pseu:8, spt:2},               // 13.9.
+  9:  {spi:7, ess:3, ibo:3, pseu:8, spt:2},               // 14.9.
+  11: {ess:4, ibo:3, pseu:9, spt:4},                      // 16.9. SPI ispit
+  12: {ess:5, ibo:3, pseu:8, spt:7},                      // 17.9.
+  14: {ibo:4, pseu:12, spt:7},                            // 19.9. ESS ispit
+  16: {spt:7},                                             // 21.9. IBO ispit + PSEU review 1
+  18: {spt:6},                                             // 23.9. PSEU ispit
+  19: {spt:14}                                             // 24.9.
+};
 
-  deadlines.forEach(D=>{
-    if(D < startDay) return;
-    let required = 0;
-    EXAM_SUBJECTS.forEach(s=>{
-      if(REGULAR_DEADLINE[s] <= D){
-        required += pools[s].filter(it => !it.review).length;
-      }
-    });
-
-    let availableDays = 0;
-    for(let d=startDay; d<=D; d++){
-      if(!BLOCKED_DAYS.has(d)) availableDays++;
-    }
-    if(availableDays > 0){
-      capacity = Math.max(capacity, Math.ceil(required / availableDays));
-    }
-  });
-
-  return capacity;
+function baseTarget(day, subj){
+  return (BASE_TARGETS[day] && BASE_TARGETS[day][subj]) || 0;
 }
 
-function availableDaysForSubject(fromDay, subj){
-  let n = 0;
-  for(let d=fromDay; d<=REGULAR_DEADLINE[subj]; d++){
-    if(!BLOCKED_DAYS.has(d)) n++;
-  }
-  return Math.max(1, n);
-}
+function adjustedTargetsFrom(startDay, pools){
+  const out = {};
+  for(let d=startDay; d<DAY_COUNT; d++) out[d] = Object.assign({}, BASE_TARGETS[d] || {});
 
-// Raspodela jedne zajedničke dnevne kase među predmetima.
-// Težina = preostalo / (broj raspoloživih dana)^2.
-// Kvadrat daje prednost bližim rokovima, ali kasniji predmeti ipak dobijaju
-// mali deo na početku; njihov deo raste kako raniji ispiti otpadaju.
-function balancedCountsForDay(day, pools, capacity){
-  const eligible = EXAM_SUBJECTS.filter(s =>
-    day <= REGULAR_DEADLINE[s] && pools[s].some(it => !it.review)
-  );
-  if(!eligible.length) return {};
-
-  const remaining = {};
-  const score = {};
-  let totalRemaining = 0;
-  let totalScore = 0;
-
-  eligible.forEach(s=>{
-    remaining[s] = pools[s].filter(it => !it.review).length;
-    totalRemaining += remaining[s];
-    const days = availableDaysForSubject(day, s);
-    score[s] = remaining[s] / (days * days);
-    totalScore += score[s];
-  });
-
-  const slots = Math.min(capacity, totalRemaining);
-  const alloc = {};
-  const raw = {};
-  let used = 0;
-
-  eligible.forEach(s=>{
-    raw[s] = totalScore > 0 ? slots * (score[s] / totalScore) : 0;
-    alloc[s] = Math.min(remaining[s], Math.floor(raw[s]));
-    used += alloc[s];
-  });
-
-  // Ostatak raspodeli po najvećem decimalnom ostatku; ako su jednaki,
-  // prednost ima bliži rok.
-  while(used < slots){
-    const possible = eligible.filter(s => alloc[s] < remaining[s]);
-    if(!possible.length) break;
-    possible.sort((a,b)=>{
-      const fa = raw[a] - Math.floor(raw[a]);
-      const fb = raw[b] - Math.floor(raw[b]);
-      if(fb !== fa) return fb - fa;
-      if(REGULAR_DEADLINE[a] !== REGULAR_DEADLINE[b]) return REGULAR_DEADLINE[a] - REGULAR_DEADLINE[b];
-      return score[b] - score[a];
-    });
-    const s = possible[0];
-    alloc[s]++;
-    raw[s] = Math.floor(raw[s]); // da isti decimalni ostatak ne pobedi beskonačno
-    used++;
-  }
-
-  // Sigurnosna provera rokova. Za svaki rok proveri koliko gradiva SA TIM
-  // ILI RANIJIM rokom mora biti završeno baš danas da bi ostatak stao u
-  // buduće zajedničke dnevne kapacitete. Ako fali, prebacujemo slot sa
-  // kasnijeg predmeta na grupu koja ranije dospeva.
-  const deadlines = Array.from(new Set(eligible.map(s => REGULAR_DEADLINE[s]))).sort((a,b)=>a-b);
-  deadlines.forEach(D=>{
-    const due = eligible.filter(s => REGULAR_DEADLINE[s] <= D);
-    let tasksDue = 0;
-    due.forEach(s=> tasksDue += remaining[s]);
-
-    let futureDays = 0;
-    for(let d=day+1; d<=D; d++){
-      if(!BLOCKED_DAYS.has(d)) futureDays++;
+  EXAM_SUBJECTS.forEach(subj=>{
+    const remaining = pools[subj].filter(it=>!it.review).length;
+    const days = [];
+    let planned = 0;
+    for(let d=startDay; d<=REGULAR_DEADLINE[subj] && d<DAY_COUNT; d++){
+      if(BLOCKED_DAYS.has(d)) continue;
+      const b = baseTarget(d, subj);
+      if(b > 0){ days.push(d); planned += b; }
     }
-
-    const mustDoToday = Math.max(0, tasksDue - capacity * futureDays);
-    let allocatedDue = 0;
-    due.forEach(s=> allocatedDue += alloc[s] || 0);
-    let short = mustDoToday - allocatedDue;
-
-    while(short > 0){
-      const donors = eligible.filter(s => REGULAR_DEADLINE[s] > D && (alloc[s]||0) > 0);
-      const receivers = due.filter(s => (alloc[s]||0) < remaining[s]);
-      if(!donors.length || !receivers.length) break;
-
-      donors.sort((a,b)=> REGULAR_DEADLINE[b] - REGULAR_DEADLINE[a]);
-      receivers.sort((a,b)=>{
-        if(score[b] !== score[a]) return score[b] - score[a];
-        return REGULAR_DEADLINE[a] - REGULAR_DEADLINE[b];
-      });
-
-      alloc[donors[0]]--;
-      alloc[receivers[0]]++;
-      short--;
+    // Ako smo u zaostatku u odnosu na zaključanu rutu, višak rasporedi
+    // proporcionalno postojećim kvotama kroz preostale dane. Time rep ne
+    // eksplodira u jednom danu samo zato što je prošao datum.
+    let extra = Math.max(0, remaining - planned);
+    if(extra > 0 && days.length){
+      const weights = days.map(d=>Math.max(1, baseTarget(d, subj)));
+      const totalW = weights.reduce((a,b)=>a+b,0);
+      const raw = weights.map(w=>extra*w/totalW);
+      const add = raw.map(x=>Math.floor(x));
+      let used = add.reduce((a,b)=>a+b,0);
+      const order = raw.map((x,i)=>({i, frac:x-Math.floor(x)})).sort((a,b)=>b.frac-a.frac);
+      let k=0;
+      while(used < extra){ add[order[k % order.length].i]++; used++; k++; }
+      days.forEach((d,i)=>{ out[d][subj] = (out[d][subj]||0) + add[i]; });
     }
   });
-
-  // SPT: 21. i 23. septembar želimo lakše, a 24. teže — ALI bez zaostatka.
-  // Zato SPT nikad ne smemo spustiti ispod minimuma koji garantuje da SVE
-  // preostalo može da stane u buduće regularne dane do SPT roka.
-  //
-  // desired = približno pola normalne kvote na 21/23.
-  // minToday = koliko MORAMO uraditi danas da ostatak može da stane u
-  // buduće raspoložive dane, uz isti DAILY_CAPACITY.
-  // Uzimamo max(desired, minToday), pa 24. dobija što više može bez rizika.
-  if((day === 14 || day === 16) && alloc.spt > 0){
-    const desired = Math.max(1, Math.floor(alloc.spt * 0.5));
-
-    let futureRegularDays = 0;
-    for(let d = day + 1; d <= REGULAR_DEADLINE.spt; d++){
-      if(!BLOCKED_DAYS.has(d)) futureRegularDays++;
-    }
-
-    const sptRemainingToday = remaining.spt || 0;
-    const maxFutureCapacity = futureRegularDays * capacity;
-    const minToday = Math.max(0, sptRemainingToday - maxFutureCapacity);
-
-    alloc.spt = Math.min(
-      sptRemainingToday,
-      Math.max(desired, minToday)
-    );
-  }
-
-  return alloc;
+  return out;
 }
 
 function simulateForward(startDay){
@@ -887,9 +846,9 @@ function simulateForward(startDay){
     });
   }
 
-  // Jedan zajednički kapacitet samo za ispitne predmete. ENG se ne računa. Ako se plan pokrene
-  // kasnije ili postoji zaostatak, kapacitet se automatski preračuna naviše.
-  const DAILY_CAPACITY = computeBalancedCapacity(Math.max(startDay,0), pools);
+  // Zaključana ruta + proporcionalni drift za eventualni zaostatak.
+  // ENG se ne računa u ovu raspodelu.
+  const ADJUSTED_TARGETS = adjustedTargetsFrom(Math.max(startDay,0), pools);
 
   const schedule = {};
   for(let d = Math.max(startDay,0); d < DAY_COUNT; d++){
@@ -931,15 +890,13 @@ function simulateForward(startDay){
     });
 
     // 3) Jedna zajednička dnevna kasa samo za ISPITE. Engleski je potpuno van kase.
-    const counts = balancedCountsForDay(d, pools, DAILY_CAPACITY);
+    const counts = ADJUSTED_TARGETS[d] || {};
     Object.keys(counts).forEach(s=>{
       const regularItems = pools[s].filter(it => !it.review);
       let n = Math.min(counts[s], regularItems.length);
 
-      // Za PSEU i druge eventualne area-poolove zadrži logične granice oblasti.
-      // Ovo može pomeriti dnevni zbir za 1-2 stavke, što je namerno prihvatljivo
-      // da se oblast ne preseče na besmislenom mestu.
-      if(n > 0) n = areaAwareCount(regularItems, n);
+      // BASE_TARGETS su već ručno usklađeni sa tematskim celinama gde je to
+      // moguće (PSEU naročito), zato ovde ne menjamo dogovorenu dnevnu kvotu.
 
       if(n > 0){
         const taken = regularItems.slice(0, n);
@@ -994,7 +951,7 @@ function simulateForward(startDay){
     }
   });
 
-  return {schedule, missed, dailyCapacity: DAILY_CAPACITY};
+  return {schedule, missed, dailyCapacity: null};
 }
 
 function ensureTodayCache(){
@@ -1014,9 +971,9 @@ function itemLookup(id){
 
 function subjectCode(subj){ return ({eng:'ENG',spi:'SPI',ess:'ESS',ibo:'IBO',pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
 function examClock(subj){ return ({eng:'',spi:'09:00',ess:'10:00',ibo:'09:00',pseu:'09:00',spt:'09:00'})[subj] || ''; }
-function calendarDateForIndex(i){ return new Date(YEAR, MONTH, 7+i, 12, 0, 0); }
+function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 0, 0); }
 function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
-function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,7+i); return Math.ceil((e-t)/86400000); }
+function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,START_DAY+i); return Math.ceil((e-t)/86400000); }
 
 function renderMissionStrip(){
   const el=document.getElementById('missionStrip');
@@ -1030,10 +987,10 @@ function renderMissionStrip(){
   const stops=ordered.map(s=>{
     const d=daysUntilIndex(SUBJECTS[s].examDay);
     const cls=d<0?'past':(s===next?'next':'');
-    const date=7+SUBJECTS[s].examDay;
+    const date=START_DAY+SUBJECTS[s].examDay;
     return `<div class="route-stop ${cls}" style="color:${SUBJECTS[s].color}"><div class="route-dot"></div><div class="route-code">${subjectCode(s)}</div><div class="route-date">${date}. SEP${examClock(s)?' · '+examClock(s):''}</div></div>`;
   }).join('');
-  el.innerHTML=`<section class="mission-strip"><div class="mission-top"><div class="mission-next"><div class="label">Sledeće na redu</div><div class="value">${subjectCode(next)} · ${7+SUBJECTS[next].examDay}. septembar ${examClock(next)?'· '+examClock(next):''} · ${nextText}</div></div></div><div class="route">${stops}</div></section>`;
+  el.innerHTML=`<section class="mission-strip"><div class="mission-top"><div class="mission-next"><div class="label">Sledeće na redu</div><div class="value">${subjectCode(next)} · ${START_DAY+SUBJECTS[next].examDay}. septembar ${examClock(next)?'· '+examClock(next):''} · ${nextText}</div></div></div><div class="route">${stops}</div></section>`;
 }
 
 // ---------- Render ----------
@@ -1172,7 +1129,7 @@ function renderDays(todayIdx, schedule){
 
     const header = document.createElement('div');
     header.className = 'day-header';
-    header.dataset.short = String(7+d).padStart(2,'0') + ' SEP';
+    header.dataset.short = String(START_DAY+d).padStart(2,'0') + ' SEP';
     const exam = EXAMS[d];
     let examFlagHtml = '';
     let examSubjLabel = '';
@@ -1193,7 +1150,7 @@ function renderDays(todayIdx, schedule){
           const p = state.progress[it.id];
           if(p && p.done && p.completedAt){
             const dt = new Date(p.completedAt);
-            if(dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===7+d){
+            if(dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d){
               dayTotal++; dayDone++;
             }
           }
@@ -1209,7 +1166,7 @@ function renderDays(todayIdx, schedule){
     }
 
     header.innerHTML = `
-      <div class="day-title" data-short="${String(7+d).padStart(2,'0')} SEP">${dayLabel(d)}${examFlagHtml}${tagHtml}</div>
+      <div class="day-title" data-short="${String(START_DAY+d).padStart(2,'0')} SEP">${dayLabel(d)}${examFlagHtml}${tagHtml}</div>
       <div style="display:flex;align-items:center;">
         <div class="day-progress">${dayTotal? `${dayDone}/${dayTotal}`:''}</div>
         <span class="chevron">▶</span>
@@ -1270,7 +1227,7 @@ function itemsForDayHistory(d){
       const p = state.progress[it.id];
       if(!p || !p.done || !p.completedAt) return false;
       const dt = new Date(p.completedAt);
-      return dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===7+d;
+      return dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
     }).map(it=>it.id);
     if(ids.length) out[subj] = ids;
   });
