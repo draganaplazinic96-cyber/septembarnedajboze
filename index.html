@@ -923,6 +923,12 @@ const WAKE_TIME = '08:00';
 const FREE_WAKE = '12:00';
 const FREE_SLEEP = '23:00';
 
+// Razmak koji mora da postoji IZMEĐU kraja bilo koje obaveze (glavni posao
+// ILI dodatna obaveza) i početka učenja koje sledi posle nje. Ne primenjuje
+// se na sam POČETAK obaveze (učenje se prekida odmah kad obaveza počne) —
+// samo na trenutak kad se učenje NASTAVLJA posle nje.
+const POST_WORK_GAP_MIN = 15;
+
 function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
 function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
 
@@ -934,20 +940,24 @@ function getDayPlan(d){
 
 // Oduzima period [busyStart,busyEnd) od intervala [winStart,winEnd) i vraća
 // preostale segmente (0, 1 ili 2 komada — ako je obaveza nasred prozora,
-// prozor se cepa na dva dela umesto da se ceo izgubi).
-function subtractBusy(winStart, winEnd, busyStart, busyEnd){
+// prozor se cepa na dva dela umesto da se ceo izgubi). "gap" pomera početak
+// segmenta POSLE obaveze za dati broj minuta (razmak pre nastavka učenja);
+// segment PRE obaveze ostaje nepromenjen jer se učenje tu i onako prekida
+// tačno na početku obaveze, bez potrebe za razmakom.
+function subtractBusy(winStart, winEnd, busyStart, busyEnd, gap){
+  gap = gap || 0;
   if(winEnd<=winStart) return [];
   if(busyEnd==null || busyStart==null || busyEnd<=busyStart || busyEnd<=winStart || busyStart>=winEnd) return [[winStart,winEnd]];
   const segs = [];
   if(busyStart > winStart) segs.push([winStart, Math.min(busyStart,winEnd)]);
-  if(busyEnd < winEnd) segs.push([Math.max(busyEnd,winStart), winEnd]);
+  if(busyEnd < winEnd) segs.push([Math.max(busyEnd+gap,winStart), winEnd]);
   return segs.filter(([s,e])=>e>s);
 }
 function windowSegments(winStart, winEnd, extra){
   let segs = [[winStart,winEnd]];
   if(extra && extra.enabled && extra.from && extra.to){
     const exStart = timeToMinutes(extra.from), exEnd = timeToMinutes(extra.to);
-    segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd));
+    segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd,POST_WORK_GAP_MIN));
   }
   return segs.filter(([s,e])=>e>s);
 }
@@ -1015,13 +1025,14 @@ function studySuggestionText(d, itemsBySubj){
       return hasExtra ? `${base} (pazi, obaveza ${extraNote})` : base;
     }
     // Radni dan + ispit: jutro ne postoji uopšte, veče je otvoreno (koliko izdržiš),
-    // ali se dodatna obaveza ipak oduzima/cepa ako upadne u to veče.
+    // s tim da učenje kreće tek POST_WORK_GAP_MIN minuta posle kraja obaveze —
+    // isto pravilo se primenjuje i ako dodatna obaveza upadne u to veče.
     const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
     const OPEN_END = 100000;
-    let segs = [[workToMin, OPEN_END]];
+    let segs = [[workToMin + POST_WORK_GAP_MIN, OPEN_END]];
     if(hasExtra){
       const exStart = timeToMinutes(p.extra.from), exEnd = timeToMinutes(p.extra.to);
-      segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd));
+      segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd,POST_WORK_GAP_MIN));
     }
     const label = segs.map(([s,e])=> e===OPEN_END ? `${minutesToTime(s)}–...` : `${minutesToTime(s)}–${minutesToTime(e)}`).join(' i ');
     const suf = subs.length ? ` (${codes(subs)})` : '';
@@ -1041,7 +1052,8 @@ function studySuggestionText(d, itemsBySubj){
   const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
   const sleepMin = 24*60 + 30;
   const morningSegs = workFromMin > wakeMin ? windowSegments(wakeMin, workFromMin, p.extra) : [];
-  const eveningSegs = workToMin < sleepMin ? windowSegments(workToMin, sleepMin, p.extra) : [];
+  const eveningStartMin = workToMin + POST_WORK_GAP_MIN;
+  const eveningSegs = eveningStartMin < sleepMin ? windowSegments(eveningStartMin, sleepMin, p.extra) : [];
   const morningMinRaw = segsTotalMin(morningSegs);
   const eveningMinRaw = segsTotalMin(eveningSegs);
   const morningViable = morningMinRaw >= MIN_VIABLE_WINDOW_MIN;
