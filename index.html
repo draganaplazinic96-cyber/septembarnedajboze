@@ -68,6 +68,8 @@ label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:po
 .day-plan-control .plan-times{display:flex;align-items:center;gap:6px;margin-bottom:6px;color:var(--muted);flex-wrap:wrap}
 .day-plan-control .plan-times input[type="time"]{border:1px solid var(--line);background:var(--panel);font-family:var(--sans);font-size:.76rem;padding:2px 4px}
 .day-plan-control .plan-suggestion{color:var(--accent);font-weight:650}
+.review-link-btn{display:block;text-align:center;background:var(--ink);color:#f5efe4;text-decoration:none;font-size:.78rem;font-weight:700;letter-spacing:.03em;padding:11px;margin-bottom:12px;border-radius:2px}
+.review-link-btn:hover{background:#27322e}
 @media(max-width:720px){body{padding:20px 12px 60px}.command-mark{display:none}.exams{grid-template-columns:1fr 1fr}.route-date{font-size:.56rem}.daily-plans{grid-template-columns:1fr}.subject-mini-row{grid-template-columns:1fr 1fr 45px}.subj-status{grid-column:2/4;text-align:right;margin-top:-5px}.mission-days{text-align:left}#days{margin-left:43px;padding-left:15px}.day-title:before{left:-65px;width:40px}.day:before{left:-22px}}
 @media(max-width:480px){.command-title{font-size:3.25rem}.exams{grid-template-columns:1fr}.mission-strip{padding:15px 13px}.route{gap:2px}.route-code{font-size:.58rem}.route-date{font-size:.5rem}.today-date{font-size:1.65rem}.subject-mini-row{grid-template-columns:1fr 58px}.mini-bar-bg{grid-column:1/3}.subj-frac{grid-column:2}.subj-status{grid-column:1;text-align:left;grid-row:3}.day-title{font-size:.95rem}}
 
@@ -158,25 +160,38 @@ function subjectIcon(subj){
 
 const STORAGE_KEY = 'plan-sept-2026-v5';
 const YEAR = 2026, MONTH = 8; // septembar
-const START_DAY = 6;
-const DAY_COUNT = 21; // indeksi 0..20 = 6..26. septembar
+const START_DAY = 7;
+const DAY_COUNT = 20; // indeksi 0..19 = 7..26. septembar
 
 const SUBJECTS = {
-  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:8},
-  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:10},
-  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:13},
-  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:15},
-  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:17},
-  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:20}
+  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:7},
+  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:9},
+  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:12},
+  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:14},
+  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:16},
+  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:19}
 };
 
 const EXAMS = {
-  8:  {type:'kolokvijum', subj:'eng'},
-  10: {type:'ispit', subj:'spi'},
-  13: {type:'ispit', subj:'ess'},
-  15: {type:'ispit', subj:'ibo'},
-  17: {type:'ispit', subj:'pseu'},
-  20: {type:'ispit', subj:'spt'}
+  7:  {type:'kolokvijum', subj:'eng'},
+  9:  {type:'ispit', subj:'spi'},
+  12: {type:'ispit', subj:'ess'},
+  14: {type:'ispit', subj:'ibo'},
+  16: {type:'ispit', subj:'pseu'},
+  19: {type:'ispit', subj:'spt'}
+};
+
+// Posebne, samostalne stranice za dan(e) revizije pred svaki ispit —
+// napravljene odvojeno (svoj dizajn, pitanje-po-pitanje, "crvena zona").
+// Linkuju se ovde, kod ne diramo, ostaju odvojeni fajlovi/sajtovi.
+const REVIEW_LINKS = {
+  6:  {subj:'eng',  url:'https://draganaplazinic96-cyber.github.io/e2k2/'},
+  8:  {subj:'spi',  url:'https://draganaplazinic96-cyber.github.io/spi/'},
+  11: {subj:'ess',  url:'https://draganaplazinic96-cyber.github.io/ess/'},
+  13: {subj:'ibo',  url:'https://draganaplazinic96-cyber.github.io/ibo/'},
+  14: {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
+  15: {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
+  18: {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
 };
 
 const POOLS = {
@@ -670,7 +685,7 @@ function areaAwareCount(poolArr, rawCount){
   return poolArr.length;
 }
 
-const SCHEDULER_VERSION = 'priority-route-v9-no-sep5-area-aware';
+const SCHEDULER_VERSION = 'priority-route-v10-sep7-start-sequenced';
 const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
 
 const REVIEW_PLAN = {
@@ -708,22 +723,25 @@ function daysLeftAvailable(fromDay, toDayInclusive){
 // (pozvan u simulateForward) svaki dan preseca TAČNO na granici teme — nikad
 // nasred nje. Dan 0 (6. septembar) je namerno rezervisan isključivo za ESS i
 // PSEU (~60% pun dan), i to tačno prvim celim blokom svakog od njih.
+// Redosled: SPI + ESS + PSEU kreću odmah (svi imaju premalo vremena da čekaju).
+// IBO se otvara tek kad SPI ispit prođe (16.9), SPT tek kad ESS ispit prođe (19.9) —
+// dogovoreno kao pravac, brojevi ispod su nađeni simulacijom (EDF + ograničenje
+// dnevnog obima u rečima) tako da je vrh dana što niži, uz cele tematske celine.
 const BASE_TARGETS = {
-  0:  {ess:6, pseu:2},                                     // 6.9. — samo ESS blok 1 (1-6) + PSEU oblast 1
-  1:  {spi:4, ess:6, ibo:5, pseu:8},                        // 7.9.
-  2:  {spi:7, pseu:11, spt:4},                               // 8.9.
-  3:  {spi:4, ess:6, ibo:4, pseu:9},                         // 9.9.
-  4:  {spi:10, pseu:10},                                     // 10.9. — SPI blokovi 4+5 spojeni (najlakši dan za to)
-  5:  {spi:5, ess:6, ibo:6, pseu:8},                         // 11.9.
-  6:  {spi:4, pseu:12, spt:8},                               // 12.9.
-  7:  {spi:4, ess:4, ibo:5, pseu:8},                         // 13.9.
-  8:  {spi:7, ess:3, pseu:8, spt:7},                         // 14.9. (ENG kolokvijum)
-  10: {ess:4, pseu:9},                                       // 16.9. (SPI ispit)
-  11: {ess:5, ibo:7, pseu:8, spt:11},                        // 17.9.
-  13: {ibo:4, pseu:12},                                      // 19.9. (ESS ispit)
-  15: {spt:8},                                                // 21.9. (IBO ispit + PSEU krug 1)
-  17: {spt:11},                                               // 23.9. (PSEU ispit)
-  18: {spt:15}                                                // 24.9.
+  0:  {spi:11, ess:6, pseu:2},                  // 7.9.
+  1:  {spi:9, ess:6, pseu:3},                   // 8.9.
+  2:  {spi:10, ess:6, pseu:2},                  // 9.9.
+  3:  {spi:8, ess:6, pseu:3},                   // 10.9.
+  4:  {spi:7, ess:11, pseu:4},                  // 11.9.
+  5:  {ess:5, pseu:22},                         // 12.9.
+  6:  {pseu:24},                                // 13.9.
+  7:  {pseu:25},                                // 14.9. (ENG kolokvijum)
+  9:  {ibo:15, pseu:8},                         // 16.9. (SPI ispit) — IBO kreće
+  10: {ibo:16, pseu:5},                         // 17.9.
+  12: {pseu:7, spt:12},                         // 19.9. (ESS ispit) — SPT kreće
+  14: {spt:18},                                 // 21.9. (IBO ispit)
+  16: {spt:19},                                 // 23.9. (PSEU ispit)
+  17: {spt:15}                                  // 24.9.
 };
 
 function baseTarget(day, subj){
@@ -1250,6 +1268,18 @@ function renderDays(todayIdx, schedule){
 
     const body = document.createElement('div');
     body.className = 'day-body';
+
+    const reviewLink = REVIEW_LINKS[d];
+    if(reviewLink){
+      const linkEl = document.createElement('a');
+      linkEl.href = reviewLink.url;
+      linkEl.target = '_blank';
+      linkEl.rel = 'noopener';
+      linkEl.className = 'review-link-btn';
+      linkEl.textContent = `📖 Otvori detaljnu reviziju — ${SUBJECTS[reviewLink.subj].label}`;
+      linkEl.addEventListener('click', e=>e.stopPropagation());
+      body.appendChild(linkEl);
+    }
 
     const plan = getDayPlan(d);
     const planEl = document.createElement('div');
