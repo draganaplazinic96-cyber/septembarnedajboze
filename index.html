@@ -929,7 +929,7 @@ const FREE_SLEEP = '23:00';
 // samo na trenutak kad se učenje NASTAVLJA posle nje.
 const POST_WORK_GAP_MIN = 15;
 
-// Broj sati koji Walker mode ostavlja kao "buffer" pre sledeće obaveze
+// Broj sati koji Waklert mode ostavlja kao "buffer" pre sledeće obaveze
 // (odmor/spavanje pre nje), umesto fiksnog noćnog sna.
 const WALKER_PRE_NEXT_GAP_HOURS = 4;
 
@@ -1038,8 +1038,8 @@ function splitSubjectsByWindows(list, morningMin, eveningMin){
   return {morning, evening};
 }
 
-// ---------- Walker mode ----------
-// Kad je Walker mode uključen za dan d, cela normalna jutro/veče i "spavaj u
+// ---------- Waklert mode ----------
+// Kad je Waklert mode uključen za dan d, cela normalna jutro/veče i "spavaj u
 // ponoć" logika se preskače. Umesto toga: JEDAN kontinuirani prozor za
 // učenje koji počinje odmah posle kraja poslednje obaveze TOG dana i
 // završava se WALKER_PRE_NEXT_GAP_HOURS pre početka prve obaveze SLEDEĆEG
@@ -1050,7 +1050,7 @@ function splitSubjectsByWindows(list, morningMin, eveningMin){
 function walkerSuggestionText(d, p, itemsBySubj){
   const startObligationEnd = getTodayObligationEndMin(p);
   if(startObligationEnd == null){
-    return 'Walker mode je uključen, ali danas nema definisane obaveze (posao ni dodatna obaveza) — nema od čega da se računa "posle obaveze".';
+    return 'Waklert mode je uključen, ali danas nema definisane obaveze (posao ni dodatna obaveza) — nema od čega da se računa "posle obaveze".';
   }
   const startMin = startObligationEnd + POST_WORK_GAP_MIN;
   const nextStart = getNextDayObligationStartMin(d);
@@ -1058,14 +1058,14 @@ function walkerSuggestionText(d, p, itemsBySubj){
   const suf = fullList.length ? ` (${fullList.map(x=>subjectCode(x.subj)).join(', ')})` : '';
 
   if(nextStart == null){
-    return `Predlog (Walker mode): učenje ${minutesToTime(startMin)}–... — bez noćnog sna, do sledeće poznate obaveze${suf}`;
+    return `Predlog (Waklert mode): učenje ${minutesToTime(startMin)}–... — bez noćnog sna, do sledeće poznate obaveze${suf}`;
   }
 
   const endMin = 1440 + nextStart - (WALKER_PRE_NEXT_GAP_HOURS * 60);
   if(endMin <= startMin){
-    return 'Walker mode: sledeća obaveza je preblizu — nema realnog prozora za učenje.';
+    return 'Waklert mode: sledeća obaveza je preblizu — nema realnog prozora za učenje.';
   }
-  return `Predlog (Walker mode): učenje ${minutesToTime(startMin)}–${minutesToTime(endMin)} — bez noćnog sna, ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze${suf}`;
+  return `Predlog (Waklert mode): učenje ${minutesToTime(startMin)}–${minutesToTime(endMin)} — bez noćnog sna, ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze${suf}`;
 }
 
 function studySuggestionText(d, itemsBySubj){
@@ -1370,7 +1370,7 @@ function renderDays(todayIdx, schedule){
         ${(plan.extra&&plan.extra.enabled) ? ` od <input type="time" data-plan-day="${d}" data-plan-field="extraFrom" value="${plan.extra.from||'16:00'}"/> do <input type="time" data-plan-day="${d}" data-plan-field="extraTo" value="${plan.extra.to||'17:00'}"/>` : ''}
       </div>
       <div class="plan-times">
-        <label title="Bez noćnog sna: učenje počinje posle obaveze i traje do ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze"><input type="checkbox" data-plan-day="${d}" data-plan-field="walker" ${plan.walker?'checked':''}/> 🌙 Walker mode</label>
+        <label title="Bez noćnog sna: učenje počinje posle obaveze i traje do ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze"><input type="checkbox" data-plan-day="${d}" data-plan-field="walker" ${plan.walker?'checked':''}/> 🌙 Waklert mode</label>
       </div>
       <div class="plan-suggestion">${studySuggestionText(d, itemsForDay)}</div>
     `;
