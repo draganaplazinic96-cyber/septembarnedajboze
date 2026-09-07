@@ -272,6 +272,9 @@ const POOLS = {
     'Stanje u Evropi 90-ih godina',
     'Rusija za vreme Borisa Jeljcina',
     'Bliski istok 90-ih godina',
+    {review:true, reviewRound:1, text:'Ponovljena pitanja 1–15 (prva trećina gradiva)'},
+    {review:true, reviewRound:2, text:'Ponovljena pitanja 16–30 (druga trećina gradiva)'},
+    {review:true, reviewRound:3, text:'Ponovljena pitanja 31–45 (treća trećina gradiva)'},
     {review:true, text:'Ponovljeno svih 45 pitanja'}
   ],
   ess: [
@@ -315,6 +318,10 @@ const POOLS = {
     'Efekti privatizacije u Srbiji i industrija',
     'Restrukturiranje javnih preduzeća',
     'Koncept privatizacije javnih preduzeća',
+    {review:true, reviewRound:1, text:'Ponovljene teme 1–12 (privredni sistem, makro merenje/rast/razvoj)'},
+    {review:true, reviewRound:2, text:'Ponovljene teme 13–24 (država, ekonomska politika, tranzicija i privatizacija — teorija)'},
+    {review:true, reviewRound:3, text:'Ponovljene teme 25–35 (privatizacija u praksi, poljoprivreda, spoljni sektor i integracije)'},
+    {review:true, reviewRound:4, text:'Ponovljene teme 36–40 (razvijenost, industrija, javna preduzeća)'},
     {review:true, text:'Ponovljeno svih 40 tema'}
   ],
   ibo: [
@@ -708,13 +715,24 @@ function areaAwareCount(poolArr, rawCount){
   return poolArr.length;
 }
 
-const SCHEDULER_VERSION = 'priority-route-v10-sep7-start-sequenced';
+const SCHEDULER_VERSION = 'priority-route-v12-ess-spaced-review';
 const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
 
 const REVIEW_PLAN = {
   eng:  [{day: SUBJECTS.eng.examDay - 1, round: null, blocking: false}],
-  spi:  [{day: SUBJECTS.spi.examDay - 1, round: null, blocking: true}],
-  ess:  [{day: SUBJECTS.ess.examDay - 1, round: null, blocking: true}],
+  spi:  [
+    {day: 5, round: 1, blocking: false},
+    {day: 6, round: 2, blocking: false},
+    {day: 7, round: 3, blocking: false},
+    {day: SUBJECTS.spi.examDay - 1, round: null, blocking: true}
+  ],
+  ess:  [
+    {day: 6, round: 1, blocking: false},
+    {day: 7, round: 2, blocking: false},
+    {day: 9, round: 3, blocking: false},
+    {day: 10, round: 4, blocking: false},
+    {day: SUBJECTS.ess.examDay - 1, round: null, blocking: true}
+  ],
   ibo:  [{day: SUBJECTS.ibo.examDay - 1, round: null, blocking: true}],
   pseu: [
     {day: SUBJECTS.pseu.examDay - 2, round: 1, blocking: false},
@@ -1097,14 +1115,14 @@ function walkerSuggestionText(d, p, itemsBySubj){
   const suf = fullList.length ? ` (${fullList.map(x=>subjectCode(x.subj)).join(', ')})` : '';
 
   if(nextStart == null){
-    return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–... — bez noćnog sna, do sledeće poznate obaveze${suf}`;
+    return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–...${suf}`;
   }
 
   const endMin = 1440 + nextStart - (WALKER_PRE_NEXT_GAP_HOURS * 60);
   if(endMin <= startMin){
     return '🌙 Waklert mode: sledeća obaveza je preblizu — nema realnog prozora za učenje.';
   }
-  return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–${timeLabelWithDay(endMin)} — bez noćnog sna, ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze${suf}`;
+  return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–${timeLabelWithDay(endMin)}${suf}`;
 }
 
 function studySuggestionText(d, itemsBySubj){
