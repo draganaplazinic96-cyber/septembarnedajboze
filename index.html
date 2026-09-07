@@ -595,11 +595,21 @@ Object.keys(POOLS).forEach(subj=>{
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
 function dayDate(i){ return new Date(YEAR, MONTH, START_DAY+i); }
 
-function effectiveTodayIndex(){
+function calendarTodayIndex(){
   const now = new Date();
   const start = new Date(YEAR, MONTH, START_DAY);
   const diff = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - start)/86400000);
   return Math.min(Math.max(diff,0), DAY_COUNT-1);
+}
+
+function effectiveTodayIndex(){
+  // Planerski dan traje dok ga korisnica sama ne zaključi,
+  // čak i kada kalendarski pređemo ponoć.
+  if(state && state.todayCache && !state.todayFinalized &&
+     Number.isInteger(state.todayCache.dayIndex)){
+    return state.todayCache.dayIndex;
+  }
+  return calendarTodayIndex();
 }
 
 let state = {
@@ -1189,7 +1199,7 @@ function renderTodayCard(todayIdx, missed){
     }).join('');
   }
   const finalizeBlock = state.todayFinalized
-    ? `<div class="finalized-note">✓ ON TRACK · dan zaključen</div>`
+    ? `<div class="finalized-note">✓ Dan ručno zaključen</div>`
     : `<button class="finalize-btn" data-action="finalize">Završila za danas · zaključi dan</button>`;
   const pct=totalItems?Math.round(doneItems/totalItems*100):0;
   el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(todayIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${missedHtml}${finalizeBlock}</div>`;
@@ -1316,8 +1326,11 @@ function renderDays(todayIdx, schedule){
         ITEM_POOL[subj].forEach(it=>{
           const p = state.progress[it.id];
           if(p && p.done && p.completedAt){
+            const logicalMatch = Number.isInteger(p.logicalDayIndex) && p.logicalDayIndex === d;
             const dt = new Date(p.completedAt);
-            if(dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d){
+            const legacyCalendarMatch = !Number.isInteger(p.logicalDayIndex) &&
+              dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
+            if(logicalMatch || legacyCalendarMatch){
               dayTotal++; dayDone++;
             }
           }
@@ -1424,6 +1437,7 @@ function itemsForDayHistory(d){
     const ids = ITEM_POOL[subj].filter(it=>{
       const p = state.progress[it.id];
       if(!p || !p.done || !p.completedAt) return false;
+      if(Number.isInteger(p.logicalDayIndex)) return p.logicalDayIndex === d;
       const dt = new Date(p.completedAt);
       return dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
     }).map(it=>it.id);
@@ -1466,7 +1480,11 @@ function attachDayListeners(){
     cb.addEventListener('change', (e)=>{
       const id = e.target.dataset.itemId;
       if(e.target.checked){
-        state.progress[id] = {done:true, completedAt: new Date().toISOString()};
+        state.progress[id] = {
+          done:true,
+          completedAt: new Date().toISOString(),
+          logicalDayIndex: effectiveTodayIndex()
+        };
       } else {
         state.progress[id] = {done:false, completedAt:null};
       }
