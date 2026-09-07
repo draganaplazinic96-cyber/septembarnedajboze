@@ -595,21 +595,33 @@ Object.keys(POOLS).forEach(subj=>{
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
 function dayDate(i){ return new Date(YEAR, MONTH, START_DAY+i); }
 
-function calendarTodayIndex(){
+// Kalendarski dan po realnom datumu — koristi se SAMO kao početna (bootstrap)
+// vrednost pri prvom učitavanju, kad još ne postoji sačuvan "aktivni" dan.
+function calendarDayIndex(){
   const now = new Date();
   const start = new Date(YEAR, MONTH, START_DAY);
   const diff = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - start)/86400000);
   return Math.min(Math.max(diff,0), DAY_COUNT-1);
 }
 
-function effectiveTodayIndex(){
-  // Planerski dan traje dok ga korisnica sama ne zaključi,
-  // čak i kada kalendarski pređemo ponoć.
-  if(state && state.todayCache && !state.todayFinalized &&
-     Number.isInteger(state.todayCache.dayIndex)){
-    return state.todayCache.dayIndex;
+// "Aktivni" (današnji) dan se NIKAD ne menja sam po ponoći — ostaje isti dok
+// se ručno ne zaključi klikom na "Završila za danas · zaključi dan". To dugme
+// je JEDINI način da se pređe na sledeći dan. Kalendarski datum se koristi
+// samo pri prvom ikad otvaranju aplikacije, kao startna vrednost.
+function activeDayIndex(){
+  if(state.currentDayIndex == null){
+    // Radije nasledi poslednji poznati "aktivni" dan iz starog cache-a
+    // (ako postoji) nego da ga računa iz stvarnog kalendarskog datuma —
+    // u suprotnom bi baš prvi put kad ovaj kod proradi posle ponoći opet
+    // automatski "preskočio" na sledeći dan, iako korisnica dan još nije
+    // ručno zaključila.
+    if(state.todayCache && typeof state.todayCache.dayIndex === 'number'){
+      state.currentDayIndex = state.todayCache.dayIndex;
+    } else {
+      state.currentDayIndex = calendarDayIndex();
+    }
   }
-  return calendarTodayIndex();
+  return Math.min(Math.max(state.currentDayIndex, 0), DAY_COUNT-1);
 }
 
 let state = {
@@ -618,7 +630,8 @@ let state = {
   todayCache: null,
   todayFinalized: false,
   pendingCarryover: null,
-  dayPlan: {}
+  dayPlan: {},
+  currentDayIndex: null
 };
 let openDays = new Set();
 let storageOk = true;
@@ -639,7 +652,7 @@ function loadState(){
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw){
       const data = JSON.parse(raw);
-      state = Object.assign({progress:{}, examAnswers:{}, todayCache:null, todayFinalized:false, pendingCarryover:null, dayPlan:{}}, data);
+      state = Object.assign({progress:{}, examAnswers:{}, todayCache:null, todayFinalized:false, pendingCarryover:null, dayPlan:{}, currentDayIndex:null}, data);
     }
   }catch(err){
     console.error('Load error', err);
@@ -906,7 +919,15 @@ function simulateForward(startDay){
 }
 
 function ensureTodayCache(){
-  const idx = effectiveTodayIndex();
+  const idx = activeDayIndex();
+  // Samo-ispravka: ako "prebacene teme napred" navodno kreću baš OD dana na
+  // kom se trenutno nalazimo, to je nekonzistentno stanje (obično ostatak
+  // ranijeg automatskog/pogrešnog prelaska dana) — poništi ga, teme se
+  // tretiraju kao normalno neurađene teme ovog dana.
+  if(state.pendingCarryover && state.pendingCarryover.fromDay === idx){
+    state.pendingCarryover = null;
+    saveState();
+  }
   if(!state.todayCache || state.todayCache.dayIndex !== idx || state.todayCache.schedulerVersion !== SCHEDULER_VERSION){
     const {schedule} = simulateForward(idx);
     state.todayCache = {dayIndex: idx, schedulerVersion: SCHEDULER_VERSION, items: schedule[idx] || {}};
@@ -939,12 +960,17 @@ const FREE_SLEEP = '23:00';
 // samo na trenutak kad se učenje NASTAVLJA posle nje.
 const POST_WORK_GAP_MIN = 15;
 
-// Broj sati koji Waklert mode ostavlja kao "buffer" pre sledeće obaveze
-// (odmor/spavanje pre nje), umesto fiksnog noćnog sna.
-const WALKER_PRE_NEXT_GAP_HOURS = 4;
-
 function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
 function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
+
+// Sentinel za "otvoren kraj" (kad ne znamo/nema sledeće obaveze — npr. "koliko izdržiš").
+const OPEN_END_SENTINEL = 100000;
+// Prikaz vremena koje može biti: sentinel (→ "..."), isti dan (< 1440) ili sutrašnji
+// dan (>= 1440, npr. kad MODAFINIL prenese učenje preko ponoći) → dodaje "(sutra)".
+function timeLabelWithDay(m){
+  if(m === OPEN_END_SENTINEL) return '...';
+  return m>=1440 ? (minutesToTime(m)+' (sutra)') : minutesToTime(m);
+}
 
 function getDayPlan(d){
   const p = state.dayPlan && state.dayPlan[String(d)];
@@ -953,9 +979,13 @@ function getDayPlan(d){
   return base;
 }
 
-// Vraća kraj poslednje obaveze TOG dana (posao ako je radni, i/ili dodatna
-// obaveza ako je uključena) — šta god se kasnije završava. null ako dan
-// nema nijednu poznatu obavezu (npr. slobodan dan bez dodatne obaveze).
+// Broj sati koji Waklert mode ostavlja kao "buffer" (odmor pre sledeće
+// obaveze) umesto fiksnog noćnog sna.
+const WALKER_PRE_NEXT_GAP_HOURS = 4;
+
+// Kraj poslednje obaveze TOG dana (posao ako je radni, i/ili dodatna obaveza
+// ako je uključena) — šta god se kasnije završava. null ako dan nema
+// nijednu poznatu obavezu (npr. slobodan dan bez dodatne obaveze).
 function getTodayObligationEndMin(p){
   const candidates = [];
   if(p.type !== 'slobodan' && p.workTo) candidates.push(timeToMinutes(p.workTo));
@@ -964,7 +994,7 @@ function getTodayObligationEndMin(p){
   return Math.max(...candidates);
 }
 
-// Vraća početak PRVE obaveze SLEDEĆEG dana (posao ako je radni, ili dodatna
+// Početak PRVE obaveze SLEDEĆEG dana (posao ako je radni, ili dodatna
 // obaveza ako je uključena) — šta god počinje ranije. null ako sledeći dan
 // nema nijednu poznatu obavezu, ili ako je d poslednji dan roka.
 function getNextDayObligationStartMin(d){
@@ -1049,18 +1079,17 @@ function splitSubjectsByWindows(list, morningMin, eveningMin){
 }
 
 // ---------- Waklert mode ----------
-// Kad je Waklert mode uključen za dan d, cela normalna jutro/veče i "spavaj u
-// ponoć" logika se preskače. Umesto toga: JEDAN kontinuirani prozor za
-// učenje koji počinje odmah posle kraja poslednje obaveze TOG dana i
+// Kad je uključen za dan d: preskače se cela jutro/veče i "spavaj u ponoć"
+// logika. Umesto toga — JEDAN kontinuirani prozor za učenje koji počinje
+// odmah (+ POST_WORK_GAP_MIN) posle kraja poslednje obaveze TOG dana i
 // završava se WALKER_PRE_NEXT_GAP_HOURS pre početka prve obaveze SLEDEĆEG
-// dana (posao ili dodatna obaveza — šta god dolazi ranije). Ako sledeći dan
-// nema poznatu obavezu, prozor ostaje otvoren ("..."). Ako sam TAJ dan nema
-// nijednu obavezu na osnovu koje bi se računao početak, javljamo napomenu
-// umesto predloga (nemamo od čega da računamo "posle obaveze").
+// dana. Ako sledeći dan nema poznatu obavezu, prozor ostaje otvoren ("...").
+// Ako sam TAJ dan nema nijednu obavezu na osnovu koje bi se računao početak,
+// javlja se napomena umesto predloga.
 function walkerSuggestionText(d, p, itemsBySubj){
   const startObligationEnd = getTodayObligationEndMin(p);
   if(startObligationEnd == null){
-    return 'Waklert mode je uključen, ali danas nema definisane obaveze (posao ni dodatna obaveza) — nema od čega da se računa "posle obaveze".';
+    return '🌙 Waklert mode je uključen, ali danas nema definisane obaveze (posao ni dodatna obaveza) — nema od čega da se računa "posle obaveze".';
   }
   const startMin = startObligationEnd + POST_WORK_GAP_MIN;
   const nextStart = getNextDayObligationStartMin(d);
@@ -1068,14 +1097,14 @@ function walkerSuggestionText(d, p, itemsBySubj){
   const suf = fullList.length ? ` (${fullList.map(x=>subjectCode(x.subj)).join(', ')})` : '';
 
   if(nextStart == null){
-    return `Predlog (Waklert mode): učenje ${minutesToTime(startMin)}–... — bez noćnog sna, do sledeće poznate obaveze${suf}`;
+    return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–... — bez noćnog sna, do sledeće poznate obaveze${suf}`;
   }
 
   const endMin = 1440 + nextStart - (WALKER_PRE_NEXT_GAP_HOURS * 60);
   if(endMin <= startMin){
-    return 'Waklert mode: sledeća obaveza je preblizu — nema realnog prozora za učenje.';
+    return '🌙 Waklert mode: sledeća obaveza je preblizu — nema realnog prozora za učenje.';
   }
-  return `Predlog (Waklert mode): učenje ${minutesToTime(startMin)}–${minutesToTime(endMin)} — bez noćnog sna, ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze${suf}`;
+  return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–${timeLabelWithDay(endMin)} — bez noćnog sna, ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze${suf}`;
 }
 
 function studySuggestionText(d, itemsBySubj){
@@ -1175,7 +1204,7 @@ function renderMissionStrip(){
 }
 
 function render(){
-  const todayIdx = effectiveTodayIndex();
+  const todayIdx = activeDayIndex();
   ensureTodayCache();
   const {schedule, missed} = simulateForward(todayIdx);
 
@@ -1199,10 +1228,15 @@ function renderTodayCard(todayIdx, missed){
     }).join('');
   }
   const finalizeBlock = state.todayFinalized
-    ? `<div class="finalized-note">✓ Dan ručno zaključen</div>`
+    ? `<div class="finalized-note">✓ ON TRACK · dan zaključen</div>`
     : `<button class="finalize-btn" data-action="finalize">Završila za danas · zaključi dan</button>`;
+  const backBlock = todayIdx > 0
+    ? `<button class="finalize-btn" data-action="goback" style="background:transparent;color:var(--ink);border-top:1px solid var(--soft);font-weight:700;">◀ Vrati na ${dayLabel(todayIdx-1)}</button>`
+    : '';
+  const dayOptions = Array.from({length:DAY_COUNT}, (_,i)=>`<option value="${i}" ${i===todayIdx?'selected':''}>${dayLabel(i)}</option>`).join('');
+  const daySelectBlock = `<div style="padding:10px 18px;border-top:1px solid var(--soft);font-size:.78rem;color:var(--muted);">Aktivni dan: <select data-action="set-day" style="font-family:var(--sans);font-size:.78rem;padding:3px 6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);">${dayOptions}</select></div>`;
   const pct=totalItems?Math.round(doneItems/totalItems*100):0;
-  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(todayIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${missedHtml}${finalizeBlock}</div>`;
+  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(todayIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${missedHtml}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
 }
 
 function renderOverall(missed){
@@ -1325,15 +1359,15 @@ function renderDays(todayIdx, schedule){
       Object.keys(SUBJECTS).forEach(subj=>{
         ITEM_POOL[subj].forEach(it=>{
           const p = state.progress[it.id];
-          if(p && p.done && p.completedAt){
-            const logicalMatch = Number.isInteger(p.logicalDayIndex) && p.logicalDayIndex === d;
+          if(!p || !p.done) return;
+          let matches = false;
+          if(p.dayIndex != null){
+            matches = p.dayIndex === d;
+          } else if(p.completedAt){
             const dt = new Date(p.completedAt);
-            const legacyCalendarMatch = !Number.isInteger(p.logicalDayIndex) &&
-              dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
-            if(logicalMatch || legacyCalendarMatch){
-              dayTotal++; dayDone++;
-            }
+            matches = dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
           }
+          if(matches){ dayTotal++; dayDone++; }
         });
       });
     } else {
@@ -1381,8 +1415,6 @@ function renderDays(todayIdx, schedule){
       <div class="plan-times">
         <label><input type="checkbox" data-plan-day="${d}" data-plan-field="extraEnabled" ${plan.extra&&plan.extra.enabled?'checked':''}/> Dodatne obaveze</label>
         ${(plan.extra&&plan.extra.enabled) ? ` od <input type="time" data-plan-day="${d}" data-plan-field="extraFrom" value="${plan.extra.from||'16:00'}"/> do <input type="time" data-plan-day="${d}" data-plan-field="extraTo" value="${plan.extra.to||'17:00'}"/>` : ''}
-      </div>
-      <div class="plan-times">
         <label title="Bez noćnog sna: učenje počinje posle obaveze i traje do ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze"><input type="checkbox" data-plan-day="${d}" data-plan-field="walker" ${plan.walker?'checked':''}/> 🌙 Waklert mode</label>
       </div>
       <div class="plan-suggestion">${studySuggestionText(d, itemsForDay)}</div>
@@ -1436,8 +1468,9 @@ function itemsForDayHistory(d){
   Object.keys(SUBJECTS).forEach(subj=>{
     const ids = ITEM_POOL[subj].filter(it=>{
       const p = state.progress[it.id];
-      if(!p || !p.done || !p.completedAt) return false;
-      if(Number.isInteger(p.logicalDayIndex)) return p.logicalDayIndex === d;
+      if(!p || !p.done) return false;
+      if(p.dayIndex != null) return p.dayIndex === d;
+      if(!p.completedAt) return false;
       const dt = new Date(p.completedAt);
       return dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
     }).map(it=>it.id);
@@ -1480,13 +1513,9 @@ function attachDayListeners(){
     cb.addEventListener('change', (e)=>{
       const id = e.target.dataset.itemId;
       if(e.target.checked){
-        state.progress[id] = {
-          done:true,
-          completedAt: new Date().toISOString(),
-          logicalDayIndex: effectiveTodayIndex()
-        };
+        state.progress[id] = {done:true, completedAt: new Date().toISOString(), dayIndex: activeDayIndex()};
       } else {
-        state.progress[id] = {done:false, completedAt:null};
+        state.progress[id] = {done:false, completedAt:null, dayIndex:null};
       }
       saveState();
       render();
@@ -1512,9 +1541,44 @@ function restoreOpenState(){
   });
 }
 
+document.addEventListener('change', (e)=>{
+  const sel = e.target.closest('[data-action="set-day"]');
+  if(!sel) return;
+  const val = parseInt(sel.value, 10);
+  if(Number.isNaN(val)) return;
+  state.currentDayIndex = Math.min(Math.max(val,0), DAY_COUNT-1);
+  state.todayFinalized = false;
+  if(state.pendingCarryover && state.pendingCarryover.fromDay === state.currentDayIndex){
+    state.pendingCarryover = null;
+  }
+  saveState();
+  openDays.add(String(state.currentDayIndex));
+  render();
+  restoreOpenState();
+});
+
 document.addEventListener('click', (e)=>{
+  if(e.target.closest('[data-action="goback"]')){
+    const cur = activeDayIndex();
+    if(cur > 0){
+      const prev = cur - 1;
+      state.currentDayIndex = prev;
+      state.todayFinalized = false;
+      // Ako je "prebacivanje nezavršenih tema napred" nastalo TAČNO time što je
+      // ovaj dan maloas zaključen, poništi ga — teme se vraćaju kao normalno
+      // neurađene teme TOG dana, umesto da ostanu sklonjene za sledeći dan.
+      if(state.pendingCarryover && state.pendingCarryover.fromDay === prev){
+        state.pendingCarryover = null;
+      }
+      saveState();
+      openDays.add(String(state.currentDayIndex));
+      render();
+      restoreOpenState();
+    }
+    return;
+  }
   if(e.target.closest('[data-action="finalize"]')){
-    const todayIdx = effectiveTodayIndex();
+    const todayIdx = activeDayIndex();
     const cacheItems = (state.todayCache && state.todayCache.items) || {};
     const uncheckedIds = [];
     Object.keys(cacheItems).forEach(subj=>{
@@ -1528,7 +1592,11 @@ document.addEventListener('click', (e)=>{
       ? {fromDay: todayIdx, ids: mergedIds}
       : null;
     state.todayFinalized = true;
+    // Ručni prelazak na sledeći dan — dan se NIKAD ne menja sam od ponoći,
+    // menja se isključivo ovim klikom.
+    state.currentDayIndex = Math.min(todayIdx + 1, DAY_COUNT - 1);
     saveState();
+    openDays.add(String(state.currentDayIndex));
     render();
     restoreOpenState();
   }
@@ -1538,7 +1606,19 @@ document.addEventListener('click', (e)=>{
   loadState();
   storageOk = verifyStorageWorks();
   showStorageWarning(!storageOk);
-  openDays.add(String(effectiveTodayIndex()));
+  // Jednokratna automatska ispravka: vrati aktivni dan na 7. septembar
+  // (indeks 0) i očisti sve što je nakupljeno u prethodnom pokvarenom stanju
+  // (pogrešno prebačen dan, teme sklonjene "za sutra"). Radi se SAMO jednom —
+  // posle ovoga, dan se opet menja isključivo ručno (dugme / padajući meni).
+  if(!state.__dayResetV1){
+    state.currentDayIndex = 0;
+    state.todayFinalized = false;
+    state.pendingCarryover = null;
+    state.todayCache = null;
+    state.__dayResetV1 = true;
+    saveState();
+  }
+  openDays.add(String(activeDayIndex()));
   render();
 })();
 </script>
