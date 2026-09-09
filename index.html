@@ -2,6 +2,7 @@
 <html lang="sr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plan učenja — rok septembar 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,99 +22,167 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
   background-size:32px 32px;padding:34px 18px 80px;-webkit-font-smoothing:antialiased}
 .wrap{max-width:980px;margin:0 auto}
 .command-header{position:relative;border-top:6px solid var(--ink);border-bottom:1px solid var(--ink);padding:24px 0 22px;margin-bottom:18px;overflow:hidden}
-.command-kicker{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--muted);margin-bottom:8px}
 .command-title{font-family:var(--serif);font-size:clamp(2.9rem,8vw,6rem);line-height:.83;letter-spacing:-.055em;font-weight:600;margin:0;text-transform:uppercase}
 .command-title span{display:block}
-.command-meta{margin-top:14px;display:flex;gap:14px;flex-wrap:wrap;font-size:.73rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.command-mark{position:absolute;right:0;top:20px;width:210px;height:90px;opacity:.24}
-.command-mark svg{width:100%;height:100%}
-.storage-warning{display:none;background:var(--warn-bg);color:var(--warn-text);border:1px solid rgba(168,67,57,.45);padding:10px 13px;margin:0 0 14px;font-size:.78rem;font-weight:650}.storage-warning.show{display:block}
+.storage-warning{display:none;background:var(--warn-bg);color:var(--warn-text);border:1px solid rgba(168,67,57,.45);padding:10px 13px;margin:0 0 14px;font-size:.78rem;font-weight:650;border-radius:2px}
+.storage-warning.show{display:block}
 
-/* master route */
 .mission-strip{background:var(--ink);color:#f3eee4;padding:18px 20px 16px;margin-bottom:16px;border-radius:2px}
 .mission-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
-.mission-next .label,.mission-days .label{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:#aaa99e;font-weight:700}
+.mission-next .label{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:#aaa99e;font-weight:700}
 .mission-next .value{font-family:var(--serif);font-size:1.45rem;margin-top:2px}
-.mission-days{text-align:right}.mission-days .value{font-family:var(--serif);font-size:2.15rem;line-height:1}
 .route{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding-top:14px}
-.route:before{content:"";position:absolute;left:4%;right:4%;top:22px;height:1px;background:#777b75}
-.route-stop{position:relative;text-align:center;min-width:0}.route-dot{width:15px;height:15px;border-radius:50%;margin:0 auto 8px;border:3px solid var(--ink);box-shadow:0 0 0 1px currentColor;background:currentColor;position:relative;z-index:1}.route-stop.past{opacity:.48}.route-stop.next .route-dot{box-shadow:0 0 0 1px currentColor,0 0 0 5px rgba(255,255,255,.10)}
-.route-code{font-size:.68rem;font-weight:800;letter-spacing:.08em}.route-date{font-size:.64rem;color:#a8aaa3;margin-top:2px;white-space:nowrap}
+.route:before{content:"";position:absolute;left:4%;right:4%;top:22px;height:1px;background:#777}
+.route-stop{position:relative;text-align:center;min-width:0}
+.route-dot{width:15px;height:15px;border-radius:50%;margin:0 auto 8px;border:3px solid var(--ink);box-shadow:0 0 0 1px currentColor;background:currentColor;position:relative;z-index:1}
+.route-stop.past{opacity:.48}
+.route-stop.next .route-dot{box-shadow:0 0 0 1px currentColor,0 0 0 5px rgba(255,255,255,.10)}
+.route-code{font-size:.68rem;font-weight:800;letter-spacing:.08em}
+.route-date{font-size:.64rem;color:#a8aaa3;margin-top:2px;white-space:nowrap}
 
-/* exam docket */
 .exams{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--ink);background:var(--panel);margin-bottom:16px}
-.exams .cat-title{display:none}.exams>div:not(.cat-title){font-size:.76rem;color:var(--muted);padding:11px 13px;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:53px}.exams b{display:block;color:var(--ink);font-family:var(--serif);font-size:.92rem;margin-bottom:2px}
+.exams .cat-title{grid-column:1/-1;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--muted);background:rgba(23,32,29,.04);padding:6px 13px;border-bottom:1px solid var(--soft)}
+.exams>div:not(.cat-title){font-size:.76rem;color:var(--muted);padding:11px 13px;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:53px}
+.exams b{display:block;color:var(--ink);font-family:var(--serif);font-size:.92rem;margin-bottom:2px}
 
-.daily-plans{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}.daily-plan-col{background:transparent;border:1px solid var(--line);padding:14px 16px}.daily-plan-title{font-family:var(--serif);font-size:1rem;font-weight:600;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:7px}.daily-plan-row{display:flex;gap:12px;font-size:.78rem;padding:3px 0;line-height:1.45}.daily-plan-row .time{flex:0 0 48px;color:var(--accent);font-weight:800}.daily-plan-row .act{color:var(--muted)}
+.today-card{background:var(--panel);border:2px solid var(--ink);padding:0;margin-bottom:16px;position:relative}
+.today-card:before{content:"DANAS";position:absolute;right:16px;top:11px;font-size:.62rem;letter-spacing:.18em;font-weight:800;color:var(--muted)}
+.today-top{padding:18px 18px 8px}
+.today-date{font-family:var(--serif);font-size:2rem;font-weight:600;letter-spacing:-.03em}
+.today-stats{padding:0 18px 14px;font-size:.82rem;color:var(--muted)}
+.today-stats b{color:var(--ink);font-size:1rem}
+.finalize-btn{width:100%;display:block;border:0;border-top:1px solid var(--ink);background:var(--ink);color:#f5efe4;padding:13px 16px;font-family:var(--sans);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;cursor:pointer}
+.finalize-btn:hover{background:#27322e}
+.finalized-note{border-top:1px solid var(--line);padding:12px 18px;color:var(--green);font-weight:700;font-size:.78rem}
+.day-select-row{padding:10px 18px;border-top:1px solid var(--soft);font-size:.78rem;color:var(--muted)}
+.day-select-row select{font-family:var(--sans);font-size:.78rem;padding:3px 6px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
 
-/* today hero */
-.today-card{background:var(--panel);border:2px solid var(--ink);padding:0;margin-bottom:16px;position:relative}.today-card:before{content:"DANAS";position:absolute;right:16px;top:11px;font-size:.62rem;letter-spacing:.18em;font-weight:800;color:var(--muted)}
-.today-top{padding:18px 18px 8px}.today-date{font-family:var(--serif);font-size:2rem;font-weight:600;letter-spacing:-.03em}.today-stats{padding:0 18px 14px;font-size:.82rem;color:var(--muted)}.today-stats b{color:var(--ink);font-size:1rem}.finalize-btn{width:100%;border:0;border-top:1px solid var(--ink);background:var(--ink);color:#f5efe4;padding:13px 16px;font-family:var(--sans);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;cursor:pointer}.finalize-btn:hover{background:#27322e}.finalized-note{border-top:1px solid var(--line);padding:12px 18px;color:var(--green);font-weight:700;font-size:.78rem}.deficit-banner{margin:0;border-top:1px solid #c69990;background:var(--warn-bg);color:var(--warn-text);padding:10px 18px;font-size:.78rem;line-height:1.5}.deficit-banner b{color:inherit}.drift-label{font-weight:800;letter-spacing:.09em;text-transform:uppercase;margin-right:5px}
+.overall{padding:0;border:1px solid var(--ink);background:var(--panel);margin-bottom:24px}
+.overall-top{display:flex;justify-content:space-between;align-items:end;padding:16px 18px 13px;margin:0;border-bottom:1px solid var(--ink)}
+.overall-title-wrap .eyebrow{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:800}
+.overall-title-wrap .title{font-family:var(--serif);font-size:1.35rem;margin-top:2px}
+.overall-top .pct{font-family:var(--serif);font-size:2.2rem;font-weight:600}
+.overall>.bar-bg{height:4px;margin:0;background:var(--paper-2);overflow:hidden}
+.bar-fill{height:100%;background:var(--ink);transition:width .4s ease}
 
-/* radar */
-.overall{background:var(--panel);border:1px solid var(--ink);padding:18px;margin-bottom:24px}.overall-top{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line);padding-bottom:11px;margin-bottom:12px}.overall-title-wrap .eyebrow{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:800}.overall-title-wrap .title{font-family:var(--serif);font-size:1.35rem;margin-top:2px}.overall-top .pct{font-family:var(--serif);font-size:2.2rem;font-weight:600}.bar-bg{height:3px;background:var(--paper-2);overflow:hidden;margin-bottom:15px}.bar-fill{height:100%;background:var(--ink);transition:width .4s ease}.subject-mini{display:flex;flex-direction:column}.subject-mini-row{display:grid;grid-template-columns:190px 1fr 58px 118px;align-items:center;gap:10px;font-size:.75rem;padding:8px 0;border-bottom:1px solid var(--soft)}.subject-mini-row:last-child{border-bottom:0}.subj-name{font-weight:650;display:flex;align-items:center;gap:8px}.subj-name .subject-symbol{width:22px;height:22px;flex-basis:22px}.subj-name .subject-symbol svg{width:21px;height:21px} .mini-bar-bg{height:6px;background:var(--paper-2);overflow:hidden}.mini-bar-fill{display:block;height:100%;transition:width .4s}.subj-frac{font-variant-numeric:tabular-nums;color:var(--muted);text-align:right}.subj-status{text-align:right;text-transform:uppercase;letter-spacing:.05em;font-size:.64rem;font-weight:800}.subj-status.ok{color:var(--green)}.subj-status.risk{color:var(--red)}.subj-status.done{color:var(--ink)}
+.subject-mini{display:grid;grid-template-columns:repeat(3,1fr)}
+.subject-mini-row{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;gap:8px 10px;padding:16px 16px 14px;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:132px;overflow:hidden}
+.subject-mini-row:nth-child(3n){border-right:0}
+.subject-mini-row:nth-last-child(-n+3){border-bottom:0}
+.subject-mini-row:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--subject-color)}
+.subj-name{grid-column:1/3;font-family:var(--serif);font-size:.93rem;font-weight:600;line-height:1.18;display:flex;align-items:center;gap:10px;color:var(--ink)}
+.subj-name .subject-symbol{width:30px;height:30px;flex:0 0 30px;color:var(--subject-color)}
+.subj-name .subject-symbol svg{width:28px;height:28px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.subj-name .subject-symbol svg .eu-star{fill:#d4b018;stroke:#d4b018}
+.mini-bar-bg{grid-column:1/3;height:5px;background:var(--paper-2);align-self:end;overflow:hidden}
+.mini-bar-fill{display:block;height:100%;background:var(--subject-color)!important}
+.subj-frac{grid-column:1;font-family:var(--serif);font-size:1.05rem;color:var(--ink);text-align:left;font-variant-numeric:tabular-nums}
+.subj-status{grid-column:2;text-align:right;align-self:center;border:1px solid currentColor;padding:3px 6px;font-size:.57rem;letter-spacing:.07em;text-transform:uppercase;font-weight:800;white-space:nowrap}
+.subj-status.ok{color:var(--green)}
+.subj-status.risk{color:var(--red)}
+.subj-status.done{color:var(--ink)}
 
-/* timeline */
-#days{position:relative;margin-left:70px;border-left:1px solid var(--ink);padding-left:22px}.day{position:relative;margin:0 0 12px;background:rgba(245,241,232,.62);border:1px solid var(--line)}.day:before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);left:-29px;top:19px;z-index:2}.day.is-today{border:2px solid var(--ink);background:var(--panel)}.day.is-today:before{background:var(--ink);box-shadow:0 0 0 4px var(--paper)}.day-header{display:flex;justify-content:space-between;align-items:center;padding:14px 15px;cursor:pointer;user-select:none;gap:10px;flex-wrap:wrap}.day-header:hover{background:rgba(23,32,29,.035)}.day-title{font-family:var(--serif);font-size:1.05rem;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.day-title:before{content:attr(data-short);position:absolute;left:-91px;width:56px;text-align:right;font-family:var(--sans);font-size:.62rem;letter-spacing:.08em;color:var(--muted);font-weight:800}.day-progress{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}.day-body{padding:0 15px 15px;display:none}.day.open .day-body{display:block}.chevron{transition:transform .2s;color:var(--muted);font-size:.7rem}.day.open .chevron{transform:rotate(90deg)}
-.exam-flag{display:inline-flex;align-items:center;font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:#f3eee4;padding:4px 7px;border-radius:1px}.day-tag{display:inline-flex;font-size:.59rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--line)}.day-tag.past{color:var(--muted)}.day-tag.projected{color:var(--accent);border-color:#92a69e}.day-tag.rest{color:var(--green)}
-.note{font-size:.76rem;color:var(--muted);background:rgba(23,32,29,.04);padding:8px 10px;margin:9px 0;border-left:2px solid var(--ink)}.group{margin-top:15px}.group-title{font-size:.82rem;font-weight:750;margin:0 0 7px;display:flex;align-items:center;gap:7px}.group-title .subj-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}.group-count{color:var(--muted);font-weight:500;font-size:.7rem}.area-group{margin:10px 0 0 4px}.area-title{font-size:.73rem;font-weight:750;color:var(--muted);margin:8px 0 4px}.area-count{font-weight:500;color:#918a7f}
-label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:pointer;font-size:.82rem;line-height:1.42;border-bottom:1px dotted rgba(117,111,102,.22)}label.item:hover{background:rgba(23,32,29,.035)}label.item input{margin-top:2px;accent-color:var(--ink);width:15px;height:15px;flex-shrink:0;cursor:pointer}label.item input:checked~span.txt{color:#918b82;text-decoration:line-through;opacity:.72}label.item.review span.txt{font-weight:650}label.item.locked{cursor:default;opacity:.62}label.item.locked input{cursor:default}.examcheck-block{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}.examcheck-block label.item{flex:1;min-width:180px;justify-content:center;text-align:center;font-weight:700;font-size:.74rem;background:transparent;border:1px solid var(--line);padding:8px}.examcheck-block label.item input{display:none}.examcheck-block label.item input:checked~span.txt{color:var(--ink);opacity:1;text-decoration:none}.examcheck-block label.item:has(input:checked){border-color:var(--ink);background:var(--paper-2)}
-.loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}.empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
-.footer-stamp{text-align:center;margin:28px 0 0;color:var(--muted);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}
+#days{position:relative;margin-left:70px;border-left:1px solid var(--ink);padding-left:22px}
+.day{position:relative;margin:0 0 12px;background:rgba(245,241,232,.62);border:1px solid var(--line)}
+.day:before{content:"";position:absolute;width:9px;height:9px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);left:-29px;top:19px;z-index:2}
+.day.is-today{border:2px solid var(--ink);background:var(--panel)}
+.day.is-today:before{background:var(--ink);box-shadow:0 0 0 4px var(--paper)}
+.day-header{display:flex;justify-content:space-between;align-items:center;padding:14px 15px;cursor:pointer;user-select:none;gap:10px;flex-wrap:wrap;position:relative}
+.day-header:hover{background:rgba(23,32,29,.035)}
+.day-title{font-family:var(--serif);font-size:1.05rem;font-weight:600;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.day-title:before{content:attr(data-short);position:absolute;left:-91px;width:56px;text-align:right;font-family:var(--sans);font-size:.62rem;letter-spacing:.08em;color:var(--muted);font-weight:800}
+.day-progress{font-size:.72rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.day-body{padding:0 15px 15px;display:none}
+.day.open .day-body{display:block}
+.chevron{transition:transform .2s;color:var(--muted);font-size:.7rem}
+.day.open .chevron{transform:rotate(90deg)}
 
-.day-plan-control{background:rgba(23,32,29,.035);border:1px solid var(--soft);padding:9px 11px;margin-bottom:12px;font-size:.76rem}
-.day-plan-control .plan-row{display:flex;gap:14px;margin-bottom:6px;flex-wrap:wrap}
-.day-plan-control label{display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600}
-.day-plan-control input[type="radio"]{accent-color:var(--ink);cursor:pointer}
-.day-plan-control .plan-times{display:flex;align-items:center;gap:6px;margin-bottom:6px;color:var(--muted);flex-wrap:wrap}
-.day-plan-control .plan-times input[type="time"]{border:1px solid var(--line);background:var(--panel);font-family:var(--sans);font-size:.76rem;padding:2px 4px}
-.day-plan-control .plan-suggestion{color:var(--accent);font-weight:650}
+.exam-flag{display:inline-flex;align-items:center;gap:3px;font-size:.62rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;background:var(--ink);color:#f3eee4;padding:4px 7px;border-radius:1px}
+.day-tag{display:inline-flex;font-size:.59rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:3px 7px;border:1px solid var(--line)}
+.day-tag.past{color:var(--muted)}
+.day-tag.projected{color:var(--accent);border-color:#92a69e}
+.day-tag.locked{color:var(--red);border-color:#c69990}
+
 .review-link-btn{display:block;text-align:center;background:var(--ink);color:#f5efe4;text-decoration:none;font-size:.78rem;font-weight:700;letter-spacing:.03em;padding:11px;margin-bottom:12px;border-radius:2px}
 .review-link-btn:hover{background:#27322e}
-@media(max-width:720px){body{padding:20px 12px 60px}.command-mark{display:none}.exams{grid-template-columns:1fr 1fr}.route-date{font-size:.56rem}.daily-plans{grid-template-columns:1fr}.subject-mini-row{grid-template-columns:1fr 1fr 45px}.subj-status{grid-column:2/4;text-align:right;margin-top:-5px}.mission-days{text-align:left}#days{margin-left:43px;padding-left:15px}.day-title:before{left:-65px;width:40px}.day:before{left:-22px}}
-@media(max-width:480px){.command-title{font-size:3.25rem}.exams{grid-template-columns:1fr}.mission-strip{padding:15px 13px}.route{gap:2px}.route-code{font-size:.58rem}.route-date{font-size:.5rem}.today-date{font-size:1.65rem}.subject-mini-row{grid-template-columns:1fr 58px}.mini-bar-bg{grid-column:1/3}.subj-frac{grid-column:2}.subj-status{grid-column:1;text-align:left;grid-row:3}.day-title{font-size:.95rem}}
 
-/* Subject signatures — jasne ikonice po predmetu */
+.group{margin-top:15px}
 .group-title{position:relative;min-height:42px;padding:8px 12px;border-top:1px solid var(--line);border-bottom:1px solid var(--soft);overflow:hidden;background:rgba(255,255,255,.24);display:flex;align-items:center;gap:10px}
-.group-title .subj-dot{display:none}
 .group-title .subject-symbol{width:30px;height:30px;flex:0 0 30px}
 .group-title .subject-symbol svg{width:28px;height:28px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.group-count{color:var(--muted);font-weight:500;font-size:.7rem}
 .group.sig-eng .group-title{color:#1f6170;background:linear-gradient(90deg,rgba(31,97,112,.10),transparent 58%)}
 .group.sig-spi .group-title{color:#8c3f5c;background:linear-gradient(90deg,rgba(140,63,92,.10),transparent 58%)}
 .group.sig-ess .group-title{color:#5d7a52;background:linear-gradient(90deg,rgba(93,122,82,.10),transparent 58%)}
 .group.sig-ibo .group-title{color:#b15f43;background:linear-gradient(90deg,rgba(177,95,67,.10),transparent 58%)}
 .group.sig-pseu .group-title{color:#b79518;background:linear-gradient(90deg,rgba(183,149,24,.12),transparent 58%)}
 .group.sig-spt .group-title{color:#625c96;background:linear-gradient(90deg,rgba(98,92,150,.10),transparent 58%)}
-.group.sig-pseu .subject-symbol svg{stroke:#d4b018;fill:none}.group.sig-pseu .subject-symbol .eu-star{fill:#d4b018;stroke:#d4b018}
-.group.sig-ess .subject-symbol .down{stroke:#9a4b41}.group.sig-ess .subject-symbol .up{stroke:#567b5d}
+.group.sig-pseu .subject-symbol svg{stroke:#d4b018}
+.group.sig-pseu .subject-symbol svg .eu-star{fill:#d4b018;stroke:#d4b018}
+.group.sig-ess .subject-symbol svg .up{stroke:#567b5d}
 
-/* v5 — Ispitni radar kao šest vizuelnih kartica */
-.overall{padding:0;border:1px solid var(--ink);background:var(--panel)}
-.overall-top{padding:16px 18px 13px;margin:0;border-bottom:1px solid var(--ink)}
-.overall>.bar-bg{height:4px;margin:0;background:var(--paper-2)}
-.subject-mini{display:grid;grid-template-columns:repeat(3,1fr)}
-.subject-mini-row{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;gap:8px 10px;padding:16px 16px 14px;border:0;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:132px;overflow:hidden}
-.subject-mini-row:nth-child(3n){border-right:0}.subject-mini-row:nth-last-child(-n+3){border-bottom:0}
-.subject-mini-row:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--subject-color)}
-.subj-name{grid-column:1/3;font-family:var(--serif);font-size:.93rem;font-weight:600;line-height:1.18;gap:10px;color:var(--ink)}
-.subj-name .subject-symbol{width:34px;height:34px;flex:0 0 34px;color:var(--subject-color)}
-.subj-name .subject-symbol svg{width:32px;height:32px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.subj-name .subject-symbol.pseu svg .eu-star{fill:#d4b018;stroke:#d4b018}
-.subj-name .subject-symbol.ess svg .up{stroke:#567b5d}
-.mini-bar-bg{grid-column:1/3;height:5px;background:var(--paper-2);align-self:end}.mini-bar-fill{height:100%;display:block;background:var(--subject-color)!important}
-.subj-frac{grid-column:1;font-family:var(--serif);font-size:1.05rem;color:var(--ink);text-align:left;font-variant-numeric:tabular-nums}
-.subj-status{grid-column:2;text-align:right;align-self:center;border:1px solid currentColor;padding:3px 6px;font-size:.57rem;letter-spacing:.07em}
-@media(max-width:720px){.subject-mini{grid-template-columns:repeat(2,1fr)}.subject-mini-row:nth-child(3n){border-right:1px solid var(--soft)}.subject-mini-row:nth-child(2n){border-right:0}.subject-mini-row:nth-last-child(-n+3){border-bottom:1px solid var(--soft)}.subject-mini-row:nth-last-child(-n+2){border-bottom:0}}
-@media(max-width:480px){.subject-mini{grid-template-columns:1fr}.subject-mini-row,.subject-mini-row:nth-child(2n),.subject-mini-row:nth-child(3n){border-right:0;border-bottom:1px solid var(--soft)}.subject-mini-row:last-child{border-bottom:0}}
+.area-group{margin:10px 0 0 4px}
+.area-title{font-size:.73rem;font-weight:750;color:var(--muted);margin:8px 0 4px}
+.area-count{font-weight:500;color:#918a7f}
 
+label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:pointer;font-size:.82rem;line-height:1.42;border-bottom:1px dotted rgba(117,111,102,.22)}
+label.item:hover{background:rgba(23,32,29,.035)}
+label.item input{margin-top:2px;accent-color:var(--ink);width:15px;height:15px;flex-shrink:0;cursor:pointer}
+label.item input:checked~span.txt{color:#918b82;text-decoration:line-through;opacity:.72}
+label.item.review span.txt{font-weight:650}
+label.item.locked{cursor:default;opacity:.62}
+label.item.locked input{cursor:default}
+
+.examcheck-block{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.examcheck-block label.item{flex:1;min-width:180px;justify-content:center;text-align:center;font-weight:700;font-size:.74rem;background:transparent;border:1px solid var(--line);padding:8px}
+.examcheck-block label.item input{display:none}
+.examcheck-block label.item input:checked~span.txt{color:var(--ink);opacity:1;text-decoration:none}
+.examcheck-block label.item:has(input:checked){border-color:var(--ink);background:var(--paper-2)}
+
+.loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}
+.empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
+
+.day-plan-control{background:rgba(23,32,29,.035);border:1px solid var(--soft);padding:9px 11px;margin-bottom:12px;font-size:.76rem}
+.day-plan-control .plan-row{display:flex;gap:14px;margin-bottom:6px;flex-wrap:wrap}
+.day-plan-control label{display:flex;align-items:center;gap:5px;cursor:pointer;font-weight:600}
+.day-plan-control input[type="radio"],.day-plan-control input[type="checkbox"]{accent-color:var(--ink);cursor:pointer}
+.day-plan-control .plan-times{display:flex;align-items:center;gap:6px;margin-bottom:6px;color:var(--muted);flex-wrap:wrap}
+.day-plan-control .plan-times input[type="time"]{border:1px solid var(--line);background:var(--panel);font-family:var(--sans);font-size:.76rem;padding:2px 4px}
+.day-plan-control .plan-suggestion{color:var(--accent);font-weight:650}
+
+.footer-stamp{text-align:center;margin:28px 0 0;color:var(--muted);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}
+
+@media(max-width:720px){
+  body{padding:20px 12px 60px}
+  .exams{grid-template-columns:1fr 1fr}
+  #days{margin-left:43px;padding-left:15px}
+  .day-title:before{left:-65px;width:40px}
+  .day:before{left:-22px}
+  .subject-mini{grid-template-columns:repeat(2,1fr)}
+  .subject-mini-row:nth-child(3n){border-right:1px solid var(--soft)}
+  .subject-mini-row:nth-child(2n){border-right:0}
+  .subject-mini-row:nth-last-child(-n+3){border-bottom:1px solid var(--soft)}
+  .subject-mini-row:nth-last-child(-n+2){border-bottom:0}
+}
+@media(max-width:480px){
+  .command-title{font-size:3.25rem}
+  .exams{grid-template-columns:1fr}
+  .mission-strip{padding:15px 13px}
+  .route{gap:2px}
+  .route-code{font-size:.58rem}
+  .route-date{font-size:.5rem}
+  .today-date{font-size:1.65rem}
+  .day-title{font-size:.95rem}
+  .subject-mini{grid-template-columns:1fr}
+  .subject-mini-row,.subject-mini-row:nth-child(2n),.subject-mini-row:nth-child(3n){border-right:0;border-bottom:1px solid var(--soft)}
+  .subject-mini-row:last-child{border-bottom:0}
+}
 </style>
-
-
 </head>
 <body>
 <div class="wrap">
   <header class="command-header">
-        <h1 class="command-title"><span>Septembarski</span><span>rok '26</span></h1>
+    <h1 class="command-title"><span>Septembarski</span><span>rok '26</span></h1>
   </header>
   <div id="missionStrip"></div>
 
@@ -143,12 +212,16 @@ label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:po
 
   <div id="days"><div class="loading">Učitavanje...</div></div>
 
+  <div class="footer-stamp">FIXED SCHEDULE · v1</div>
 </div>
 
 <script>
+/* =========================================================================
+   IKONICE PREDMETA (nepromenjeno — vizuelni identitet)
+   ========================================================================= */
 function subjectIcon(subj){
   const icons={
-    eng:`<span class="subject-symbol eng" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 7.5h14a5 5 0 0 1 5 5v4a5 5 0 0 1-5 5h-7l-5 4v-4H5a5 5 0 0 1-5-5v-4a5 5 0 0 1 5-5Z" transform="translate(2 0)"/><path d="M17 10.5h5a5 5 0 0 1 5 5v3a5 5 0 0 1-5 5h-2v3l-4-3"/></svg></span>`,
+    eng:`<span class="subject-symbol eng" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 7.5h14a5 5 0 0 1 5 5v4a5 5 0 0 1-5 5h-7l-5 4v-4H5a5 5 0 0 1-5-5v4a5 5 0 0 1 5-5Z" transform="translate(2 0)"/><path d="M17 10.5h5a5 5 0 0 1 5 5v3a5 5 0 0 1-5 5h-2v3l-4-3"/></svg></span>`,
     spi:`<span class="subject-symbol spi" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 5v22" stroke-width="2.6"/><path d="M5.8 12h20.4M5.8 20h20.4" opacity=".55"/><path d="M11 6.3c-2.2 3.2-3.3 6.4-3.3 9.7s1.1 6.5 3.3 9.7M21 6.3c2.2 3.2 3.3 6.4 3.3 9.7s-1.1 6.5-3.3 9.7" opacity=".55"/></svg></span>`,
     ess:`<span class="subject-symbol ess" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 26V6M4 26h24"/><path d="M7 22l5-7 5 4 8-11" class="up"/><path d="M24 8h3v3" class="up"/></svg></span>`,
     ibo:`<span class="subject-symbol ibo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M11 4l5 2 3 4 5 2-1 4 3 3-4 3 1 5-5-2-3 3-3-4-4-1 2-4-3-3 4-3-1-4 3-2Z"/></svg></span>`,
@@ -158,18 +231,18 @@ function subjectIcon(subj){
   return icons[subj]||'';
 }
 
-const STORAGE_KEY = 'plan-sept-2026-v5';
+const STORAGE_KEY = 'plan-sept-2026-v5'; // ISTI KLJUČ kao pre — ne sme se izgubiti postojeći progress
 const YEAR = 2026, MONTH = 8; // septembar
 const START_DAY = 7;
 const DAY_COUNT = 20; // indeksi 0..19 = 7..26. septembar
 
 const SUBJECTS = {
-  eng: {label:"Engleski jezik 2", cls:"eng", color:"var(--eng)", examDay:7},
-  spi: {label:"Savremena politička istorija", cls:"spi", color:"var(--spi)", examDay:9},
-  ess: {label:"Ekonomski sistem Srbije", cls:"ess", color:"var(--ess)", examDay:12},
-  ibo: {label:"Istorija balkanskih odnosa", cls:"ibo", color:"var(--ibo)", examDay:14},
-  pseu: {label:"Politički sistem Evropske unije", cls:"pseu", color:"var(--pseu)", examDay:16},
-  spt: {label:"Savremena politička teorija", cls:"spt", color:"var(--spt)", examDay:19}
+  eng:  {label:"Engleski jezik 2",                 cls:"eng",  color:"var(--eng)",  examDay:7},
+  spi:  {label:"Savremena politička istorija",      cls:"spi",  color:"var(--spi)",  examDay:9},
+  ess:  {label:"Ekonomski sistem Srbije",           cls:"ess",  color:"var(--ess)",  examDay:12},
+  ibo:  {label:"Istorija balkanskih odnosa",        cls:"ibo",  color:"var(--ibo)",  examDay:14},
+  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:16},
+  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:19}
 };
 
 const EXAMS = {
@@ -181,19 +254,24 @@ const EXAMS = {
   19: {type:'ispit', subj:'spt'}
 };
 
-// Posebne, samostalne stranice za dan(e) revizije pred svaki ispit —
-// napravljene odvojeno (svoj dizajn, pitanje-po-pitanje, "crvena zona").
-// Linkuju se ovde, kod ne diramo, ostaju odvojeni fajlovi/sajtovi.
+// Dani koji su REZERVISANI ISKLJUČIVO za jedan predmet (revizija pred ispit).
+// Nijedan drugi predmet (ni carryover drugog predmeta) ne sme da se pojavi tog dana.
+const LOCKED_DAYS = { 8:'spi', 11:'ess', 13:'ibo', 15:'pseu', 18:'spt' };
+// Dan kada je predviđena revizija svakog predmeta (koristi se i za REVIEW_LINKS i za status na radaru)
+const REVIEW_DAY_FOR = { eng:6, spi:8, ess:11, ibo:13, pseu:15, spt:18 };
+
 const REVIEW_LINKS = {
   6:  {subj:'eng',  url:'https://draganaplazinic96-cyber.github.io/e2k2/'},
   8:  {subj:'spi',  url:'https://draganaplazinic96-cyber.github.io/spi/'},
   11: {subj:'ess',  url:'https://draganaplazinic96-cyber.github.io/ess/'},
   13: {subj:'ibo',  url:'https://draganaplazinic96-cyber.github.io/ibo/'},
-  14: {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
   15: {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
   18: {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
 };
 
+/* =========================================================================
+   POOLS — sadržaj gradiva (nepromenjeno, osim IBO koji je ispravljen na 46 pitanja)
+   ========================================================================= */
 const POOLS = {
   eng: [
     'Kvantifikatori: many/much, a lot of, few/a little, plenty of, enough',
@@ -322,41 +400,57 @@ const POOLS = {
     {review:true, reviewRound:4, text:'Ponovljene teme 36–40 (razvijenost, industrija, javna preduzeća)'},
     {review:true, text:'Ponovljeno svih 40 tema'}
   ],
+  // IBO — ISPRAVLJEN POOL: tačno 46 regularnih pitanja + 1 review (zamenjuje stari pogrešan pool od 31 pitanja)
   ibo: [
-    'Sanstefanski mir i stvaranje bugarske države (1878-1908)',
+    'Sanstefanski mir i stvaranje bugarske države',
     'Velika istočna kriza i Berlinski kongres',
     'Nastanak i razvoj hrvatskog nacionalnog pitanja u 19. veku',
-    'Prizrenska liga i stvaranje albanskog nacionalnog pokreta (1878-1913)',
+    'Prizrenska liga i stvaranje albanskog nacionalnog pokreta',
+    'Bosna i Hercegovina u odnosima evropskih sila i susednih balkanskih država tokom Velike istočne krize 1875–1878.',
     'Makedonsko pitanje u balkanskim i evropskim odnosima',
     'Ideje o ujedinjenju južnoslovenskih naroda u 19. veku',
     'Crna Gora u vreme Nikole Petrovića',
     'Srbija pod vlašću poslednjih Obrenovića',
+    'Grčka od Berlinskog kongresa do početka XX veka',
+    'Rumunija od Berlinskog kongresa do početka XX veka',
     'Mladoturska revolucija i stvaranje turske nacije',
-    'Majski prevrat i vlast Petra I (1903-1912)',
-    'Aneksiona kriza i odnosi AU i Srbije',
+    'Majski prevrat i vlast Petra I',
+    'Aneksiona kriza i odnosi Austrougarske i Srbije',
+    'Bugarska pod Ferdinandom početkom XX veka',
+    'Rumunija pod Karlom I početkom XX veka',
+    'Grčka pod Đorđem I i Elefteriosom Venizelosom početkom XX veka',
     'Balkanski ratovi i njihove posledice',
-    'Prvi svetski rat na Balkanu od 1914. do kraja 1915. godine',
-    'Prvi svetski rat na Balkanu od 1916. do 1918. godine',
+    'Izbijanje Prvog svetskog rata i ratne operacije na Balkanu 1914–1915.',
+    'Ulazak Bugarske i Rumunije u Prvi svetski rat i ratne operacije na Balkanu 1915–1917.',
+    'Ulazak Grčke u Prvi svetski rat i Solunski front 1917–1918.',
     'Versajska mirovna konferencija i geopolitičke promene na Balkanu posle Prvog svetskog rata',
+    'Kemal Ataturk i stvaranje turske nacionalne države',
+    'Grčko-turski rat 1920–1923.',
+    'Od demokratije ka diktaturama — politički sistemi balkanskih država posle Prvog svetskog rata',
     'Kraljevina SHS/Jugoslavija između dva svetska rata',
-    'Kemal Ataturk i turska država između dva svetska rata',
-    'Balkan u politici sila tokom Drugog svetskog rata',
-    'Grčka pod Venizelosom i Metaksisom',
+    'Bugarska između dva svetska rata',
+    'Rumunija između dva svetska rata',
+    'Grčka pod Venizelosom i Metaksasom',
     'Albanija pod Ahmedom Zoguom',
+    'Balkanske konferencije 1930–1933.',
+    'Balkanski sporazum / Balkanska antanta 1934–1940.',
+    'Mala antanta',
+    'Francuski i italijanski sistem saveza na Balkanu između dva svetska rata',
+    'Uticaj fašizma i nacizma na balkanske države',
+    'Prodor Musolinija i Hitlera na Balkan 1939–1941.',
+    'Rumunija i Bugarska kao satelitske države tokom Drugog svetskog rata',
+    'Okupirana Jugoslavija i Albanija tokom Drugog svetskog rata',
+    'Okupirana Grčka i početak građanskog rata 1944–1945.',
     'Britanija i pokreti otpora na Balkanu tokom Drugog svetskog rata',
-    'Rumunija u međuratnom periodu',
-    'Bugarska u međuratnom periodu',
-    'Balkanska multilateralna saradnja između dva svetska rata',
-    'Francuski i italijanski sistem saveza na Balkanu između dva svetska rata i Mala antanta',
-    'Uticaj fašizma i nacizma na Balkanu tridesetih godina XX veka',
-    'Prodor Musolinija i Hitlera na Balkan 1939-1941.',
-    'Pokreti otpora na Balkanu tokom Drugog svetskog rata',
-    'Uzroci i posledice sporazuma Staljina i Čerčila o podeli interesnih sfera na Balkanu posle Drugog svetskog rata',
-    'Mirovni sporazumi i početak hladnoratovskih podela interesnih sfera na Balkanu nakon Drugog svetskog rata',
-    'Građanski rat u Grčkoj 1945-1949.',
-    {review:true, text:'Ponovljeno svih 31 pitanje'}
+    'Mirovni sporazumi i početak hladnoratovske podele interesnih sfera na Balkanu posle Drugog svetskog rata',
+    'Prosovjetska spoljna politika nove Jugoslavije 1944–1948.',
+    'Izgradnja komunističkih sistema u državama jugoistočne Evrope',
+    'Hladni rat u jugoistočnoj Evropi',
+    'Balkanski pakt Jugoslavije, Grčke i Turske i politika Zapada prema Balkanu tokom pedesetih godina',
+    'Jugoslavija i politika nesvrstavanja od šezdesetih do osamdesetih godina XX veka',
+    {review:true, text:'Kompletno ponavljanje svih 46 pitanja — Istorija balkanskih odnosa'}
   ],
-  pseu:   [
+  pseu: [
     {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Klasična teorija političkog sistema'},
     {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Primena koncepta političkog sistema na Evropsku zajednicu/uniju'},
     {area: '2. Evolucija od međunarodne organizacije ka političkom sistemu', text: 'Evolucija Evropskih zajednica – od osnivanja do krize „prazne stolice"'},
@@ -463,7 +557,7 @@ const POOLS = {
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Da li EU pretpostavlja novi tip demokratije?'},
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Krizni ishod legitimnosti i demokratije'},
     {review:true, reviewRound:1, area: 'Ponavljanje — krug 1', text: 'Prvi krug ponavljanja: brzi pregled svih 105 pitanja, fokus na slabije oblasti'},
-    {review:true, reviewRound:2, area: 'Ponavljanje — krug 2', text: 'Drugi krug ponavljanja: detaljan pregled svih 105 pitanja, neposredno pred ispit'},
+    {review:true, reviewRound:2, area: 'Ponavljanje — krug 2', text: 'Drugi krug ponavljanja: detaljan pregled svih 105 pitanja, neposredno pred ispit'}
   ],
   spt: [
     'Pozitivna i negativna sloboda',
@@ -534,6 +628,7 @@ const POOLS = {
   ]
 };
 
+/* Tematske oblasti — SAMO za vizuelno grupisanje, NE utiču na raspored po danima */
 const THEMATIC_AREAS = {
   spi: [
     [1,4,'Drugi svetski rat'],
@@ -556,15 +651,16 @@ const THEMATIC_AREAS = {
     [32,35,'Spoljni sektor i integracije'],
     [36,40,'Razvijenost, industrija i javna preduzeća']
   ],
+  // IBO — nove tematske oblasti usklađene sa 46 pitanja (samo vizuelno grupisanje)
   ibo: [
-    [1,2,'Istočna kriza i Berlinski poredak'],
-    [3,5,'Nacionalna pitanja na Balkanu'],
-    [6,9,'Južnoslovenske ideje i balkanske države pred krize'],
-    [10,12,'Srbija, Aneksiona kriza i Balkanski ratovi'],
-    [13,15,'Prvi svetski rat i Versaj'],
-    [16,20,'Međuratni Balkan — Jugoslavija, Turska, Grčka i Albanija'],
-    [21,27,'Međuratni poredak, savezi i prodor fašizma/nacizma'],
-    [28,31,'Drugi svetski rat i posleratne podele']
+    [1,6,'Istočna kriza i nacionalna pitanja'],
+    [7,12,'Balkanske države do početka XX veka'],
+    [13,18,'Balkan pred Prvi svetski rat'],
+    [19,24,'Prvi svetski rat i novi balkanski poredak'],
+    [25,30,'Balkanske države između dva rata'],
+    [31,36,'Međuratni međunarodni odnosi na Balkanu'],
+    [37,40,'Drugi svetski rat na Balkanu'],
+    [41,46,'Posleratni Balkan i Hladni rat']
   ],
   spt: [
     [1,4,'Sloboda'],
@@ -596,47 +692,74 @@ Object.keys(POOLS).forEach(subj=>{
     };
   });
 });
+function itemLookup(id){
+  const subj = id.split('-')[0];
+  return ITEM_POOL[subj].find(it => it.id === id);
+}
+function reviewIdsForSubject(subj){
+  return ITEM_POOL[subj].filter(it=>it.review).map(it=>it.id);
+}
+
+/* =========================================================================
+   rangeIds — pretvara 1-based opseg pitanja iz prompta u 0-based ID-jeve
+   ========================================================================= */
+function rangeIds(subj, startOneBased, endOneBasedInclusive){
+  const ids = [];
+  for(let i=startOneBased; i<=endOneBasedInclusive; i++) ids.push(`${subj}-${i-1}`);
+  return ids;
+}
+
+/* =========================================================================
+   FIXED_SCHEDULE — AUTORITATIVAN, DETERMINISTIČKI raspored po danIndex-u.
+   Brojevi su TAČNO oni iz uputstva (1-based opsezi pretvoreni preko rangeIds).
+   Dani 0 i 1 (7. i 8. sept) su već završeni pre migracije (videti runMigration).
+   Dani u LOCKED_DAYS namerno nemaju regularne stavke ovde — samo review (FIXED_REVIEWS).
+   ========================================================================= */
+const FIXED_SCHEDULE = {
+  0: { eng: rangeIds('eng',1,5),   spi: rangeIds('spi',1,4), pseu: rangeIds('pseu',1,2) },
+  1: { eng: rangeIds('eng',6,10) },
+  2: { eng: rangeIds('eng',11,15), spi: rangeIds('spi',5,8),   ess: rangeIds('ess',1,4),   ibo: rangeIds('ibo',1,4),   pseu: rangeIds('pseu',3,7) },
+  3: { eng: rangeIds('eng',16,20), spi: rangeIds('spi',9,16),  ess: rangeIds('ess',5,8),   ibo: rangeIds('ibo',5,8),   pseu: rangeIds('pseu',8,14) },
+  4: { eng: rangeIds('eng',21,24), spi: rangeIds('spi',17,24), ess: rangeIds('ess',9,12),  ibo: rangeIds('ibo',9,12),  pseu: rangeIds('pseu',15,22) },
+  5: { eng: rangeIds('eng',25,28), spi: rangeIds('spi',25,31), ess: rangeIds('ess',13,17), ibo: rangeIds('ibo',13,17), pseu: rangeIds('pseu',23,31) },
+  6: { spi: rangeIds('spi',32,38), ess: rangeIds('ess',18,22), ibo: rangeIds('ibo',18,22), pseu: rangeIds('pseu',32,41), spt: rangeIds('spt',1,4) }, // + ENG review (FIXED_REVIEWS) — SPT ovde kreće
+  7: { spi: rangeIds('spi',39,45), ess: rangeIds('ess',23,27), ibo: rangeIds('ibo',23,27), pseu: rangeIds('pseu',42,50) }, // ENG kolokvijum tog jutra — namerno bez SPT
+  8: { }, // SAMO SPI — kompletna revizija (FIXED_REVIEWS)
+  9: { ess: rangeIds('ess',28,33), ibo: rangeIds('ibo',28,33), pseu: rangeIds('pseu',51,63), spt: rangeIds('spt',5,12) }, // SPI ispit tog jutra
+  10:{ ess: rangeIds('ess',34,40), ibo: rangeIds('ibo',34,39), pseu: rangeIds('pseu',64,76), spt: rangeIds('spt',13,19) },
+  11:{ }, // SAMO ESS — kompletna revizija
+  12:{ ibo: rangeIds('ibo',40,46), pseu: rangeIds('pseu',77,90), spt: rangeIds('spt',20,30) }, // ESS ispit tog jutra
+  13:{ }, // SAMO IBO — kompletna revizija
+  14:{ pseu: rangeIds('pseu',91,105), spt: rangeIds('spt',31,38) }, // IBO ispit tog jutra
+  15:{ }, // SAMO PSEU — kompletna revizija
+  16:{ spt: rangeIds('spt',39,45) }, // PSEU ispit tog jutra
+  17:{ spt: rangeIds('spt',46,64) },
+  18:{ }, // SAMO SPT — kompletna revizija
+  19:{ } // SPT ispit — bez novog gradiva
+};
+
+/* Review dani -> koji predmet dobija review taj dan (koristi se u baseItemsForDay) */
+const FIXED_REVIEWS = { 6:'eng', 8:'spi', 11:'ess', 13:'ibo', 15:'pseu', 18:'spt' };
 
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
-function dayDate(i){ return new Date(YEAR, MONTH, START_DAY+i); }
+function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 0, 0); }
+function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
+function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,START_DAY+i); return Math.ceil((e-t)/86400000); }
+function subjectCode(subj){ return ({eng:'ENG',spi:'SPI',ess:'ESS',ibo:'IBO',pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
+function examClock(subj){ return ({eng:'',spi:'09:00',ess:'10:00',ibo:'09:00',pseu:'09:00',spt:'09:00'})[subj] || ''; }
 
-// Kalendarski dan po realnom datumu — koristi se SAMO kao početna (bootstrap)
-// vrednost pri prvom učitavanju, kad još ne postoji sačuvan "aktivni" dan.
-function calendarDayIndex(){
-  const now = new Date();
-  const start = new Date(YEAR, MONTH, START_DAY);
-  const diff = Math.floor((new Date(now.getFullYear(),now.getMonth(),now.getDate()) - start)/86400000);
-  return Math.min(Math.max(diff,0), DAY_COUNT-1);
-}
-
-// "Aktivni" (današnji) dan se NIKAD ne menja sam po ponoći — ostaje isti dok
-// se ručno ne zaključi klikom na "Završila za danas · zaključi dan". To dugme
-// je JEDINI način da se pređe na sledeći dan. Kalendarski datum se koristi
-// samo pri prvom ikad otvaranju aplikacije, kao startna vrednost.
-function activeDayIndex(){
-  if(state.currentDayIndex == null){
-    // Radije nasledi poslednji poznati "aktivni" dan iz starog cache-a
-    // (ako postoji) nego da ga računa iz stvarnog kalendarskog datuma —
-    // u suprotnom bi baš prvi put kad ovaj kod proradi posle ponoći opet
-    // automatski "preskočio" na sledeći dan, iako korisnica dan još nije
-    // ručno zaključila.
-    if(state.todayCache && typeof state.todayCache.dayIndex === 'number'){
-      state.currentDayIndex = state.todayCache.dayIndex;
-    } else {
-      state.currentDayIndex = calendarDayIndex();
-    }
-  }
-  return Math.min(Math.max(state.currentDayIndex, 0), DAY_COUNT-1);
-}
-
+/* =========================================================================
+   STANJE (localStorage)
+   ========================================================================= */
 let state = {
-  progress: {},
-  examAnswers: {},
-  todayCache: null,
+  progress: {},          // id -> {done, completedAt, dayIndex}
+  examAnswers: {},        // dayIndex -> 'yes'/'no'
+  dayPlan: {},             // dayIndex -> {type, workFrom, workTo, extra:{...}, walker}
+  currentDayIndex: null,
   todayFinalized: false,
-  pendingCarryover: null,
-  dayPlan: {},
-  currentDayIndex: null
+  carryover: {eng:[],spi:[],ess:[],ibo:[],pseu:[],spt:[]},
+  carryoverSnapshots: {},  // dayIndex(dana koji je zaključen) -> carryover PRE tog finalize-a (za "vrati nazad")
+  __fixedScheduleMigrationV1: false
 };
 let openDays = new Set();
 let storageOk = true;
@@ -651,19 +774,22 @@ function verifyStorageWorks(){
     return r === v;
   }catch(err){ return false; }
 }
-
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(raw){
       const data = JSON.parse(raw);
-      state = Object.assign({progress:{}, examAnswers:{}, todayCache:null, todayFinalized:false, pendingCarryover:null, dayPlan:{}, currentDayIndex:null}, data);
+      state = Object.assign({
+        progress:{}, examAnswers:{}, dayPlan:{}, currentDayIndex:null,
+        todayFinalized:false, carryover:{eng:[],spi:[],ess:[],ibo:[],pseu:[],spt:[]},
+        carryoverSnapshots:{}, __fixedScheduleMigrationV1:false
+      }, data);
+      if(!state.carryover) state.carryover = {};
+      ['eng','spi','ess','ibo','pseu','spt'].forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
+      if(!state.carryoverSnapshots) state.carryoverSnapshots = {};
     }
-  }catch(err){
-    console.error('Load error', err);
-  }
+  }catch(err){ console.error('Load error', err); }
 }
-
 function saveState(){
   try{
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -674,340 +800,173 @@ function saveState(){
     console.error('Save error', err);
   }
 }
-
 function showStorageWarning(show){
   document.getElementById('storageWarning').classList.toggle('show', !!show);
 }
 
-function areaAwareCount(poolArr, rawCount){
-  if(rawCount <= 0) return 0;
-  if(rawCount >= poolArr.length) return poolArr.length;
-  if(!poolArr[0] || !poolArr[0].area){
-    return Math.round(rawCount);
-  }
-  const segments = [];
-  let i = 0;
-  while(i < poolArr.length){
-    const area = poolArr[i].area;
-    let j = i;
-    while(j < poolArr.length && poolArr[j].area === area) j++;
-    segments.push({start:i, end:j, len:j-i});
-    i = j;
-  }
-  for(const seg of segments){
-    if(rawCount <= seg.start) return seg.start;
-    if(rawCount < seg.end){
-      const posInSeg = rawCount - seg.start;
-      const remainInSeg = seg.end - rawCount;
-      if(seg.len <= 3){
-        return (posInSeg <= remainInSeg) ? seg.start : seg.end;
-      }
-      if(posInSeg === 1 || remainInSeg === 1){
-        let half = Math.round(seg.len / 2);
-        half = Math.max(2, Math.min(seg.len - 2, half));
-        return seg.start + half;
-      }
-      return (posInSeg <= remainInSeg) ? seg.start : seg.end;
+/* =========================================================================
+   JEDNOKRATNA MIGRACIJA
+   7. i 8. septembar tretiramo kao već završene. Pošto ne možemo pouzdano
+   znati da li je nešto završeno TAČNO 7. ili TAČNO 8, sve migrirano
+   označavamo sa dayIndex:0 (samo bucket "pre 9. septembra", bez lažne
+   preciznosti) — ovo NIKADA ne briše stvarno već čekirano gradivo.
+   ========================================================================= */
+function runMigrationIfNeeded(){
+  if(state.__fixedScheduleMigrationV1) return;
+  const markDone = (id) => {
+    if(!state.progress[id] || !state.progress[id].done){
+      state.progress[id] = {done:true, completedAt:null, dayIndex:0};
     }
-  }
-  return poolArr.length;
+  };
+  rangeIds('spi',1,4).forEach(markDone);
+  rangeIds('pseu',1,2).forEach(markDone);
+  rangeIds('eng',1,10).forEach(markDone);
+
+  state.currentDayIndex = 2; // 9. septembar — kao što traži uputstvo
+  state.todayFinalized = false;
+  delete state.pendingCarryover; // stara struktura, više se ne koristi
+  delete state.todayCache;       // stara struktura, više se ne koristi
+  if(!state.carryover) state.carryover = {};
+  ['eng','spi','ess','ibo','pseu','spt'].forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
+
+  state.__fixedScheduleMigrationV1 = true;
+  saveState();
 }
 
-const SCHEDULER_VERSION = 'priority-route-v13-spi-spread';
-const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
-
-const REVIEW_PLAN = {
-  eng:  [{day: SUBJECTS.eng.examDay - 1, round: null, blocking: false}],
-  spi:  [
-    {day: 7, round: 'first', blocking: false},
-    {day: SUBJECTS.spi.examDay - 1, round: 'final', blocking: true}
-  ],
-  ess:  [
-    {day: 6, round: 1, blocking: false},
-    {day: 7, round: 2, blocking: false},
-    {day: 9, round: 3, blocking: false},
-    {day: 10, round: 4, blocking: false},
-    {day: SUBJECTS.ess.examDay - 1, round: null, blocking: true}
-  ],
-  ibo:  [{day: SUBJECTS.ibo.examDay - 1, round: null, blocking: true}],
-  pseu: [
-    {day: SUBJECTS.pseu.examDay - 2, round: 1, blocking: false},
-    {day: SUBJECTS.pseu.examDay - 1, round: 2, blocking: true}
-  ],
-  spt:  [{day: SUBJECTS.spt.examDay - 1, round: null, blocking: true}]
-};
-
-const BLOCKED_DAYS = new Set();
-Object.values(REVIEW_PLAN).forEach(rounds=>{
-  rounds.forEach(r=>{ if(r.blocking) BLOCKED_DAYS.add(r.day); });
-});
-
-const REGULAR_DEADLINE = {};
-Object.keys(REVIEW_PLAN).forEach(s=>{
-  REGULAR_DEADLINE[s] = REVIEW_PLAN[s][0].day - 1;
-});
-
-function daysLeftAvailable(fromDay, toDayInclusive){
-  let count = 0;
-  for(let t = fromDay; t <= toDayInclusive; t++){
-    if(!BLOCKED_DAYS.has(t)) count++;
-  }
-  return Math.max(1, count);
+function activeDayIndex(){
+  const v = (state.currentDayIndex == null) ? 2 : state.currentDayIndex;
+  return Math.min(Math.max(v, 0), DAY_COUNT-1);
 }
 
-// Dnevni ciljevi su namerno birani kao TAČNE kumulativne sume celih tematskih
-// blokova/oblasti (THEMATIC_AREAS / PSEU area polje), tako da areaAwareCount()
-// (pozvan u simulateForward) svaki dan preseca TAČNO na granici teme — nikad
-// nasred nje. SPI je sada razvučen na 7 dana (7–13.9), umesto na 5, da nijedan
-// dan ne bude prenatrpan; 14.9 je prvi celovit pregled (nije blokirajući —
-// pseu i eng kolokvijum i dalje idu taj dan), 15.9 je finalni pregled pred
-// ispit (blokirajući).
-// Redosled: SPI + ESS + PSEU kreću odmah (svi imaju premalo vremena da čekaju).
-// IBO se otvara tek kad SPI ispit prođe (16.9), SPT tek kad ESS ispit prođe (19.9) —
-// dogovoreno kao pravac, brojevi ispod su nađeni simulacijom (EDF + ograničenje
-// dnevnog obima u rečima) tako da je vrh dana što niži, uz cele tematske celine.
-// ESS ciljevi (7-12.9.) preračunati po stvarnom broju reči gradiva iz skripte
-// (ess.md, 29.155 reči/40 tema, prosek 729/temu — raspon 378-990), umesto po
-// broju tema: granice 12,18,24,31,35,40 (bilo 6,12,18,24,35,40) su optimalna
-// podela u 6 dana koja minimizuje najveće odstupanje po broju reči po danu
-// uz očuvanje granica tematskih celina (7.106/4.054/4.907/5.908/3.376/3.804
-// reči po danu — najgori dan pre ovoga bio je 11.9. sa 9.284 reči).
-const BASE_TARGETS = {
-  0:  {spi:4, ess:12, pseu:2},                  // 7.9.
-  1:  {spi:7, ess:6, pseu:3},                   // 8.9.
-  2:  {spi:9, ess:6, pseu:2},                   // 9.9.
-  3:  {spi:5, ess:7, pseu:3},                   // 10.9.
-  4:  {spi:5, ess:4, pseu:4},                   // 11.9.
-  5:  {spi:8, ess:5, pseu:22},                  // 12.9.
-  6:  {spi:7, pseu:24},                         // 13.9.
-  7:  {pseu:25},                                // 14.9. (ENG kolokvijum + SPI prvi pregled)
-  9:  {ibo:15, pseu:8},                         // 16.9. (SPI ispit) — IBO kreće
-  10: {ibo:16, pseu:5},                         // 17.9.
-  12: {pseu:7, spt:12},                         // 19.9. (ESS ispit) — SPT kreće
-  14: {spt:18},                                 // 21.9. (IBO ispit)
-  16: {spt:19},                                 // 23.9. (PSEU ispit)
-  17: {spt:15}                                  // 24.9.
-};
+/* =========================================================================
+   STAVKE PO DANU
+   ========================================================================= */
 
-function baseTarget(day, subj){
-  return (BASE_TARGETS[day] && BASE_TARGETS[day][subj]) || 0;
-}
-
-function adjustedTargetsFrom(startDay, pools){
+// "Goli" plan za dan d (FIXED_SCHEDULE + eventualni review taj dan), BEZ carryover-a.
+// Koristi se za prošle (istorijski prikaz koristi drugu funkciju) i buduće (projekcija) dane.
+function baseItemsForDay(d){
   const out = {};
-  for(let d=startDay; d<DAY_COUNT; d++) out[d] = Object.assign({}, BASE_TARGETS[d] || {});
+  const fs = FIXED_SCHEDULE[d] || {};
+  Object.keys(fs).forEach(s=>{ if(fs[s] && fs[s].length) out[s] = fs[s].slice(); });
+  const reviewSubj = FIXED_REVIEWS[d];
+  if(reviewSubj){
+    const ids = reviewIdsForSubject(reviewSubj);
+    if(ids.length) out[reviewSubj] = (out[reviewSubj]||[]).concat(ids);
+  }
+  return out;
+}
 
-  EXAM_SUBJECTS.forEach(subj=>{
-    const remaining = pools[subj].filter(it=>!it.review).length;
-    const days = [];
-    let planned = 0;
-    for(let d=startDay; d<=REGULAR_DEADLINE[subj] && d<DAY_COUNT; d++){
-      if(BLOCKED_DAYS.has(d)) continue;
-      const b = baseTarget(d, subj);
-      if(b > 0){ days.push(d); planned += b; }
-    }
-    let extra = Math.max(0, remaining - planned);
-    if(extra > 0 && days.length){
-      const weights = days.map(d=>Math.max(1, baseTarget(d, subj)));
-      const totalW = weights.reduce((a,b)=>a+b,0);
-      const raw = weights.map(w=>extra*w/totalW);
-      const add = raw.map(x=>Math.floor(x));
-      let used = add.reduce((a,b)=>a+b,0);
-      const order = raw.map((x,i)=>({i, frac:x-Math.floor(x)})).sort((a,b)=>b.frac-a.frac);
-      let k=0;
-      while(used < extra){ add[order[k % order.length].i]++; used++; k++; }
-      days.forEach((d,i)=>{ out[d][subj] = (out[d][subj]||0) + add[i]; });
-    }
+// Stavke za AKTIVNI dan — uključuje carryover (samo za predmete kojima ovaj dan nije
+// zaključan za neki DRUGI predmet). Carryover ide ISPRED redovnih stavki tog dana.
+function itemsForActiveDay(d){
+  const out = {};
+  const base = baseItemsForDay(d);
+  const locked = LOCKED_DAYS[d]; // ime predmeta kome je dan rezervisan, ili undefined
+  Object.keys(SUBJECTS).forEach(s=>{
+    const co = (locked && locked !== s) ? [] : (state.carryover[s] || []);
+    const baseIds = base[s] || [];
+    const merged = co.concat(baseIds);
+    if(merged.length) out[s] = merged;
   });
   return out;
 }
 
-function simulateForward(startDay){
-  const pools = {};
+// Šta je STVARNO završeno baš tog (prošlog) dana — na osnovu progress[id].dayIndex
+function itemsForDayHistory(d){
+  const out = {};
   Object.keys(SUBJECTS).forEach(subj=>{
-    pools[subj] = ITEM_POOL[subj].filter(it => !(state.progress[it.id] && state.progress[it.id].done));
+    const ids = ITEM_POOL[subj].filter(it=>{
+      const p = state.progress[it.id];
+      return !!(p && p.done && p.dayIndex === d);
+    }).map(it=>it.id);
+    if(ids.length) out[subj] = ids;
   });
-
-  const carryoverFromDay = state.pendingCarryover ? state.pendingCarryover.fromDay : -1;
-  const carryoverBySubj = {};
-  Object.keys(SUBJECTS).forEach(s=> carryoverBySubj[s] = []);
-  if(state.pendingCarryover){
-    state.pendingCarryover.ids.forEach(id=>{
-      const subj = id.split('-')[0];
-      const idx = pools[subj] ? pools[subj].findIndex(it => it.id === id) : -1;
-      if(idx !== -1){
-        carryoverBySubj[subj].push(pools[subj][idx]);
-        pools[subj].splice(idx, 1);
-      }
-    });
-  }
-
-  const ADJUSTED_TARGETS = adjustedTargetsFrom(Math.max(startDay,0), pools);
-
-  const schedule = {};
-  for(let d = Math.max(startDay,0); d < DAY_COUNT; d++){
-    schedule[d] = {};
-
-    let blockingSubj = null, blockingRound = null;
-    Object.keys(REVIEW_PLAN).forEach(s=>{
-      REVIEW_PLAN[s].forEach(r=>{
-        if(r.blocking && r.day === d){ blockingSubj = s; blockingRound = r.round; }
-      });
-    });
-    if(blockingSubj){
-      const s = blockingSubj;
-      const poolS = pools[s];
-      const reviewItems = poolS.filter(it => it.review && (blockingRound ? it.reviewRound === blockingRound : true));
-      if(reviewItems.length){
-        schedule[d][s] = (schedule[d][s] || []).concat(reviewItems.map(t=>t.id));
-        const ids = new Set(reviewItems.map(t=>t.id));
-        pools[s] = poolS.filter(it => !ids.has(it.id));
-      }
-      attachCarryoverIfDue(s, d);
-      continue;
-    }
-
-    Object.keys(REVIEW_PLAN).forEach(s=>{
-      REVIEW_PLAN[s].forEach(r=>{
-        if(!r.blocking && r.day === d){
-          const poolS = pools[s];
-          const reviewItems = poolS.filter(it => it.review && (r.round ? it.reviewRound === r.round : true));
-          if(reviewItems.length){
-            schedule[d][s] = (schedule[d][s] || []).concat(reviewItems.map(t=>t.id));
-            const ids = new Set(reviewItems.map(t=>t.id));
-            pools[s] = pools[s].filter(it => !ids.has(it.id));
-          }
-        }
-      });
-    });
-
-    const counts = ADJUSTED_TARGETS[d] || {};
-    Object.keys(counts).forEach(s=>{
-      const regularItems = pools[s].filter(it => !it.review);
-      let n = Math.min(counts[s], regularItems.length);
-      n = areaAwareCount(regularItems, n);
-
-      if(n > 0){
-        const taken = regularItems.slice(0, n);
-        const takenIds = new Set(taken.map(t=>t.id));
-        schedule[d][s] = (schedule[d][s] || []).concat(taken.map(t=>t.id));
-        pools[s] = pools[s].filter(it => !takenIds.has(it.id));
-      }
-    });
-
-    if(d >= 0 && d <= REGULAR_DEADLINE.eng){
-      const engRegular = pools.eng.filter(it => !it.review);
-      if(engRegular.length){
-        const daysLeft = daysLeftAvailable(d, REGULAR_DEADLINE.eng);
-        const n = d === REGULAR_DEADLINE.eng
-          ? engRegular.length
-          : Math.min(Math.ceil(engRegular.length / daysLeft), engRegular.length);
-        if(n > 0){
-          const taken = engRegular.slice(0, n);
-          const takenIds = new Set(taken.map(t=>t.id));
-          schedule[d].eng = (schedule[d].eng || []).concat(taken.map(t=>t.id));
-          pools.eng = pools.eng.filter(it => !takenIds.has(it.id));
-        }
-      }
-    }
-
-    Object.keys(SUBJECTS).forEach(s=> attachCarryoverIfDue(s, d));
-  }
-
-  function attachCarryoverIfDue(s, d){
-    if(d <= carryoverFromDay) return;
-    if(!carryoverBySubj[s] || carryoverBySubj[s].length === 0) return;
-    if(schedule[d][s] && schedule[d][s].length){
-      const ids = carryoverBySubj[s].map(it => it.id);
-      schedule[d][s] = ids.concat(schedule[d][s]);
-      carryoverBySubj[s] = [];
-    }
-  }
-
-  Object.keys(carryoverBySubj).forEach(s=>{
-    if(carryoverBySubj[s].length){
-      pools[s] = pools[s].concat(carryoverBySubj[s]);
-    }
-  });
-
-  const missed = {};
-  Object.keys(SUBJECTS).forEach(subj=>{
-    if(pools[subj].length > 0){
-      missed[subj] = pools[subj].length;
-    }
-  });
-
-  return {schedule, missed, dailyCapacity: null};
+  return out;
 }
 
-function ensureTodayCache(){
-  const idx = activeDayIndex();
-  // Samo-ispravka: ako "prebacene teme napred" navodno kreću baš OD dana na
-  // kom se trenutno nalazimo, to je nekonzistentno stanje (obično ostatak
-  // ranijeg automatskog/pogrešnog prelaska dana) — poništi ga, teme se
-  // tretiraju kao normalno neurađene teme ovog dana.
-  if(state.pendingCarryover && state.pendingCarryover.fromDay === idx){
-    state.pendingCarryover = null;
-    saveState();
-  }
-  if(!state.todayCache || state.todayCache.dayIndex !== idx || state.todayCache.schedulerVersion !== SCHEDULER_VERSION){
-    const {schedule} = simulateForward(idx);
-    state.todayCache = {dayIndex: idx, schedulerVersion: SCHEDULER_VERSION, items: schedule[idx] || {}};
+/* =========================================================================
+   AKCIJE: zaključi dan / vrati nazad / promeni aktivni dan
+   ========================================================================= */
+function finalizeDay(){
+  const d = activeDayIndex();
+  const items = itemsForActiveDay(d);
+
+  // snapshot carryover-a PRE ove izmene, da bi "vrati nazad" mogao tačno da je poništi
+  state.carryoverSnapshots[d] = JSON.parse(JSON.stringify(state.carryover));
+
+  Object.keys(items).forEach(s=>{
+    const stillUndone = items[s].filter(id => !(state.progress[id] && state.progress[id].done));
+    // Zamenjujemo CEO red čekanja za predmet s onim što je danas ostalo nezavršeno
+    // (carryover koji je već bio prikačen danas je već uključen u items[s], tako
+    // da se ništa ne duplira i ništa ne gubi).
+    state.carryover[s] = stillUndone;
+  });
+
+  if(d < DAY_COUNT - 1){
+    state.currentDayIndex = d + 1;
     state.todayFinalized = false;
-    saveState();
+  } else {
+    state.todayFinalized = true; // poslednji dan — nema kuda dalje
   }
+  saveState();
+  render();
+  restoreOpenState();
 }
 
-function itemLookup(id){
-  const subj = id.split('-')[0];
-  return ITEM_POOL[subj].find(it => it.id === id);
+function goBackOneDay(){
+  const cur = activeDayIndex();
+  if(cur <= 0) return;
+  const prev = cur - 1;
+  if(state.carryoverSnapshots && state.carryoverSnapshots[prev]){
+    state.carryover = state.carryoverSnapshots[prev];
+    delete state.carryoverSnapshots[prev];
+  }
+  state.currentDayIndex = prev;
+  state.todayFinalized = false;
+  saveState();
+  openDays.add(String(state.currentDayIndex));
+  render();
+  restoreOpenState();
 }
 
-function subjectCode(subj){ return ({eng:'ENG',spi:'SPI',ess:'ESS',ibo:'IBO',pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
-function examClock(subj){ return ({eng:'',spi:'09:00',ess:'10:00',ibo:'09:00',pseu:'09:00',spt:'09:00'})[subj] || ''; }
-function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 0, 0); }
-function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
-function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,START_DAY+i); return Math.ceil((e-t)/86400000); }
+function setActiveDay(idx){
+  state.currentDayIndex = Math.min(Math.max(idx,0), DAY_COUNT-1);
+  state.todayFinalized = false;
+  saveState();
+  openDays.add(String(state.currentDayIndex));
+  render();
+  restoreOpenState();
+}
 
-// ---------- Dnevni plan zauzetosti (radni/slobodan dan) ----------
+/* =========================================================================
+   VREME UČENJA — predlog jutro/veče/Waklert mode.
+   Ova logika SAMO predlaže KADA se uči već određene predmete tog dana;
+   nikada ne menja broj/opseg pitanja niti datume.
+   ========================================================================= */
 const DEFAULT_WORK_FROM = '13:30';
 const DEFAULT_WORK_TO = '23:30';
 const WAKE_TIME = '08:00';
 const FREE_WAKE = '12:00';
 const FREE_SLEEP = '23:00';
-
-// Razmak koji mora da postoji IZMEĐU kraja bilo koje obaveze (glavni posao
-// ILI dodatna obaveza) i početka učenja koje sledi posle nje. Ne primenjuje
-// se na sam POČETAK obaveze (učenje se prekida odmah kad obaveza počne) —
-// samo na trenutak kad se učenje NASTAVLJA posle nje.
 const POST_WORK_GAP_MIN = 15;
+const OPEN_END_SENTINEL = 100000;
+const WALKER_PRE_NEXT_GAP_HOURS = 4;
+const MIN_VIABLE_WINDOW_MIN = 60;
+const DIFFICULTY_RANK = {pseu:1, ess:2, spi:3, spt:4, ibo:5, eng:6};
+const AVG_WORDS_PER_TOPIC = {ess:729, ibo:610, spi:981, pseu:430, spt:561};
 
 function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
 function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
-
-// Sentinel za "otvoren kraj" (kad ne znamo/nema sledeće obaveze — npr. "koliko izdržiš").
-const OPEN_END_SENTINEL = 100000;
-// Prikaz vremena koje može biti: sentinel (→ "..."), isti dan (< 1440) ili sutrašnji
-// dan (>= 1440, npr. kad MODAFINIL prenese učenje preko ponoći) → dodaje "(sutra)".
 function timeLabelWithDay(m){
   if(m === OPEN_END_SENTINEL) return '...';
   return m>=1440 ? (minutesToTime(m)+' (sutra)') : minutesToTime(m);
 }
-
 function getDayPlan(d){
   const p = state.dayPlan && state.dayPlan[String(d)];
   const base = {type:'radni', workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO, extra:{enabled:false,from:'16:00',to:'17:00'}, walker:false};
   if(p && p.type) return Object.assign({}, base, p, {extra: Object.assign({enabled:false,from:'16:00',to:'17:00'}, p.extra||{})});
   return base;
 }
-
-// Broj sati koji Waklert mode ostavlja kao "buffer" (odmor pre sledeće
-// obaveze) umesto fiksnog noćnog sna.
-const WALKER_PRE_NEXT_GAP_HOURS = 4;
-
-// Kraj poslednje obaveze TOG dana (posao ako je radni, i/ili dodatna obaveza
-// ako je uključena) — šta god se kasnije završava. null ako dan nema
-// nijednu poznatu obavezu (npr. slobodan dan bez dodatne obaveze).
 function getTodayObligationEndMin(p){
   const candidates = [];
   if(p.type !== 'slobodan' && p.workTo) candidates.push(timeToMinutes(p.workTo));
@@ -1015,10 +974,6 @@ function getTodayObligationEndMin(p){
   if(!candidates.length) return null;
   return Math.max(...candidates);
 }
-
-// Početak PRVE obaveze SLEDEĆEG dana (posao ako je radni, ili dodatna
-// obaveza ako je uključena) — šta god počinje ranije. null ako sledeći dan
-// nema nijednu poznatu obavezu, ili ako je d poslednji dan roka.
 function getNextDayObligationStartMin(d){
   if(d + 1 >= DAY_COUNT) return null;
   const next = getDayPlan(d + 1);
@@ -1028,13 +983,6 @@ function getNextDayObligationStartMin(d){
   if(!candidates.length) return null;
   return Math.min(...candidates);
 }
-
-// Oduzima period [busyStart,busyEnd) od intervala [winStart,winEnd) i vraća
-// preostale segmente (0, 1 ili 2 komada — ako je obaveza nasred prozora,
-// prozor se cepa na dva dela umesto da se ceo izgubi). "gap" pomera početak
-// segmenta POSLE obaveze za dati broj minuta (razmak pre nastavka učenja);
-// segment PRE obaveze ostaje nepromenjen jer se učenje tu i onako prekida
-// tačno na početku obaveze, bez potrebe za razmakom.
 function subtractBusy(winStart, winEnd, busyStart, busyEnd, gap){
   gap = gap || 0;
   if(winEnd<=winStart) return [];
@@ -1054,25 +1002,6 @@ function windowSegments(winStart, winEnd, extra){
 }
 function segsTotalMin(segs){ return segs.reduce((a,[s,e])=>a+(e-s),0); }
 function segsLabel(segs){ return segs.map(([s,e])=>`${minutesToTime(s)}–${minutesToTime(e)}`).join(' i '); }
-
-// Subjektivna težina predmeta (1=najteže, korisno samo za odluku ko dobija
-// jutarnji/svežiji termin kad se dan deli na dva prozora — ne utiče na to
-// koliko je čega raspoređeno niti na redosled tema, to je već fiksirano
-// datumima ispita i granicama tematskih blokova).
-const DIFFICULTY_RANK = {pseu:1, ess:2, spi:3, spt:4, ibo:5, eng:6};
-
-// Stvarni obim gradiva (izmereno iz priloženih skripti — broj reči po
-// predmetu / broj tema = prosečna dužina jedne teme). Koristi se da se
-// jutro/veče ne dele po broju stavki nego po stvarnoj količini teksta.
-// ess ispravljen sa 424 na 729 (stvarni prosek izmeren iz ess.md: 29.155
-// reči / 40 tema) — stara vrednost je potcenjivala koliko vremena ESS
-// realno traži u odnosu na druge predmete kad se dan deli na jutro/veče.
-const AVG_WORDS_PER_TOPIC = {ess:729, ibo:610, spi:981, pseu:430, spt:561};
-
-// Ispod ovoga prozor NIJE realna sesija (npr. 30 min veče posle kasne
-// smene) — ne predlaže se kao "uči", samo se napomene da je prekratko.
-const MIN_VIABLE_WINDOW_MIN = 60;
-
 function subjectListForSplit(itemsBySubj){
   const list = [];
   Object.keys(SUBJECTS).forEach(s=>{
@@ -1083,10 +1012,6 @@ function subjectListForSplit(itemsBySubj){
   list.sort((a,b)=> (DIFFICULTY_RANK[a.subj]||99) - (DIFFICULTY_RANK[b.subj]||99));
   return list;
 }
-
-// Deli predmete tog dana na jutarnji/večernji prozor proporcionalno dužini
-// prozora (u minutima) I stvarnom obimu teksta (weight, ne broj stavki).
-// Cele predmete, ne seče.
 function splitSubjectsByWindows(list, morningMin, eveningMin){
   if(!list.length) return {morning:[], evening:[]};
   if(morningMin <= 0) return {morning:[], evening:list.map(x=>x.subj)};
@@ -1102,15 +1027,6 @@ function splitSubjectsByWindows(list, morningMin, eveningMin){
   if(!evening.length && morning.length>1){ evening.push(morning.pop()); }
   return {morning, evening};
 }
-
-// ---------- Waklert mode ----------
-// Kad je uključen za dan d: preskače se cela jutro/veče i "spavaj u ponoć"
-// logika. Umesto toga — JEDAN kontinuirani prozor za učenje koji počinje
-// odmah (+ POST_WORK_GAP_MIN) posle kraja poslednje obaveze TOG dana i
-// završava se WALKER_PRE_NEXT_GAP_HOURS pre početka prve obaveze SLEDEĆEG
-// dana. Ako sledeći dan nema poznatu obavezu, prozor ostaje otvoren ("...").
-// Ako sam TAJ dan nema nijednu obavezu na osnovu koje bi se računao početak,
-// javlja se napomena umesto predloga.
 function walkerSuggestionText(d, p, itemsBySubj){
   const startObligationEnd = getTodayObligationEndMin(p);
   if(startObligationEnd == null){
@@ -1120,52 +1036,38 @@ function walkerSuggestionText(d, p, itemsBySubj){
   const nextStart = getNextDayObligationStartMin(d);
   const fullList = subjectListForSplit(itemsBySubj || {});
   const suf = fullList.length ? ` (${fullList.map(x=>subjectCode(x.subj)).join(', ')})` : '';
-
   if(nextStart == null){
     return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–...${suf}`;
   }
-
   const endMin = 1440 + nextStart - (WALKER_PRE_NEXT_GAP_HOURS * 60);
   if(endMin <= startMin){
     return '🌙 Waklert mode: sledeća obaveza je preblizu — nema realnog prozora za učenje.';
   }
   return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–${timeLabelWithDay(endMin)}${suf}`;
 }
-
 function studySuggestionText(d, itemsBySubj){
   const p = getDayPlan(d);
   const fullList = subjectListForSplit(itemsBySubj || {});
   const codes = arr => arr.map(subjectCode).join(', ');
-
-  if(p.walker){
-    return walkerSuggestionText(d, p, itemsBySubj);
-  }
-
+  if(p.walker) return walkerSuggestionText(d, p, itemsBySubj);
   if(EXAMS[d]){
     const subs = fullList.map(x=>x.subj);
     const hasExtra = p.extra && p.extra.enabled && p.extra.from && p.extra.to;
     const extraNote = hasExtra ? `${p.extra.from}–${p.extra.to}` : null;
     if(p.type === 'slobodan'){
-      // Ne znamo koliko ispit traje, pa nema jutro/veče — samo predmeti posle ispita.
-      // Dodatna obaveza se ne može tačno oduzeti (nema od čega), samo se napominje.
       const base = subs.length ? `Predlog: posle ispita — ${codes(subs)}` : 'Predlog: posle ispita — nema novih tema raspoređenih.';
       return hasExtra ? `${base} (pazi, obaveza ${extraNote})` : base;
     }
-    // Radni dan + ispit: jutro ne postoji uopšte, veče je otvoreno (koliko izdržiš),
-    // s tim da učenje kreće tek POST_WORK_GAP_MIN minuta posle kraja obaveze —
-    // isto pravilo se primenjuje i ako dodatna obaveza upadne u to veče.
     const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
-    const OPEN_END = 100000;
-    let segs = [[workToMin + POST_WORK_GAP_MIN, OPEN_END]];
+    let segs = [[workToMin + POST_WORK_GAP_MIN, OPEN_END_SENTINEL]];
     if(hasExtra){
       const exStart = timeToMinutes(p.extra.from), exEnd = timeToMinutes(p.extra.to);
       segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd,POST_WORK_GAP_MIN));
     }
-    const label = segs.map(([s,e])=> e===OPEN_END ? `${minutesToTime(s)}–...` : `${minutesToTime(s)}–${minutesToTime(e)}`).join(' i ');
+    const label = segs.map(([s,e])=> e===OPEN_END_SENTINEL ? `${minutesToTime(s)}–...` : `${minutesToTime(s)}–${minutesToTime(e)}`).join(' i ');
     const suf = subs.length ? ` (${codes(subs)})` : '';
     return `Predlog: učenje — veče ${label}${suf}`;
   }
-
   const hasEng = fullList.some(x=>x.subj==='eng');
   const list = fullList.filter(x=>x.subj!=='eng');
   if(p.type === 'slobodan'){
@@ -1186,9 +1088,6 @@ function studySuggestionText(d, itemsBySubj){
   const morningViable = morningMinRaw >= MIN_VIABLE_WINDOW_MIN;
   const eveningViable = eveningMinRaw >= MIN_VIABLE_WINDOW_MIN;
   const {morning, evening} = splitSubjectsByWindows(list, morningViable?morningMinRaw:0, eveningViable?eveningMinRaw:0);
-
-  // Engleski ide baš u prozor koji je PREKRATAK za ozbiljne predmete —
-  // njemu to ne smeta, njemu ionako ne treba puna sesija ni koncentracija.
   let engMorning=false, engEvening=false;
   if(hasEng){
     const morningShort = morningMinRaw>0 && !morningViable;
@@ -1200,7 +1099,6 @@ function studySuggestionText(d, itemsBySubj){
   }
   if(engMorning) morning.unshift('eng');
   if(engEvening) evening.unshift('eng');
-
   const parts = [];
   if(morningViable) parts.push(`jutro ${segsLabel(morningSegs)}${morning.length?` (${codes(morning)})`:''}`);
   else if(engMorning) parts.push(`jutro ${segsLabel(morningSegs)} (ENG)`);
@@ -1210,15 +1108,16 @@ function studySuggestionText(d, itemsBySubj){
   return 'Predlog: učenje — ' + parts.join(' i ');
 }
 
+/* =========================================================================
+   RENDER
+   ========================================================================= */
 function renderMissionStrip(){
   const el=document.getElementById('missionStrip');
   if(!el) return;
   const ordered=['eng','spi','ess','ibo','pseu','spt'];
   const next=ordered.find(s=>daysUntilIndex(SUBJECTS[s].examDay)>=0) || ordered[ordered.length-1];
   const nextDays=daysUntilIndex(SUBJECTS[next].examDay);
-  const endDays=daysUntilIndex(SUBJECTS.spt.examDay);
   const nextText=nextDays===0 ? 'DANAS' : (nextDays===1 ? 'SUTRA' : `ZA ${nextDays} DANA`);
-  const endText=endDays<0 ? 'ROK ZAVRŠEN' : (endDays===0 ? 'POSLEDNJI DAN' : `${endDays} DANA`);
   const stops=ordered.map(s=>{
     const d=daysUntilIndex(SUBJECTS[s].examDay);
     const cls=d<0?'past':(s===next?'next':'');
@@ -1228,70 +1127,53 @@ function renderMissionStrip(){
   el.innerHTML=`<section class="mission-strip"><div class="mission-top"><div class="mission-next"><div class="label">Sledeće na redu</div><div class="value">${subjectCode(next)} · ${START_DAY+SUBJECTS[next].examDay}. septembar ${examClock(next)?'· '+examClock(next):''} · ${nextText}</div></div></div><div class="route">${stops}</div></section>`;
 }
 
-function render(){
-  const todayIdx = activeDayIndex();
-  ensureTodayCache();
-  const {schedule, missed} = simulateForward(todayIdx);
-
-  renderMissionStrip();
-  renderTodayCard(todayIdx, missed);
-  renderOverall(missed);
-  renderDays(todayIdx, schedule);
+function computeItemsForDisplay(d, activeIdx){
+  if(d === activeIdx) return itemsForActiveDay(d);
+  if(d < activeIdx) return itemsForDayHistory(d);
+  return baseItemsForDay(d);
 }
 
-function renderTodayCard(todayIdx, missed){
+function renderTodayCard(activeIdx){
   const el = document.getElementById('todayCard');
-  const cacheItems = state.todayCache.items || {};
+  const items = itemsForActiveDay(activeIdx);
   let totalItems = 0, doneItems = 0;
-  Object.keys(cacheItems).forEach(subj=>cacheItems[subj].forEach(id=>{totalItems++;if(state.progress[id]&&state.progress[id].done)doneItems++;}));
-  const missedEntries = Object.keys(missed);
-  let missedHtml = '';
-  if(missedEntries.length){
-    missedHtml = missedEntries.map(subj=>{
-      const m=missed[subj];
-      return `<div class="deficit-banner"><span class="drift-label">Plan drift +${m}</span><b>${subjectCode(subj)}</b> · ${m} ${m===1?'tema':'tema'} izvan projektovane putanje do roka.</div>`;
-    }).join('');
-  }
+  Object.keys(items).forEach(subj=>items[subj].forEach(id=>{
+    totalItems++; if(state.progress[id] && state.progress[id].done) doneItems++;
+  }));
   const finalizeBlock = state.todayFinalized
-    ? `<div class="finalized-note">✓ ON TRACK · dan zaključen</div>`
+    ? `<div class="finalized-note">✓ Dan zaključen</div>`
     : `<button class="finalize-btn" data-action="finalize">Završila za danas · zaključi dan</button>`;
-  const backBlock = todayIdx > 0
-    ? `<button class="finalize-btn" data-action="goback" style="background:transparent;color:var(--ink);border-top:1px solid var(--soft);font-weight:700;">◀ Vrati na ${dayLabel(todayIdx-1)}</button>`
+  const backBlock = activeIdx > 0
+    ? `<button class="finalize-btn" data-action="goback" style="background:transparent;color:var(--ink);border-top:1px solid var(--soft);font-weight:700;">◀ Vrati na ${dayLabel(activeIdx-1)}</button>`
     : '';
-  const dayOptions = Array.from({length:DAY_COUNT}, (_,i)=>`<option value="${i}" ${i===todayIdx?'selected':''}>${dayLabel(i)}</option>`).join('');
-  const daySelectBlock = `<div style="padding:10px 18px;border-top:1px solid var(--soft);font-size:.78rem;color:var(--muted);">Aktivni dan: <select data-action="set-day" style="font-family:var(--sans);font-size:.78rem;padding:3px 6px;border:1px solid var(--line);background:var(--panel);color:var(--ink);">${dayOptions}</select></div>`;
+  const dayOptions = Array.from({length:DAY_COUNT}, (_,i)=>`<option value="${i}" ${i===activeIdx?'selected':''}>${dayLabel(i)}</option>`).join('');
+  const daySelectBlock = `<div class="day-select-row">Aktivni dan: <select data-action="set-day">${dayOptions}</select></div>`;
   const pct=totalItems?Math.round(doneItems/totalItems*100):0;
-  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(todayIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${missedHtml}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
+  const lockedNote = LOCKED_DAYS[activeIdx] ? `<div class="today-stats" style="color:var(--red);font-weight:700;">🔒 Dan rezervisan isključivo za ${subjectCode(LOCKED_DAYS[activeIdx])} reviziju</div>` : '';
+  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${lockedNote}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
 }
 
-function renderOverall(missed){
-  let totalAll=0,doneAll=0;
-  const mini=document.getElementById('subjectMini');mini.innerHTML='';
+function renderOverall(activeIdx){
+  let totalAll=0, doneAll=0;
+  const mini=document.getElementById('subjectMini'); mini.innerHTML='';
   Object.keys(SUBJECTS).forEach(subj=>{
-    const s=SUBJECTS[subj],items=ITEM_POOL[subj];
-    const doneCount=items.filter(it=>state.progress[it.id]&&state.progress[it.id].done).length;
-    totalAll+=items.length;doneAll+=doneCount;
-    const pct=items.length?Math.round(doneCount/items.length*100):0;
-    const regular=items.filter(it=>!it.review);
-    const regularDone=regular.filter(it=>state.progress[it.id]&&state.progress[it.id].done).length;
-    let status='STABILNO',statusClass='ok';
-    if(doneCount===items.length){status='ZAVRŠENO';statusClass='done';}
-    else if(missed[subj]){status=`KRITIČNO · +${missed[subj]}`;statusClass='risk';}
-    else {
-      const remaining=Math.max(0,regular.length-regularDone);
-      const days=Math.max(1,daysUntilIndex(REGULAR_DEADLINE[subj]));
-      const load=remaining/days;
-      if(load>12){status='PRITISAK';statusClass='risk';}
-      else status='STABILNO';
-    }
-    const row=document.createElement('div');row.className='subject-mini-row';
+    const s=SUBJECTS[subj];
+    const regularItems = ITEM_POOL[subj].filter(it=>!it.review);
+    const doneCount = regularItems.filter(it=>state.progress[it.id] && state.progress[it.id].done).length;
+    totalAll += regularItems.length; doneAll += doneCount;
+    const pct = regularItems.length ? Math.round(doneCount/regularItems.length*100) : 0;
+    let status='STABILNO', statusClass='ok';
+    if(doneCount === regularItems.length){ status='ZAVRŠENO'; statusClass='done'; }
+    else if(activeIdx > s.examDay){ status='KASNI'; statusClass='risk'; }
+    else if(activeIdx >= (REVIEW_DAY_FOR[subj] ?? s.examDay)){ status='PRITISAK'; statusClass='risk'; }
+    const row=document.createElement('div'); row.className='subject-mini-row';
     row.style.setProperty("--subject-color", s.color);
-    row.innerHTML=`<span class="subj-name">${subjectIcon(subj)}<span>${subjectCode(subj)} · ${s.label}</span></span><span class="mini-bar-bg"><span class="mini-bar-fill" style="width:${pct}%"></span></span><span class="subj-frac">${doneCount}/${items.length}</span><span class="subj-status ${statusClass}">${status}</span>`;
+    row.innerHTML=`<span class="subj-name">${subjectIcon(subj)}<span>${subjectCode(subj)} · ${s.label}</span></span><span class="mini-bar-bg"><span class="mini-bar-fill" style="width:${pct}%"></span></span><span class="subj-frac">${doneCount}/${regularItems.length}</span><span class="subj-status ${statusClass}">${status}</span>`;
     mini.appendChild(row);
   });
-  const overallPct=totalAll?Math.round(doneAll/totalAll*100):0;
-  document.getElementById('overallPct').textContent=overallPct+'%';
-  document.getElementById('overallBar').style.width=overallPct+'%';
+  const overallPct = totalAll ? Math.round(doneAll/totalAll*100) : 0;
+  document.getElementById('overallPct').textContent = overallPct+'%';
+  document.getElementById('overallBar').style.width = overallPct+'%';
 }
 
 function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
@@ -1299,28 +1181,31 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
     const ids = itemsBySubj[subj];
     if(!ids || !ids.length) return;
     const s = SUBJECTS[subj];
-    let visibleIds = ids;
-    if(mode === 'history') visibleIds = ids.filter(id => state.progress[id] && state.progress[id].done);
-    if(!visibleIds.length) return;
+    const visibleIds = ids;
     const doneCount = visibleIds.filter(id => state.progress[id] && state.progress[id].done).length;
     const grp = document.createElement('div');
-    grp.className = 'group';
-    grp.classList.add(`sig-${subj}`);
+    grp.className = 'group sig-'+subj;
     grp.innerHTML = `<div class="group-title">${subjectIcon(subj)}<span class="group-label">${s.label}</span> <span class="group-count">(${doneCount}/${visibleIds.length})</span></div>`;
-
     const locked = mode !== 'today';
+    const numberedSubjects = ['spi','ibo','pseu','spt'];
     const hasAreas = visibleIds.some(id => itemLookup(id).area);
 
+    const renderLabel = (id) => {
+      const it = itemLookup(id);
+      const done = !!(state.progress[id] && state.progress[id].done);
+      const lab = document.createElement('label');
+      lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
+      const numPrefix = (!it.review && numberedSubjects.includes(subj)) ? `${Number(id.split('-').pop()) + 1}. ` : '';
+      lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : numPrefix}${it.text}</span>`;
+      return lab;
+    };
+
     if(hasAreas){
-      const byArea = [];
-      const areaIndex = {};
+      const byArea = []; const areaIndex = {};
       visibleIds.forEach(id=>{
         const it = itemLookup(id);
         const key = it.area || '';
-        if(!(key in areaIndex)){
-          areaIndex[key] = byArea.length;
-          byArea.push({area:key, ids:[]});
-        }
+        if(!(key in areaIndex)){ areaIndex[key] = byArea.length; byArea.push({area:key, ids:[]}); }
         byArea[areaIndex[key]].ids.push(id);
       });
       byArea.forEach(bucket=>{
@@ -1330,43 +1215,28 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
         if(bucket.area){
           areaDiv.innerHTML = `<div class="area-title">${bucket.area} <span class="area-count">(${areaDone}/${bucket.ids.length})</span></div>`;
         }
-        bucket.ids.forEach(id=>{
-          const it = itemLookup(id);
-          const done = !!(state.progress[id] && state.progress[id].done);
-          const lab = document.createElement('label');
-          lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
-          lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : (['spi','ibo','pseu','spt'].includes(subj) ? `${Number(id.split('-').pop()) + 1}. ` : '')}${it.text}</span>`;
-          areaDiv.appendChild(lab);
-        });
+        bucket.ids.forEach(id=> areaDiv.appendChild(renderLabel(id)));
         grp.appendChild(areaDiv);
       });
     } else {
-      visibleIds.forEach(id=>{
-        const it = itemLookup(id);
-        const done = !!(state.progress[id] && state.progress[id].done);
-        const lab = document.createElement('label');
-        lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
-        lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : (['spi','ibo','pseu','spt'].includes(subj) ? `${Number(id.split('-').pop()) + 1}. ` : '')}${it.text}</span>`;
-        grp.appendChild(lab);
-      });
+      visibleIds.forEach(id=> grp.appendChild(renderLabel(id)));
     }
-
     container.appendChild(grp);
   });
 }
 
-function renderDays(todayIdx, schedule){
+function renderDays(activeIdx){
   const container = document.getElementById('days');
   container.innerHTML = '';
-
   for(let d=0; d<DAY_COUNT; d++){
     const dayEl = document.createElement('div');
-    dayEl.className = 'day' + (d===todayIdx ? ' open is-today' : '') + (openDays.has(String(d)) ? ' open' : '');
+    dayEl.className = 'day' + (d===activeIdx ? ' open is-today' : '') + (openDays.has(String(d)) ? ' open' : '');
     dayEl.dataset.day = d;
 
     const header = document.createElement('div');
     header.className = 'day-header';
     header.dataset.short = String(START_DAY+d).padStart(2,'0') + ' SEP';
+
     const exam = EXAMS[d];
     let examFlagHtml = '';
     let examSubjLabel = '';
@@ -1375,34 +1245,18 @@ function renderDays(todayIdx, schedule){
       examFlagHtml = `<span class="exam-flag">🎓 ${exam.type.toUpperCase()} — ${examSubjLabel}</span>`;
     }
     let tagHtml = '';
-    if(d < todayIdx) tagHtml = `<span class="day-tag past">prošlo</span>`;
-    else if(d > todayIdx) tagHtml = `<span class="day-tag projected">projekcija</span>`;
+    if(d < activeIdx) tagHtml = `<span class="day-tag past">prošlo</span>`;
+    else if(d > activeIdx) tagHtml = `<span class="day-tag projected">projekcija</span>`;
+    if(LOCKED_DAYS[d]) tagHtml += `<span class="day-tag locked">SAMO ${subjectCode(LOCKED_DAYS[d])}</span>`;
 
+    const itemsForDay = computeItemsForDisplay(d, activeIdx);
     let dayTotal=0, dayDone=0;
-    const itemsForDay = (d===todayIdx) ? (state.todayCache.items||{}) : (schedule[d]||{});
-    if(d < todayIdx){
-      Object.keys(SUBJECTS).forEach(subj=>{
-        ITEM_POOL[subj].forEach(it=>{
-          const p = state.progress[it.id];
-          if(!p || !p.done) return;
-          let matches = false;
-          if(p.dayIndex != null){
-            matches = p.dayIndex === d;
-          } else if(p.completedAt){
-            const dt = new Date(p.completedAt);
-            matches = dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
-          }
-          if(matches){ dayTotal++; dayDone++; }
-        });
+    Object.keys(itemsForDay).forEach(subj=>{
+      itemsForDay[subj].forEach(id=>{
+        dayTotal++;
+        if(state.progress[id] && state.progress[id].done) dayDone++;
       });
-    } else {
-      Object.keys(itemsForDay).forEach(subj=>{
-        itemsForDay[subj].forEach(id=>{
-          dayTotal++;
-          if(state.progress[id] && state.progress[id].done) dayDone++;
-        });
-      });
-    }
+    });
 
     header.innerHTML = `
       <div class="day-title" data-short="${String(START_DAY+d).padStart(2,'0')} SEP">${dayLabel(d)}${examFlagHtml}${tagHtml}</div>
@@ -1458,56 +1312,40 @@ function renderDays(todayIdx, schedule){
       body.appendChild(ec);
     }
 
-    if(d < todayIdx){
-      const beforeCount = body.children.length;
-      renderGroupsForDay(body, d, itemsForDayHistory(d), 'history');
-      if(body.children.length === beforeCount){
-        const n = document.createElement('div');
-        n.className = 'empty-note';
-        n.textContent = 'Ništa evidentirano ovog dana.';
-        body.appendChild(n);
-      }
-    } else if(d === todayIdx){
-      renderGroupsForDay(body, d, state.todayCache.items || {}, 'today');
-    } else {
-      const beforeCount = body.children.length;
-      renderGroupsForDay(body, d, schedule[d] || {}, 'projected');
-      if(body.children.length === beforeCount){
-        const n = document.createElement('div');
-        n.className = 'empty-note';
-        n.textContent = 'Za sada ništa raspoređeno (ili je sve gradivo do ovog dana već završeno).';
-        body.appendChild(n);
-      }
+    const mode = d < activeIdx ? 'history' : (d === activeIdx ? 'today' : 'projected');
+    const beforeCount = body.children.length;
+    renderGroupsForDay(body, d, itemsForDay, mode);
+    if(body.children.length === beforeCount){
+      const n = document.createElement('div');
+      n.className = 'empty-note';
+      n.textContent = mode==='history' ? 'Ništa evidentirano ovog dana.' : 'Za sada ništa raspoređeno (ili je sve gradivo do ovog dana već završeno).';
+      body.appendChild(n);
     }
 
     dayEl.appendChild(header);
     dayEl.appendChild(body);
     container.appendChild(dayEl);
   }
-
   attachDayListeners();
 }
 
-function itemsForDayHistory(d){
-  const out = {};
-  Object.keys(SUBJECTS).forEach(subj=>{
-    const ids = ITEM_POOL[subj].filter(it=>{
-      const p = state.progress[it.id];
-      if(!p || !p.done) return false;
-      if(p.dayIndex != null) return p.dayIndex === d;
-      if(!p.completedAt) return false;
-      const dt = new Date(p.completedAt);
-      return dt.getFullYear()===YEAR && dt.getMonth()===MONTH && dt.getDate()===START_DAY+d;
-    }).map(it=>it.id);
-    if(ids.length) out[subj] = ids;
-  });
-  return out;
+function render(){
+  const activeIdx = activeDayIndex();
+  renderMissionStrip();
+  renderTodayCard(activeIdx);
+  renderOverall(activeIdx);
+  renderDays(activeIdx);
 }
 
 function trackOpenState(){
   document.querySelectorAll('.day').forEach(d=>{
     if(d.classList.contains('open')) openDays.add(d.dataset.day);
     else openDays.delete(d.dataset.day);
+  });
+}
+function restoreOpenState(){
+  document.querySelectorAll('.day').forEach(d=>{
+    if(openDays.has(d.dataset.day)) d.classList.add('open');
   });
 }
 
@@ -1532,7 +1370,6 @@ function attachDayListeners(){
       restoreOpenState();
     });
   });
-
   document.querySelectorAll('input[data-item-id]').forEach(cb=>{
     cb.addEventListener('click', e=>e.stopPropagation());
     cb.addEventListener('change', (e)=>{
@@ -1544,9 +1381,9 @@ function attachDayListeners(){
       }
       saveState();
       render();
+      restoreOpenState();
     });
   });
-
   document.querySelectorAll('input[data-examcheck]').forEach(cb=>{
     cb.addEventListener('click', e=>e.stopPropagation());
     cb.addEventListener('change', (e)=>{
@@ -1560,89 +1397,24 @@ function attachDayListeners(){
   });
 }
 
-function restoreOpenState(){
-  document.querySelectorAll('.day').forEach(d=>{
-    if(openDays.has(d.dataset.day)) d.classList.add('open');
-  });
-}
-
 document.addEventListener('change', (e)=>{
   const sel = e.target.closest('[data-action="set-day"]');
   if(!sel) return;
   const val = parseInt(sel.value, 10);
   if(Number.isNaN(val)) return;
-  state.currentDayIndex = Math.min(Math.max(val,0), DAY_COUNT-1);
-  state.todayFinalized = false;
-  if(state.pendingCarryover && state.pendingCarryover.fromDay === state.currentDayIndex){
-    state.pendingCarryover = null;
-  }
-  saveState();
-  openDays.add(String(state.currentDayIndex));
-  render();
-  restoreOpenState();
+  setActiveDay(val);
 });
 
 document.addEventListener('click', (e)=>{
-  if(e.target.closest('[data-action="goback"]')){
-    const cur = activeDayIndex();
-    if(cur > 0){
-      const prev = cur - 1;
-      state.currentDayIndex = prev;
-      state.todayFinalized = false;
-      // Ako je "prebacivanje nezavršenih tema napred" nastalo TAČNO time što je
-      // ovaj dan maloas zaključen, poništi ga — teme se vraćaju kao normalno
-      // neurađene teme TOG dana, umesto da ostanu sklonjene za sledeći dan.
-      if(state.pendingCarryover && state.pendingCarryover.fromDay === prev){
-        state.pendingCarryover = null;
-      }
-      saveState();
-      openDays.add(String(state.currentDayIndex));
-      render();
-      restoreOpenState();
-    }
-    return;
-  }
-  if(e.target.closest('[data-action="finalize"]')){
-    const todayIdx = activeDayIndex();
-    const cacheItems = (state.todayCache && state.todayCache.items) || {};
-    const uncheckedIds = [];
-    Object.keys(cacheItems).forEach(subj=>{
-      cacheItems[subj].forEach(id=>{
-        if(!(state.progress[id] && state.progress[id].done)) uncheckedIds.push(id);
-      });
-    });
-    const existingIds = (state.pendingCarryover && state.pendingCarryover.ids) || [];
-    const mergedIds = Array.from(new Set(existingIds.concat(uncheckedIds)));
-    state.pendingCarryover = mergedIds.length
-      ? {fromDay: todayIdx, ids: mergedIds}
-      : null;
-    state.todayFinalized = true;
-    // Ručni prelazak na sledeći dan — dan se NIKAD ne menja sam od ponoći,
-    // menja se isključivo ovim klikom.
-    state.currentDayIndex = Math.min(todayIdx + 1, DAY_COUNT - 1);
-    saveState();
-    openDays.add(String(state.currentDayIndex));
-    render();
-    restoreOpenState();
-  }
+  if(e.target.closest('[data-action="goback"]')){ goBackOneDay(); return; }
+  if(e.target.closest('[data-action="finalize"]')){ finalizeDay(); return; }
 });
 
 (function init(){
   loadState();
   storageOk = verifyStorageWorks();
   showStorageWarning(!storageOk);
-  // Jednokratna automatska ispravka: vrati aktivni dan na 7. septembar
-  // (indeks 0) i očisti sve što je nakupljeno u prethodnom pokvarenom stanju
-  // (pogrešno prebačen dan, teme sklonjene "za sutra"). Radi se SAMO jednom —
-  // posle ovoga, dan se opet menja isključivo ručno (dugme / padajući meni).
-  if(!state.__dayResetV1){
-    state.currentDayIndex = 0;
-    state.todayFinalized = false;
-    state.pendingCarryover = null;
-    state.todayCache = null;
-    state.__dayResetV1 = true;
-    saveState();
-  }
+  runMigrationIfNeeded(); // jednokratno — postavlja SPI 1-4, PSEU 1-2, ENG 1-10 kao završeno i aktivni dan na 9.9 (idx2)
   openDays.add(String(activeDayIndex()));
   render();
 })();
