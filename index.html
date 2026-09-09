@@ -766,12 +766,18 @@ function daysLeftAvailable(fromDay, toDayInclusive){
 // IBO se otvara tek kad SPI ispit prođe (16.9), SPT tek kad ESS ispit prođe (19.9) —
 // dogovoreno kao pravac, brojevi ispod su nađeni simulacijom (EDF + ograničenje
 // dnevnog obima u rečima) tako da je vrh dana što niži, uz cele tematske celine.
+// ESS ciljevi (7-12.9.) preračunati po stvarnom broju reči gradiva iz skripte
+// (ess.md, 29.155 reči/40 tema, prosek 729/temu — raspon 378-990), umesto po
+// broju tema: granice 12,18,24,31,35,40 (bilo 6,12,18,24,35,40) su optimalna
+// podela u 6 dana koja minimizuje najveće odstupanje po broju reči po danu
+// uz očuvanje granica tematskih celina (7.106/4.054/4.907/5.908/3.376/3.804
+// reči po danu — najgori dan pre ovoga bio je 11.9. sa 9.284 reči).
 const BASE_TARGETS = {
-  0:  {spi:4, ess:6, pseu:2},                   // 7.9.
+  0:  {spi:4, ess:12, pseu:2},                  // 7.9.
   1:  {spi:7, ess:6, pseu:3},                   // 8.9.
   2:  {spi:9, ess:6, pseu:2},                   // 9.9.
-  3:  {spi:5, ess:6, pseu:3},                   // 10.9.
-  4:  {spi:5, ess:11, pseu:4},                  // 11.9.
+  3:  {spi:5, ess:7, pseu:3},                   // 10.9.
+  4:  {spi:5, ess:4, pseu:4},                   // 11.9.
   5:  {spi:8, ess:5, pseu:22},                  // 12.9.
   6:  {spi:7, pseu:24},                         // 13.9.
   7:  {pseu:25},                                // 14.9. (ENG kolokvijum + SPI prvi pregled)
@@ -1058,7 +1064,10 @@ const DIFFICULTY_RANK = {pseu:1, ess:2, spi:3, spt:4, ibo:5, eng:6};
 // Stvarni obim gradiva (izmereno iz priloženih skripti — broj reči po
 // predmetu / broj tema = prosečna dužina jedne teme). Koristi se da se
 // jutro/veče ne dele po broju stavki nego po stvarnoj količini teksta.
-const AVG_WORDS_PER_TOPIC = {ess:424, ibo:610, spi:981, pseu:430, spt:561};
+// ess ispravljen sa 424 na 729 (stvarni prosek izmeren iz ess.md: 29.155
+// reči / 40 tema) — stara vrednost je potcenjivala koliko vremena ESS
+// realno traži u odnosu na druge predmete kad se dan deli na jutro/veče.
+const AVG_WORDS_PER_TOPIC = {ess:729, ibo:610, spi:981, pseu:430, spt:561};
 
 // Ispod ovoga prozor NIJE realna sesija (npr. 30 min veče posle kasne
 // smene) — ne predlaže se kao "uči", samo se napomene da je prekratko.
