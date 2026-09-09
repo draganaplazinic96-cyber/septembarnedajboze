@@ -272,10 +272,8 @@ const POOLS = {
     'Stanje u Evropi 90-ih godina',
     'Rusija za vreme Borisa Jeljcina',
     'Bliski istok 90-ih godina',
-    {review:true, reviewRound:1, text:'Ponovljena pitanja 1–15 (prva trećina gradiva)'},
-    {review:true, reviewRound:2, text:'Ponovljena pitanja 16–30 (druga trećina gradiva)'},
-    {review:true, reviewRound:3, text:'Ponovljena pitanja 31–45 (treća trećina gradiva)'},
-    {review:true, text:'Ponovljeno svih 45 pitanja'}
+    {review:true, reviewRound:'first', text:'Prvi pregled: brzi pregled svih 45 pitanja'},
+    {review:true, reviewRound:'final', text:'Finalni pregled: svih 45 pitanja pred ispit'}
   ],
   ess: [
     'Privredni sistem - osnovno određenje i definisanje',
@@ -715,16 +713,14 @@ function areaAwareCount(poolArr, rawCount){
   return poolArr.length;
 }
 
-const SCHEDULER_VERSION = 'priority-route-v12-ess-spaced-review';
+const SCHEDULER_VERSION = 'priority-route-v13-spi-spread';
 const EXAM_SUBJECTS = Object.keys(SUBJECTS).filter(s => s !== 'eng');
 
 const REVIEW_PLAN = {
   eng:  [{day: SUBJECTS.eng.examDay - 1, round: null, blocking: false}],
   spi:  [
-    {day: 5, round: 1, blocking: false},
-    {day: 6, round: 2, blocking: false},
-    {day: 7, round: 3, blocking: false},
-    {day: SUBJECTS.spi.examDay - 1, round: null, blocking: true}
+    {day: 7, round: 'first', blocking: false},
+    {day: SUBJECTS.spi.examDay - 1, round: 'final', blocking: true}
   ],
   ess:  [
     {day: 6, round: 1, blocking: false},
@@ -762,21 +758,23 @@ function daysLeftAvailable(fromDay, toDayInclusive){
 // Dnevni ciljevi su namerno birani kao TAČNE kumulativne sume celih tematskih
 // blokova/oblasti (THEMATIC_AREAS / PSEU area polje), tako da areaAwareCount()
 // (pozvan u simulateForward) svaki dan preseca TAČNO na granici teme — nikad
-// nasred nje. Dan 0 (6. septembar) je namerno rezervisan isključivo za ESS i
-// PSEU (~60% pun dan), i to tačno prvim celim blokom svakog od njih.
+// nasred nje. SPI je sada razvučen na 7 dana (7–13.9), umesto na 5, da nijedan
+// dan ne bude prenatrpan; 14.9 je prvi celovit pregled (nije blokirajući —
+// pseu i eng kolokvijum i dalje idu taj dan), 15.9 je finalni pregled pred
+// ispit (blokirajući).
 // Redosled: SPI + ESS + PSEU kreću odmah (svi imaju premalo vremena da čekaju).
 // IBO se otvara tek kad SPI ispit prođe (16.9), SPT tek kad ESS ispit prođe (19.9) —
 // dogovoreno kao pravac, brojevi ispod su nađeni simulacijom (EDF + ograničenje
 // dnevnog obima u rečima) tako da je vrh dana što niži, uz cele tematske celine.
 const BASE_TARGETS = {
-  0:  {spi:11, ess:6, pseu:2},                  // 7.9.
-  1:  {spi:9, ess:6, pseu:3},                   // 8.9.
-  2:  {spi:10, ess:6, pseu:2},                  // 9.9.
-  3:  {spi:8, ess:6, pseu:3},                   // 10.9.
-  4:  {spi:7, ess:11, pseu:4},                  // 11.9.
-  5:  {ess:5, pseu:22},                         // 12.9.
-  6:  {pseu:24},                                // 13.9.
-  7:  {pseu:25},                                // 14.9. (ENG kolokvijum)
+  0:  {spi:4, ess:6, pseu:2},                   // 7.9.
+  1:  {spi:7, ess:6, pseu:3},                   // 8.9.
+  2:  {spi:9, ess:6, pseu:2},                   // 9.9.
+  3:  {spi:5, ess:6, pseu:3},                   // 10.9.
+  4:  {spi:5, ess:11, pseu:4},                  // 11.9.
+  5:  {spi:8, ess:5, pseu:22},                  // 12.9.
+  6:  {spi:7, pseu:24},                         // 13.9.
+  7:  {pseu:25},                                // 14.9. (ENG kolokvijum + SPI prvi pregled)
   9:  {ibo:15, pseu:8},                         // 16.9. (SPI ispit) — IBO kreće
   10: {ibo:16, pseu:5},                         // 17.9.
   12: {pseu:7, spt:12},                         // 19.9. (ESS ispit) — SPT kreće
