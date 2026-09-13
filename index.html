@@ -231,42 +231,42 @@ function subjectIcon(subj){
   return icons[subj]||'';
 }
 
-const STORAGE_KEY = 'plan-sept-2026-v7'; // NOVA VERZIJA — dani 7-11.9 uklonjeni, indeksi pomereni, stari progres se ne učitava
+const STORAGE_KEY = 'plan-sept-2026-v8'; // NOVA VERZIJA — 12.9 uklonjen, prvi dan je 13.9, indeksi pomereni
 const YEAR = 2026, MONTH = 8; // septembar
-const START_DAY = 12;
-const DAY_COUNT = 15; // indeksi 0..14 = 12..26. septembar
+const START_DAY = 13;
+const DAY_COUNT = 14; // indeksi 0..13 = 13..26. septembar (12. septembar ne postoji u planu)
 
 const SUBJECTS = {
-  eng:  {label:"Engleski jezik 2",                 cls:"eng",  color:"var(--eng)",  examDay:2},
-  spi:  {label:"Savremena politička istorija",      cls:"spi",  color:"var(--spi)",  examDay:4},
-  ess:  {label:"Ekonomski sistem Srbije",           cls:"ess",  color:"var(--ess)",  examDay:7},
-  ibo:  {label:"Istorija balkanskih odnosa",        cls:"ibo",  color:"var(--ibo)",  examDay:9},
-  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:11},
-  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:14}
+  eng:  {label:"Engleski jezik 2",                 cls:"eng",  color:"var(--eng)",  examDay:1},
+  spi:  {label:"Savremena politička istorija",      cls:"spi",  color:"var(--spi)",  examDay:3},
+  ess:  {label:"Ekonomski sistem Srbije",           cls:"ess",  color:"var(--ess)",  examDay:6},
+  ibo:  {label:"Istorija balkanskih odnosa",        cls:"ibo",  color:"var(--ibo)",  examDay:8},
+  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:10},
+  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:13}
 };
 
 const EXAMS = {
-  2:  {type:'kolokvijum', subj:'eng'},
-  4:  {type:'ispit', subj:'spi'},
-  7:  {type:'ispit', subj:'ess'},
-  9:  {type:'ispit', subj:'ibo'},
-  11: {type:'ispit', subj:'pseu'},
-  14: {type:'ispit', subj:'spt'}
+  1:  {type:'kolokvijum', subj:'eng'},
+  3:  {type:'ispit', subj:'spi'},
+  6:  {type:'ispit', subj:'ess'},
+  8:  {type:'ispit', subj:'ibo'},
+  10: {type:'ispit', subj:'pseu'},
+  13: {type:'ispit', subj:'spt'}
 };
 
 // Dani koji su REZERVISANI ISKLJUČIVO za jedan predmet (revizija pred ispit).
 // Nijedan drugi predmet (ni carryover drugog predmeta) ne sme da se pojavi tog dana.
-const LOCKED_DAYS = { 3:'spi', 6:'ess', 8:'ibo', 10:'pseu', 13:'spt' };
+const LOCKED_DAYS = { 2:'spi', 5:'ess', 7:'ibo', 9:'pseu', 12:'spt' };
 // Dan kada je predviđena revizija svakog predmeta (koristi se i za REVIEW_LINKS i za status na radaru)
-const REVIEW_DAY_FOR = { eng:1, spi:3, ess:6, ibo:8, pseu:10, spt:13 };
+const REVIEW_DAY_FOR = { eng:0, spi:2, ess:5, ibo:7, pseu:9, spt:12 };
 
 const REVIEW_LINKS = {
-  1:  {subj:'eng',  url:'https://draganaplazinic96-cyber.github.io/e2k2/'},
-  3:  {subj:'spi',  url:'https://draganaplazinic96-cyber.github.io/spi/'},
-  6:  {subj:'ess',  url:'https://draganaplazinic96-cyber.github.io/ess/'},
-  8:  {subj:'ibo',  url:'https://draganaplazinic96-cyber.github.io/ibo/'},
-  10: {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
-  13: {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
+  0:  {subj:'eng',  url:'https://draganaplazinic96-cyber.github.io/e2k2/'},
+  2:  {subj:'spi',  url:'https://draganaplazinic96-cyber.github.io/spi/'},
+  5:  {subj:'ess',  url:'https://draganaplazinic96-cyber.github.io/ess/'},
+  7:  {subj:'ibo',  url:'https://draganaplazinic96-cyber.github.io/ibo/'},
+  9:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
+  12: {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
 };
 
 /* =========================================================================
@@ -710,33 +710,32 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 }
 
 /* =========================================================================
-   FIXED_SCHEDULE — raspored od 12. septembra (idx 0). Dani 7-11. sept su
-   potpuno uklonjeni iz plana (ne postoje kao dani sa gradivom).
+   FIXED_SCHEDULE — raspored od 13. septembra (idx 0). 12. septembar NE POSTOJI
+   u planu (prvi dan je 13.).
 
-   12-15 SPI · 13. i SPI i ENG (kolokvijum 14.) · 16-18 ESS · 19. SAMO IBO
+   13-14 SPI (+ ENG na 13., kolokvijum 14.) · 16-18 ESS · 19. SAMO IBO
    (20. zaključan isključivo za IBO reviziju) · 21-22 PSEU (ceo pool, 105 pitanja, na 21.) · 23-25 SPT.
    Dani u LOCKED_DAYS namerno nemaju regularne stavke ovde — samo review (FIXED_REVIEWS).
    ========================================================================= */
 const FIXED_SCHEDULE = {
-  0: { spi: rangeIds('spi',1,17) },                                                    // 12. sept — SPI
-  1: { spi: rangeIds('spi',18,28), eng: rangeIds('eng',1,28) },                        // 13. sept — SPI + kompletan ENG (+ ENG review iz FIXED_REVIEWS)
-  2: { spi: rangeIds('spi',29,45) },                                                    // 14. sept — ENG kolokvijum ujutru, posle toga SPI
-  3: { },                                                                                // 15. sept — SAMO SPI revizija (FIXED_REVIEWS), ispit SPI 16. ujutru
-  4: { ess: rangeIds('ess',1,20) },                                                     // 16. sept — SPI ispit ujutru, posle ESS
-  5: { ess: rangeIds('ess',21,40) },                                                    // 17. sept — ESS
-  6: { },                                                                                // 18. sept — SAMO ESS revizija, ispit ESS 19. ujutru
-  7: { ibo: rangeIds('ibo',1,46) },                                                     // 19. sept — ESS ispit ujutru, posle SAMO IBO
-  8: { },                                                                                // 20. sept — SAMO IBO revizija, ispit IBO 21. ujutru
-  9: { pseu: rangeIds('pseu',1,105) },                                                  // 21. sept — IBO ispit ujutru, posle ceo PSEU (svih 105)
-  10:{ },                                                                                // 22. sept — SAMO PSEU revizija, ispit PSEU 23. ujutru
-  11:{ spt: rangeIds('spt',1,32) },                                                     // 23. sept — PSEU ispit ujutru, posle SPT
-  12:{ spt: rangeIds('spt',33,64) },                                                    // 24. sept — SPT
-  13:{ },                                                                                // 25. sept — SAMO SPT revizija, ispit SPT 26. ujutru
-  14:{ } // 26. sept — SPT ispit, bez novog gradiva
+  0: { spi: rangeIds('spi',1,18), eng: rangeIds('eng',1,28) },                         // 13. sept — SPI + kompletan ENG (+ ENG review iz FIXED_REVIEWS)
+  1: { spi: rangeIds('spi',19,45) },                                                    // 14. sept — ENG kolokvijum ujutru, posle toga SPI
+  2: { },                                                                                // 15. sept — SAMO SPI revizija (FIXED_REVIEWS), ispit SPI 16. ujutru
+  3: { ess: rangeIds('ess',1,20) },                                                     // 16. sept — SPI ispit ujutru, posle ESS
+  4: { ess: rangeIds('ess',21,40) },                                                    // 17. sept — ESS
+  5: { },                                                                                // 18. sept — SAMO ESS revizija, ispit ESS 19. ujutru
+  6: { ibo: rangeIds('ibo',1,46) },                                                     // 19. sept — ESS ispit ujutru, posle SAMO IBO
+  7: { },                                                                                // 20. sept — SAMO IBO revizija, ispit IBO 21. ujutru
+  8: { pseu: rangeIds('pseu',1,105) },                                                  // 21. sept — IBO ispit ujutru, posle ceo PSEU (svih 105)
+  9: { },                                                                                // 22. sept — SAMO PSEU revizija, ispit PSEU 23. ujutru
+  10:{ spt: rangeIds('spt',1,32) },                                                     // 23. sept — PSEU ispit ujutru, posle SPT
+  11:{ spt: rangeIds('spt',33,64) },                                                    // 24. sept — SPT
+  12:{ },                                                                                // 25. sept — SAMO SPT revizija, ispit SPT 26. ujutru
+  13:{ } // 26. sept — SPT ispit, bez novog gradiva
 };
 
 /* Review dani -> koji predmet dobija review taj dan (koristi se u baseItemsForDay) */
-const FIXED_REVIEWS = { 1:'eng', 3:'spi', 6:'ess', 8:'ibo', 10:'pseu', 13:'spt' };
+const FIXED_REVIEWS = { 0:'eng', 2:'spi', 5:'ess', 7:'ibo', 9:'pseu', 12:'spt' };
 
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
 function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 0, 0); }
@@ -809,7 +808,7 @@ function showStorageWarning(show){
    ========================================================================= */
 function runMigrationIfNeeded(){
   if(state.__fixedScheduleMigrationV1) return;
-  state.currentDayIndex = 0; // 12. septembar — prvi dan novog rasporeda (indeksi sada kreću od 12.9.)
+  state.currentDayIndex = 0; // 13. septembar — prvi dan plana (12. septembar ne postoji)
   state.todayFinalized = false;
   delete state.pendingCarryover; // stara struktura, više se ne koristi
   delete state.todayCache;       // stara struktura, više se ne koristi
