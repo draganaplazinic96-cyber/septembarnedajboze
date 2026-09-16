@@ -11,7 +11,7 @@
 :root{
   --paper:#ece7dc;--paper-2:#ded7c8;--ink:#17201d;--ink-2:#2b3430;
   --panel:#f5f1e8;--line:#b9b1a2;--muted:#756f66;--soft:#d4ccbd;
-  --ess:#ad7a2a;--ibo:#9b4d3a;--spt:#5857a6;--eng:#397985;--spi:#9a4c70;--pseu:#527d47;
+  --ess:#ad7a2a;--ibo:#9b4d3a;--spt:#5857a6;--pseu:#527d47;
   --red:#a84339;--green:#3f765c;--accent:#2f4740;--warn-bg:#ead6cf;--warn-text:#8d302b;
   --serif:'Fraunces',Georgia,serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
@@ -31,7 +31,7 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .mission-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .mission-next .label{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:#aaa99e;font-weight:700}
 .mission-next .value{font-family:var(--serif);font-size:1.45rem;margin-top:2px}
-.route{position:relative;display:grid;grid-template-columns:repeat(6,1fr);gap:6px;padding-top:14px}
+.route{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding-top:14px}
 .route:before{content:"";position:absolute;left:4%;right:4%;top:22px;height:1px;background:#777}
 .route-stop{position:relative;text-align:center;min-width:0}
 .route-dot{width:15px;height:15px;border-radius:50%;margin:0 auto 8px;border:3px solid var(--ink);box-shadow:0 0 0 1px currentColor;background:currentColor;position:relative;z-index:1}
@@ -65,10 +65,10 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .overall>.bar-bg{height:4px;margin:0;background:var(--paper-2);overflow:hidden}
 .bar-fill{height:100%;background:var(--ink);transition:width .4s ease}
 
-.subject-mini{display:grid;grid-template-columns:repeat(3,1fr)}
+.subject-mini{display:grid;grid-template-columns:repeat(2,1fr)}
 .subject-mini-row{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;gap:8px 10px;padding:16px 16px 14px;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:132px;overflow:hidden}
-.subject-mini-row:nth-child(3n){border-right:0}
-.subject-mini-row:nth-last-child(-n+3){border-bottom:0}
+.subject-mini-row:nth-child(2n){border-right:0}
+.subject-mini-row:nth-last-child(-n+2){border-bottom:0}
 .subject-mini-row:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--subject-color)}
 .subj-name{grid-column:1/3;font-family:var(--serif);font-size:.93rem;font-weight:600;line-height:1.18;display:flex;align-items:center;gap:10px;color:var(--ink)}
 .subj-name .subject-symbol{width:30px;height:30px;flex:0 0 30px;color:var(--subject-color)}
@@ -111,8 +111,6 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .group-title .subject-symbol{width:30px;height:30px;flex:0 0 30px}
 .group-title .subject-symbol svg{width:28px;height:28px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .group-count{color:var(--muted);font-weight:500;font-size:.7rem}
-.group.sig-eng .group-title{color:#1f6170;background:linear-gradient(90deg,rgba(31,97,112,.10),transparent 58%)}
-.group.sig-spi .group-title{color:#8c3f5c;background:linear-gradient(90deg,rgba(140,63,92,.10),transparent 58%)}
 .group.sig-ess .group-title{color:#5d7a52;background:linear-gradient(90deg,rgba(93,122,82,.10),transparent 58%)}
 .group.sig-ibo .group-title{color:#b15f43;background:linear-gradient(90deg,rgba(177,95,67,.10),transparent 58%)}
 .group.sig-pseu .group-title{color:#b79518;background:linear-gradient(90deg,rgba(183,149,24,.12),transparent 58%)}
@@ -133,12 +131,6 @@ label.item.review span.txt{font-weight:650}
 label.item.locked{cursor:default;opacity:.62}
 label.item.locked input{cursor:default}
 
-.examcheck-block{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
-.examcheck-block label.item{flex:1;min-width:180px;justify-content:center;text-align:center;font-weight:700;font-size:.74rem;background:transparent;border:1px solid var(--line);padding:8px}
-.examcheck-block label.item input{display:none}
-.examcheck-block label.item input:checked~span.txt{color:var(--ink);opacity:1;text-decoration:none}
-.examcheck-block label.item:has(input:checked){border-color:var(--ink);background:var(--paper-2)}
-
 .loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}
 .empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
 
@@ -150,6 +142,12 @@ label.item.locked input{cursor:default}
 .day-plan-control .plan-times input[type="time"]{border:1px solid var(--line);background:var(--panel);font-family:var(--sans);font-size:.76rem;padding:2px 4px}
 .day-plan-control .plan-suggestion{color:var(--accent);font-weight:650}
 
+.examcheck-block{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap}
+.examcheck-block label.item{flex:1;min-width:180px;justify-content:center;text-align:center;font-weight:700;font-size:.74rem;background:transparent;border:1px solid var(--line);padding:8px}
+.examcheck-block label.item input{display:none}
+.examcheck-block label.item input:checked~span.txt{color:var(--ink);opacity:1;text-decoration:none}
+.examcheck-block label.item:has(input:checked){border-color:var(--ink);background:var(--paper-2)}
+
 .footer-stamp{text-align:center;margin:28px 0 0;color:var(--muted);font-size:.62rem;letter-spacing:.14em;text-transform:uppercase}
 
 @media(max-width:720px){
@@ -158,11 +156,6 @@ label.item.locked input{cursor:default}
   #days{margin-left:43px;padding-left:15px}
   .day-title:before{left:-65px;width:40px}
   .day:before{left:-22px}
-  .subject-mini{grid-template-columns:repeat(2,1fr)}
-  .subject-mini-row:nth-child(3n){border-right:1px solid var(--soft)}
-  .subject-mini-row:nth-child(2n){border-right:0}
-  .subject-mini-row:nth-last-child(-n+3){border-bottom:1px solid var(--soft)}
-  .subject-mini-row:nth-last-child(-n+2){border-bottom:0}
 }
 @media(max-width:480px){
   .command-title{font-size:3.25rem}
@@ -174,7 +167,7 @@ label.item.locked input{cursor:default}
   .today-date{font-size:1.65rem}
   .day-title{font-size:.95rem}
   .subject-mini{grid-template-columns:1fr}
-  .subject-mini-row,.subject-mini-row:nth-child(2n),.subject-mini-row:nth-child(3n){border-right:0;border-bottom:1px solid var(--soft)}
+  .subject-mini-row,.subject-mini-row:nth-child(2n){border-right:0;border-bottom:1px solid var(--soft)}
   .subject-mini-row:last-child{border-bottom:0}
 }
 </style>
@@ -189,10 +182,7 @@ label.item.locked input{cursor:default}
   <div class="storage-warning" id="storageWarning">⚠️ Čuvanje napretka trenutno ne radi — ono što štikliraš možda neće ostati sačuvano. Ne oslanjaj se na ovo dok se poruka ne sakrije.</div>
 
   <div class="exams">
-    <div class="cat-title">Kolokvijumi</div>
-    <div><b>14. septembar</b> — Engleski jezik 2 kolokvijum</div>
     <div class="cat-title">Ispiti</div>
-    <div><b>16. septembar, 9:00</b> — Savremena politička istorija</div>
     <div><b>19. septembar, 10:00</b> — Ekonomski sistem Srbije</div>
     <div><b>21. septembar, 9:00</b> — Istorija balkanskih odnosa</div>
     <div><b>23. septembar, 9:00</b> — Politički sistem Evropske unije</div>
@@ -217,12 +207,10 @@ label.item.locked input{cursor:default}
 
 <script>
 /* =========================================================================
-   IKONICE PREDMETA (nepromenjeno — vizuelni identitet)
+   IKONICE PREDMETA
    ========================================================================= */
 function subjectIcon(subj){
   const icons={
-    eng:`<span class="subject-symbol eng" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 7.5h14a5 5 0 0 1 5 5v4a5 5 0 0 1-5 5h-7l-5 4v-4H5a5 5 0 0 1-5-5v4a5 5 0 0 1 5-5Z" transform="translate(2 0)"/><path d="M17 10.5h5a5 5 0 0 1 5 5v3a5 5 0 0 1-5 5h-2v3l-4-3"/></svg></span>`,
-    spi:`<span class="subject-symbol spi" aria-hidden="true"><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 5v22" stroke-width="2.6"/><path d="M5.8 12h20.4M5.8 20h20.4" opacity=".55"/><path d="M11 6.3c-2.2 3.2-3.3 6.4-3.3 9.7s1.1 6.5 3.3 9.7M21 6.3c2.2 3.2 3.3 6.4 3.3 9.7s-1.1 6.5-3.3 9.7" opacity=".55"/></svg></span>`,
     ess:`<span class="subject-symbol ess" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 26V6M4 26h24"/><path d="M7 22l5-7 5 4 8-11" class="up"/><path d="M24 8h3v3" class="up"/></svg></span>`,
     ibo:`<span class="subject-symbol ibo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M11 4l5 2 3 4 5 2-1 4 3 3-4 3 1 5-5-2-3 3-3-4-4-1 2-4-3-3 4-3-1-4 3-2Z"/></svg></span>`,
     pseu:`<span class="subject-symbol pseu" aria-hidden="true"><svg viewBox="0 0 32 32"><path class="eu-star" d="M16 4.8l2.1 6.1h6.5l-5.3 3.8 2 6.2-5.3-3.8-5.3 3.8 2-6.2-5.3-3.8h6.5Z"/></svg></span>`,
@@ -231,128 +219,42 @@ function subjectIcon(subj){
   return icons[subj]||'';
 }
 
-const STORAGE_KEY = 'plan-sept-2026-v8'; // NOVA VERZIJA — 12.9 uklonjen, prvi dan je 13.9, indeksi pomereni
+const STORAGE_KEY = 'plan-sept-2026-v9'; // v9 — ENG i SPI uklonjeni, plan kreće 16. septembra
 const YEAR = 2026, MONTH = 8; // septembar
-const START_DAY = 13;
-const DAY_COUNT = 14; // indeksi 0..13 = 13..26. septembar (12. septembar ne postoji u planu)
+const START_DAY = 16;
+const DAY_COUNT = 11; // indeksi 0..10 = 16..26. septembar
 
 const SUBJECTS = {
-  eng:  {label:"Engleski jezik 2",                 cls:"eng",  color:"var(--eng)",  examDay:1},
-  spi:  {label:"Savremena politička istorija",      cls:"spi",  color:"var(--spi)",  examDay:3},
-  ess:  {label:"Ekonomski sistem Srbije",           cls:"ess",  color:"var(--ess)",  examDay:6},
-  ibo:  {label:"Istorija balkanskih odnosa",        cls:"ibo",  color:"var(--ibo)",  examDay:8},
-  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:10},
-  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:13}
+  ess:  {label:"Ekonomski sistem Srbije",           cls:"ess",  color:"var(--ess)",  examDay:3},
+  ibo:  {label:"Istorija balkanskih odnosa",        cls:"ibo",  color:"var(--ibo)",  examDay:5},
+  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:7},
+  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:10}
 };
 
 const EXAMS = {
-  1:  {type:'kolokvijum', subj:'eng'},
-  3:  {type:'ispit', subj:'spi'},
-  6:  {type:'ispit', subj:'ess'},
-  8:  {type:'ispit', subj:'ibo'},
-  10: {type:'ispit', subj:'pseu'},
-  13: {type:'ispit', subj:'spt'}
+  3:  {type:'ispit', subj:'ess'},
+  5:  {type:'ispit', subj:'ibo'},
+  7:  {type:'ispit', subj:'pseu'},
+  10: {type:'ispit', subj:'spt'}
 };
 
 // Dani koji su REZERVISANI ISKLJUČIVO za jedan predmet (revizija pred ispit).
 // Nijedan drugi predmet (ni carryover drugog predmeta) ne sme da se pojavi tog dana.
-const LOCKED_DAYS = { 2:'spi', 5:'ess', 7:'ibo', 9:'pseu', 12:'spt' };
+const LOCKED_DAYS = { 2:'ess', 4:'ibo', 6:'pseu', 9:'spt' };
 // Dan kada je predviđena revizija svakog predmeta (koristi se i za REVIEW_LINKS i za status na radaru)
-const REVIEW_DAY_FOR = { eng:0, spi:2, ess:5, ibo:7, pseu:9, spt:12 };
+const REVIEW_DAY_FOR = { ess:2, ibo:4, pseu:6, spt:9 };
 
 const REVIEW_LINKS = {
-  0:  {subj:'eng',  url:'https://draganaplazinic96-cyber.github.io/e2k2/'},
-  2:  {subj:'spi',  url:'https://draganaplazinic96-cyber.github.io/spi/'},
-  5:  {subj:'ess',  url:'https://draganaplazinic96-cyber.github.io/ess/'},
-  7:  {subj:'ibo',  url:'https://draganaplazinic96-cyber.github.io/ibo/'},
-  9:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
-  12: {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
+  2:  {subj:'ess',  url:'https://draganaplazinic96-cyber.github.io/ess/'},
+  4:  {subj:'ibo',  url:'https://draganaplazinic96-cyber.github.io/ibo/'},
+  6:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
+  9:  {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
 };
 
 /* =========================================================================
-   POOLS — sadržaj gradiva (nepromenjeno, osim IBO koji je ispravljen na 46 pitanja)
+   POOLS — sadržaj gradiva
    ========================================================================= */
 const POOLS = {
-  eng: [
-    'Kvantifikatori: many/much, a lot of, few/a little, plenty of, enough',
-    'Kvantifikatori: too much/too many, both/either/neither, ostali (each, every, several, quite a few...)',
-    'Reported speech: potvrdne i odrične izjave, backshift tabela',
-    'Reported speech: promene vremena i mesta, say vs tell',
-    'Reported speech: reported questions, reported commands/requests, reporting verbs',
-    'Adding emphasis (naglašavanje)',
-    'Second conditional (hipotetička sadašnjost/budućnost)',
-    'Third conditional (hipotetička prošlost)',
-    'Mixed conditionals (mešoviti kondicionali)',
-    '-ing form vs infinitive: glagoli + -ing, + to infinitiv, + osoba + to infinitiv',
-    'Causative have (have something done)',
-    '7.1 Vrste TV programa i osnovni termini',
-    '7.2 The Press/Media — detaljan vokabular',
-    '7.3 Glagoli govorenja u novinarstvu (reporting verbs — nijanse)',
-    '7.4 Multi-word verbs (medijski/opšti kontekst)',
-    '7.5 Dodatni TV/media vokabular',
-    '7.6 Adding emphasis — vokabular',
-    '7.7 When things go wrong — fraze za prepričavanje vesti',
-    '8.1 Ličnost i karakter — parovi koji NISU sinonimi',
-    '8.2 Compound adjectives (složeni pridevi)',
-    '8.3 Values — vrednosti',
-    '8.4 Decisions — kolokacije sa nijansama',
-    '8.5 Behaviour — glagoli, izrazi i idiomi',
-    '8.6 Handling an awkward situation — functional language',
-    '8.7 Idioms connected to time',
-    'Najčešće zamke na testu (Unit 7 & 8) — pregled',
-    'Dodatni opšti vokabular + pregled glagolskih konstrukcija + brza referenca za prepoznavanje oblika',
-    'Prvo čitanje tekstova (bez literature, samo tekstovi)',
-    {review:true, text:'Kompletan pregled: cela skripta Unit 7 & 8 (gramatika + vokabular) + drugo čitanje tekstova + rešavanje svih vežbi iz zbirke (Verzije A–F, kondicionali, reported speech)'}
-  ],
-  spi: [
-    'Prva faza Drugog svetskog rata 1939-1941',
-    'Druga faza Drugog svetskog rata 1941-1943',
-    'Treća faza Drugog svetskog rata',
-    'Pokreti otpora u Evropi',
-    'Podela Nemačke nakon Drugog svetskog rata',
-    'Stvaranje socijalističkih država u Evropi',
-    'Početak Hladnog rata',
-    'Stvaranje i delatnost Ujedinjenih nacija',
-    'Prve hladnoratovske krize — Iran, Turska i Grčka',
-    'Trumanova doktrina i Maršalov plan',
-    'Stvaranje paktova i trka u naoružanju',
-    'Kineski građanski rat',
-    'Japan pod okupacijom',
-    'Rat u Koreji',
-    'Ajzenhauerova era',
-    'Dekolonizacija nakon Drugog svetskog rata',
-    'Nezavisnost Indije',
-    'Rat na prostoru Indokine (1945-1954)',
-    'Bliski istok i stvaranje Izraela',
-    'Sueska kriza 1956.',
-    'SSSR za vreme Nikite Hruščova',
-    'Revolucija u Mađarskoj 1956.',
-    'Nastanak Pete republike u Francuskoj',
-    'Integracija Zapadne Evrope i stvaranje EEZ',
-    'Pokret nesvrstanih',
-    'Dekolonizacija Afrike',
-    'Kubanska revolucija i sukobi dve supersile',
-    'Sukobi na Bliskom istoku 60-ih godina',
-    'Kulturna revolucija u Kini',
-    'Detant i ograničavanje trke u naoružanju',
-    'SAD u Vijetnamu',
-    'Studentski protesti',
-    'Istočna politika Vilija Branta',
-    'Sukobi na Bliskom istoku 70-ih godina',
-    'Rat u Avganistanu',
-    'VB za vreme Margaret Tačer',
-    'SAD za vreme Ronalda Regana',
-    'Kraj Hladnog rata',
-    'Amerika 90-ih godina',
-    'Slom socijalizma u Evropi',
-    'Zalivski rat',
-    'Daleki istok 90-ih godina',
-    'Stanje u Evropi 90-ih godina',
-    'Rusija za vreme Borisa Jeljcina',
-    'Bliski istok 90-ih godina',
-    {review:true, reviewRound:'first', text:'Prvi pregled: brzi pregled svih 45 pitanja'},
-    {review:true, reviewRound:'final', text:'Finalni pregled: svih 45 pitanja pred ispit'}
-  ],
   ess: [
     'Privredni sistem - osnovno određenje i definisanje',
     'Sadržaj i osnovne komponente privrednog sistema',
@@ -400,7 +302,7 @@ const POOLS = {
     {review:true, reviewRound:4, text:'Ponovljene teme 36–40 (razvijenost, industrija, javna preduzeća)'},
     {review:true, text:'Ponovljeno svih 40 tema'}
   ],
-  // IBO — ISPRAVLJEN POOL: tačno 46 regularnih pitanja + 1 review (zamenjuje stari pogrešan pool od 31 pitanja)
+  // IBO — 46 regularnih pitanja + 1 review
   ibo: [
     'Sanstefanski mir i stvaranje bugarske države',
     'Velika istočna kriza i Berlinski kongres',
@@ -630,17 +532,6 @@ const POOLS = {
 
 /* Tematske oblasti — SAMO za vizuelno grupisanje, NE utiču na raspored po danima */
 const THEMATIC_AREAS = {
-  spi: [
-    [1,4,'Drugi svetski rat'],
-    [5,11,'Posleratni poredak i početak Hladnog rata'],
-    [12,15,'Azija, Koreja i Ajzenhauer'],
-    [16,20,'Dekolonizacija, Indija, Indokina i Bliski istok'],
-    [21,25,'Hruščov, Mađarska, Francuska, EEZ i Nesvrstani'],
-    [26,30,'Afrika, Kuba, Bliski istok, Kina i detant'],
-    [31,34,'Vijetnam, protesti, Ostpolitik i Bliski istok 70-ih'],
-    [35,38,'Kasni Hladni rat'],
-    [39,45,'Svet devedesetih']
-  ],
   ess: [
     [1,6,'Privredni sistem'],
     [7,12,'Makroekonomsko merenje, rast i razvoj'],
@@ -651,7 +542,6 @@ const THEMATIC_AREAS = {
     [32,35,'Spoljni sektor i integracije'],
     [36,40,'Razvijenost, industrija i javna preduzeća']
   ],
-  // IBO — nove tematske oblasti usklađene sa 46 pitanja (samo vizuelno grupisanje)
   ibo: [
     [1,6,'Istočna kriza i nacionalna pitanja'],
     [7,12,'Balkanske države do početka XX veka'],
@@ -710,39 +600,35 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 }
 
 /* =========================================================================
-   FIXED_SCHEDULE — raspored od 13. septembra (idx 0). 12. septembar NE POSTOJI
-   u planu (prvi dan je 13.).
+   FIXED_SCHEDULE — raspored od 16. septembra (idx 0).
 
-   13-14 SPI (+ ENG na 13., kolokvijum 14.) · 16-18 ESS · 19. SAMO IBO
-   (20. zaključan isključivo za IBO reviziju) · 21-22 PSEU (ceo pool, 105 pitanja, na 21.) · 23-25 SPT.
+   16-17 ESS · 19. SAMO IBO (20. zaključan isključivo za IBO reviziju) ·
+   21. PSEU (ceo pool, 105 pitanja) · 23-24 SPT.
    Dani u LOCKED_DAYS namerno nemaju regularne stavke ovde — samo review (FIXED_REVIEWS).
    ========================================================================= */
 const FIXED_SCHEDULE = {
-  0: { spi: rangeIds('spi',1,18), eng: rangeIds('eng',1,28) },                         // 13. sept — SPI + kompletan ENG (+ ENG review iz FIXED_REVIEWS)
-  1: { spi: rangeIds('spi',19,45) },                                                    // 14. sept — ENG kolokvijum ujutru, posle toga SPI
-  2: { },                                                                                // 15. sept — SAMO SPI revizija (FIXED_REVIEWS), ispit SPI 16. ujutru
-  3: { ess: rangeIds('ess',1,20) },                                                     // 16. sept — SPI ispit ujutru, posle ESS
-  4: { ess: rangeIds('ess',21,40) },                                                    // 17. sept — ESS
-  5: { },                                                                                // 18. sept — SAMO ESS revizija, ispit ESS 19. ujutru
-  6: { ibo: rangeIds('ibo',1,46) },                                                     // 19. sept — ESS ispit ujutru, posle SAMO IBO
-  7: { },                                                                                // 20. sept — SAMO IBO revizija, ispit IBO 21. ujutru
-  8: { pseu: rangeIds('pseu',1,105) },                                                  // 21. sept — IBO ispit ujutru, posle ceo PSEU (svih 105)
-  9: { },                                                                                // 22. sept — SAMO PSEU revizija, ispit PSEU 23. ujutru
-  10:{ spt: rangeIds('spt',1,32) },                                                     // 23. sept — PSEU ispit ujutru, posle SPT
-  11:{ spt: rangeIds('spt',33,64) },                                                    // 24. sept — SPT
-  12:{ },                                                                                // 25. sept — SAMO SPT revizija, ispit SPT 26. ujutru
-  13:{ } // 26. sept — SPT ispit, bez novog gradiva
+  0: { ess: rangeIds('ess',1,20) },                                                     // 16. sept — ESS
+  1: { ess: rangeIds('ess',21,40) },                                                    // 17. sept — ESS
+  2: { },                                                                                // 18. sept — SAMO ESS revizija, ispit ESS 19. ujutru
+  3: { ibo: rangeIds('ibo',1,46) },                                                     // 19. sept — ESS ispit ujutru, posle SAMO IBO
+  4: { },                                                                                // 20. sept — SAMO IBO revizija, ispit IBO 21. ujutru
+  5: { pseu: rangeIds('pseu',1,105) },                                                  // 21. sept — IBO ispit ujutru, posle ceo PSEU (svih 105)
+  6: { },                                                                                // 22. sept — SAMO PSEU revizija, ispit PSEU 23. ujutru
+  7: { spt: rangeIds('spt',1,32) },                                                     // 23. sept — PSEU ispit ujutru, posle SPT
+  8: { spt: rangeIds('spt',33,64) },                                                    // 24. sept — SPT
+  9: { },                                                                                // 25. sept — SAMO SPT revizija, ispit SPT 26. ujutru
+  10:{ } // 26. sept — SPT ispit, bez novog gradiva
 };
 
 /* Review dani -> koji predmet dobija review taj dan (koristi se u baseItemsForDay) */
-const FIXED_REVIEWS = { 0:'eng', 2:'spi', 5:'ess', 7:'ibo', 9:'pseu', 12:'spt' };
+const FIXED_REVIEWS = { 2:'ess', 4:'ibo', 6:'pseu', 9:'spt' };
 
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
 function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 0, 0); }
 function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
 function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,START_DAY+i); return Math.ceil((e-t)/86400000); }
-function subjectCode(subj){ return ({eng:'ENG',spi:'SPI',ess:'ESS',ibo:'IBO',pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
-function examClock(subj){ return ({eng:'',spi:'09:00',ess:'10:00',ibo:'09:00',pseu:'09:00',spt:'09:00'})[subj] || ''; }
+function subjectCode(subj){ return ({ess:'ESS',ibo:'IBO',pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
+function examClock(subj){ return ({ess:'10:00',ibo:'09:00',pseu:'09:00',spt:'09:00'})[subj] || ''; }
 
 /* =========================================================================
    STANJE (localStorage)
@@ -753,9 +639,9 @@ let state = {
   dayPlan: {},             // dayIndex -> {type, workFrom, workTo, extra:{...}, walker}
   currentDayIndex: null,
   todayFinalized: false,
-  carryover: {eng:[],spi:[],ess:[],ibo:[],pseu:[],spt:[]},
+  carryover: {ess:[],ibo:[],pseu:[],spt:[]},
   carryoverSnapshots: {},  // dayIndex(dana koji je zaključen) -> carryover PRE tog finalize-a (za "vrati nazad")
-  __fixedScheduleMigrationV1: false
+  __fixedScheduleMigrationV2: false
 };
 let openDays = new Set();
 let storageOk = true;
@@ -777,11 +663,11 @@ function loadState(){
       const data = JSON.parse(raw);
       state = Object.assign({
         progress:{}, examAnswers:{}, dayPlan:{}, currentDayIndex:null,
-        todayFinalized:false, carryover:{eng:[],spi:[],ess:[],ibo:[],pseu:[],spt:[]},
-        carryoverSnapshots:{}, __fixedScheduleMigrationV1:false
+        todayFinalized:false, carryover:{ess:[],ibo:[],pseu:[],spt:[]},
+        carryoverSnapshots:{}, __fixedScheduleMigrationV2:false
       }, data);
       if(!state.carryover) state.carryover = {};
-      ['eng','spi','ess','ibo','pseu','spt'].forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
+      ['ess','ibo','pseu','spt'].forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
       if(!state.carryoverSnapshots) state.carryoverSnapshots = {};
     }
   }catch(err){ console.error('Load error', err); }
@@ -802,20 +688,19 @@ function showStorageWarning(show){
 
 /* =========================================================================
    JEDNOKRATNA MIGRACIJA
-   Potpun reset ("kao da se ništa nije desilo") — ništa se ne markira kao
-   završeno, samo se aktivni dan postavlja na 12. septembar (idx 5), odakle
-   novi raspored kreće.
+   Potpun reset — ništa se ne markira kao završeno, aktivni dan se postavlja
+   na 16. septembar (idx 0), odakle novi raspored kreće.
    ========================================================================= */
 function runMigrationIfNeeded(){
-  if(state.__fixedScheduleMigrationV1) return;
-  state.currentDayIndex = 0; // 13. septembar — prvi dan plana (12. septembar ne postoji)
+  if(state.__fixedScheduleMigrationV2) return;
+  state.currentDayIndex = 0; // 16. septembar — prvi dan plana
   state.todayFinalized = false;
-  delete state.pendingCarryover; // stara struktura, više se ne koristi
-  delete state.todayCache;       // stara struktura, više se ne koristi
+  delete state.pendingCarryover;
+  delete state.todayCache;
   if(!state.carryover) state.carryover = {};
-  ['eng','spi','ess','ibo','pseu','spt'].forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
+  ['ess','ibo','pseu','spt'].forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
 
-  state.__fixedScheduleMigrationV1 = true;
+  state.__fixedScheduleMigrationV2 = true;
   saveState();
 }
 
@@ -829,7 +714,6 @@ function activeDayIndex(){
    ========================================================================= */
 
 // "Goli" plan za dan d (FIXED_SCHEDULE + eventualni review taj dan), BEZ carryover-a.
-// Koristi se za prošle (istorijski prikaz koristi drugu funkciju) i buduće (projekcija) dane.
 function baseItemsForDay(d){
   const out = {};
   const fs = FIXED_SCHEDULE[d] || {};
@@ -877,14 +761,10 @@ function finalizeDay(){
   const d = activeDayIndex();
   const items = itemsForActiveDay(d);
 
-  // snapshot carryover-a PRE ove izmene, da bi "vrati nazad" mogao tačno da je poništi
   state.carryoverSnapshots[d] = JSON.parse(JSON.stringify(state.carryover));
 
   Object.keys(items).forEach(s=>{
     const stillUndone = items[s].filter(id => !(state.progress[id] && state.progress[id].done));
-    // Zamenjujemo CEO red čekanja za predmet s onim što je danas ostalo nezavršeno
-    // (carryover koji je već bio prikačen danas je već uključen u items[s], tako
-    // da se ništa ne duplira i ništa ne gubi).
     state.carryover[s] = stillUndone;
   });
 
@@ -892,7 +772,7 @@ function finalizeDay(){
     state.currentDayIndex = d + 1;
     state.todayFinalized = false;
   } else {
-    state.todayFinalized = true; // poslednji dan — nema kuda dalje
+    state.todayFinalized = true;
   }
   saveState();
   render();
@@ -938,8 +818,8 @@ const POST_WORK_GAP_MIN = 15;
 const OPEN_END_SENTINEL = 100000;
 const WALKER_PRE_NEXT_GAP_HOURS = 4;
 const MIN_VIABLE_WINDOW_MIN = 60;
-const DIFFICULTY_RANK = {pseu:1, ess:2, spi:3, spt:4, ibo:5, eng:6};
-const AVG_WORDS_PER_TOPIC = {ess:729, ibo:610, spi:981, pseu:430, spt:561};
+const DIFFICULTY_RANK = {pseu:1, ess:2, spt:4, ibo:5};
+const AVG_WORDS_PER_TOPIC = {ess:729, ibo:610, pseu:430, spt:561};
 
 function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
 function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
@@ -1054,8 +934,7 @@ function studySuggestionText(d, itemsBySubj){
     const suf = subs.length ? ` (${codes(subs)})` : '';
     return `Predlog: učenje — veče ${label}${suf}`;
   }
-  const hasEng = fullList.some(x=>x.subj==='eng');
-  const list = fullList.filter(x=>x.subj!=='eng');
+  const list = fullList;
   if(p.type === 'slobodan'){
     const segs = windowSegments(timeToMinutes(FREE_WAKE), timeToMinutes(FREE_SLEEP), p.extra);
     const suf = fullList.length ? ` (${codes(fullList.map(x=>x.subj))})` : '';
@@ -1074,22 +953,9 @@ function studySuggestionText(d, itemsBySubj){
   const morningViable = morningMinRaw >= MIN_VIABLE_WINDOW_MIN;
   const eveningViable = eveningMinRaw >= MIN_VIABLE_WINDOW_MIN;
   const {morning, evening} = splitSubjectsByWindows(list, morningViable?morningMinRaw:0, eveningViable?eveningMinRaw:0);
-  let engMorning=false, engEvening=false;
-  if(hasEng){
-    const morningShort = morningMinRaw>0 && !morningViable;
-    const eveningShort = eveningMinRaw>0 && !eveningViable;
-    if(eveningShort) engEvening = true;
-    else if(morningShort) engMorning = true;
-    else if(eveningViable) engEvening = true;
-    else if(morningViable) engMorning = true;
-  }
-  if(engMorning) morning.unshift('eng');
-  if(engEvening) evening.unshift('eng');
   const parts = [];
   if(morningViable) parts.push(`jutro ${segsLabel(morningSegs)}${morning.length?` (${codes(morning)})`:''}`);
-  else if(engMorning) parts.push(`jutro ${segsLabel(morningSegs)} (ENG)`);
   if(eveningViable) parts.push(`veče ${segsLabel(eveningSegs)}${evening.length?` (${codes(evening)})`:''}`);
-  else if(engEvening) parts.push(`veče ${segsLabel(eveningSegs)} (ENG)`);
   if(!parts.length) return 'Predlog: danas realno nema prozora za učenje — samo brzi pregled ako stigneš.';
   return 'Predlog: učenje — ' + parts.join(' i ');
 }
@@ -1100,7 +966,7 @@ function studySuggestionText(d, itemsBySubj){
 function renderMissionStrip(){
   const el=document.getElementById('missionStrip');
   if(!el) return;
-  const ordered=['eng','spi','ess','ibo','pseu','spt'];
+  const ordered=['ess','ibo','pseu','spt'];
   const next=ordered.find(s=>daysUntilIndex(SUBJECTS[s].examDay)>=0) || ordered[ordered.length-1];
   const nextDays=daysUntilIndex(SUBJECTS[next].examDay);
   const nextText=nextDays===0 ? 'DANAS' : (nextDays===1 ? 'SUTRA' : `ZA ${nextDays} DANA`);
@@ -1173,7 +1039,7 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
     grp.className = 'group sig-'+subj;
     grp.innerHTML = `<div class="group-title">${subjectIcon(subj)}<span class="group-label">${s.label}</span> <span class="group-count">(${doneCount}/${visibleIds.length})</span></div>`;
     const locked = mode !== 'today';
-    const numberedSubjects = ['spi','ibo','pseu','spt'];
+    const numberedSubjects = ['ibo','pseu','spt'];
     const hasAreas = visibleIds.some(id => itemLookup(id).area);
 
     const renderLabel = (id) => {
@@ -1400,7 +1266,7 @@ document.addEventListener('click', (e)=>{
   loadState();
   storageOk = verifyStorageWorks();
   showStorageWarning(!storageOk);
-  runMigrationIfNeeded(); // jednokratno — aktivni dan na idx0 (12.9, prvi dan plana), ništa unapred markirano
+  runMigrationIfNeeded();
   openDays.add(String(activeDayIndex()));
   render();
 })();
