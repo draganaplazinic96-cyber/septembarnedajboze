@@ -667,7 +667,8 @@ function itemsForActiveDay(d){
   const base = baseItemsForDay(d);
   const locked = LOCKED_DAYS[d]; // ime predmeta kome je dan rezervisan, ili undefined
   Object.keys(SUBJECTS).forEach(s=>{
-    const co = (locked && locked !== s) ? [] : (state.carryover[s] || []);
+    const examOver = SUBJECTS[s].examDay <= d; // ispit tog predmeta je taj dan ili je prošao — nema prenošenja
+    const co = (examOver || (locked && locked !== s)) ? [] : (state.carryover[s] || []);
     const baseIds = base[s] || [];
     const merged = co.concat(baseIds);
     if(merged.length) out[s] = merged;
@@ -699,7 +700,7 @@ function finalizeDay(){
 
   Object.keys(items).forEach(s=>{
     const stillUndone = items[s].filter(id => !(state.progress[id] && state.progress[id].done));
-    state.carryover[s] = stillUndone;
+    state.carryover[s] = (SUBJECTS[s].examDay <= d + 1) ? [] : stillUndone;
   });
 
   if(d < DAY_COUNT - 1){
