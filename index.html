@@ -11,7 +11,7 @@
 :root{
   --paper:#ece7dc;--paper-2:#ded7c8;--ink:#17201d;--ink-2:#2b3430;
   --panel:#f5f1e8;--line:#b9b1a2;--muted:#756f66;--soft:#d4ccbd;
-  --ibo:#9b4d3a;--spt:#5857a6;--pseu:#527d47;
+  --spt:#5857a6;--pseu:#527d47;
   --red:#a84339;--green:#3f765c;--accent:#2f4740;--warn-bg:#ead6cf;--warn-text:#8d302b;
   --serif:'Fraunces',Georgia,serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
 }
@@ -31,8 +31,8 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .mission-top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .mission-next .label{font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:#aaa99e;font-weight:700}
 .mission-next .value{font-family:var(--serif);font-size:1.45rem;margin-top:2px}
-.route{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding-top:14px}
-.route:before{content:"";position:absolute;left:6%;right:6%;top:22px;height:1px;background:#777}
+.route{position:relative;display:grid;grid-template-columns:repeat(2,1fr);gap:6px;padding-top:14px}
+.route:before{content:"";position:absolute;left:25%;right:25%;top:22px;height:1px;background:#777}
 .route-stop{position:relative;text-align:center;min-width:0}
 .route-dot{width:15px;height:15px;border-radius:50%;margin:0 auto 8px;border:3px solid var(--ink);box-shadow:0 0 0 1px currentColor;background:currentColor;position:relative;z-index:1}
 .route-stop.past{opacity:.48}
@@ -40,7 +40,7 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .route-code{font-size:.68rem;font-weight:800;letter-spacing:.08em}
 .route-date{font-size:.64rem;color:#a8aaa3;margin-top:2px;white-space:nowrap}
 
-.exams{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--ink);background:var(--panel);margin-bottom:16px}
+.exams{display:grid;grid-template-columns:repeat(2,1fr);border:1px solid var(--ink);background:var(--panel);margin-bottom:16px}
 .exams .cat-title{grid-column:1/-1;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--muted);background:rgba(23,32,29,.04);padding:6px 13px;border-bottom:1px solid var(--soft)}
 .exams>div:not(.cat-title){font-size:.76rem;color:var(--muted);padding:11px 13px;border-right:1px solid var(--soft);border-bottom:1px solid var(--soft);min-height:53px}
 .exams b{display:block;color:var(--ink);font-family:var(--serif);font-size:.92rem;margin-bottom:2px}
@@ -65,7 +65,7 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .overall>.bar-bg{height:4px;margin:0;background:var(--paper-2);overflow:hidden}
 .bar-fill{height:100%;background:var(--ink);transition:width .4s ease}
 
-.subject-mini{display:grid;grid-template-columns:repeat(3,1fr)}
+.subject-mini{display:grid;grid-template-columns:repeat(2,1fr)}
 .subject-mini-row{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-rows:auto auto auto;gap:8px 10px;padding:16px 16px 14px;border-right:1px solid var(--soft);border-bottom:0;min-height:132px;overflow:hidden}
 .subject-mini-row:last-child{border-right:0}
 .subject-mini-row:before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--subject-color)}
@@ -110,7 +110,6 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .group-title .subject-symbol{width:30px;height:30px;flex:0 0 30px}
 .group-title .subject-symbol svg{width:28px;height:28px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .group-count{color:var(--muted);font-weight:500;font-size:.7rem}
-.group.sig-ibo .group-title{color:#b15f43;background:linear-gradient(90deg,rgba(177,95,67,.10),transparent 58%)}
 .group.sig-pseu .group-title{color:#b79518;background:linear-gradient(90deg,rgba(183,149,24,.12),transparent 58%)}
 .group.sig-spt .group-title{color:#625c96;background:linear-gradient(90deg,rgba(98,92,150,.10),transparent 58%)}
 .group.sig-pseu .subject-symbol svg{stroke:#d4b018}
@@ -149,7 +148,6 @@ label.item.locked input{cursor:default}
 
 @media(max-width:720px){
   body{padding:20px 12px 60px}
-  .exams{grid-template-columns:1fr 1fr}
   #days{margin-left:43px;padding-left:15px}
   .day-title:before{left:-65px;width:40px}
   .day:before{left:-22px}
@@ -180,8 +178,7 @@ label.item.locked input{cursor:default}
 
   <div class="exams">
     <div class="cat-title">Ispiti</div>
-    <div><b>21. septembar, 9:00</b> — Istorija balkanskih odnosa</div>
-    <div><b>23. septembar, 9:00</b> — Politički sistem Evropske unije</div>
+    <div><b>25. septembar, 9:00</b> — Politički sistem Evropske unije</div>
     <div><b>26. septembar, 9:00</b> — Savremena politička teorija</div>
   </div>
 
@@ -198,7 +195,7 @@ label.item.locked input{cursor:default}
 
   <div id="days"><div class="loading">Učitavanje...</div></div>
 
-  <div class="footer-stamp">FIXED SCHEDULE · v2</div>
+  <div class="footer-stamp">FIXED SCHEDULE · v3</div>
 </div>
 
 <script>
@@ -207,40 +204,35 @@ label.item.locked input{cursor:default}
    ========================================================================= */
 function subjectIcon(subj){
   const icons={
-    ibo:`<span class="subject-symbol ibo" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M11 4l5 2 3 4 5 2-1 4 3 3-4 3 1 5-5-2-3 3-3-4-4-1 2-4-3-3 4-3-1-4 3-2Z"/></svg></span>`,
     pseu:`<span class="subject-symbol pseu" aria-hidden="true"><svg viewBox="0 0 32 32"><path class="eu-star" d="M16 4.8l2.1 6.1h6.5l-5.3 3.8 2 6.2-5.3-3.8-5.3 3.8 2-6.2-5.3-3.8h6.5Z"/></svg></span>`,
     spt:`<span class="subject-symbol spt" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 5v20M9 8h14M9 26h14"/><path d="M8 9l-4 8h8L8 9ZM24 9l-4 8h8l-4-8Z"/><path d="M4 17c0 2.1 1.8 3.8 4 3.8s4-1.7 4-3.8M20 17c0 2.1 1.8 3.8 4 3.8s4-1.7 4-3.8"/></svg></span>`
   };
   return icons[subj]||'';
 }
 
-const STORAGE_KEY = 'plan-sept-2026-v10'; // v10 — ESS uklonjen, plan kreće 20. septembra (IBO)
+const STORAGE_KEY = 'plan-sept-2026-v11'; // v11 — novi plan: početak 21. sept, PSEU 25. sept, SPT 26. sept
 const YEAR = 2026, MONTH = 8; // septembar
-const START_DAY = 20;
-const DAY_COUNT = 7; // indeksi 0..6 = 20..26. septembar
-const SUBJECT_KEYS = ['ibo','pseu','spt'];
+const START_DAY = 21;
+const DAY_COUNT = 6; // indeksi 0..5 = 21..26. septembar
+const SUBJECT_KEYS = ['pseu','spt'];
 
 const SUBJECTS = {
-  ibo:  {label:"Istorija balkanskih odnosa",        cls:"ibo",  color:"var(--ibo)",  examDay:1},
-  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:3},
-  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:6}
+  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:4},
+  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:5}
 };
 
 const EXAMS = {
-  1: {type:'ispit', subj:'ibo'},
-  3: {type:'ispit', subj:'pseu'},
-  6: {type:'ispit', subj:'spt'}
+  4: {type:'ispit', subj:'pseu'},
+  5: {type:'ispit', subj:'spt'}
 };
 
-// Dani koji su REZERVISANI ISKLJUČIVO za jedan predmet (revizija pred ispit).
-// Nijedan drugi predmet (ni carryover drugog predmeta) ne sme da se pojavi tog dana.
-const LOCKED_DAYS = { 0:'ibo', 2:'pseu', 5:'spt' };
-// Dan kada je predviđena revizija svakog predmeta (koristi se i za REVIEW_LINKS i za status na radaru)
-const REVIEW_DAY_FOR = { ibo:0, pseu:2, spt:5 };
+// Nema zaključanih dana — oba predmeta se preklapaju, a prenošenje (carryover) radi normalno.
+const LOCKED_DAYS = {};
+// Od kog dana predmet prelazi u status "PRITISAK" na radaru
+const REVIEW_DAY_FOR = { pseu:3, spt:4 };
 
 const REVIEW_LINKS = {
-  0:  {subj:'ibo',  url:'https://draganaplazinic96-cyber.github.io/ibo/'},
-  2:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
+  3:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
   5:  {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
 };
 
@@ -248,56 +240,6 @@ const REVIEW_LINKS = {
    POOLS — sadržaj gradiva
    ========================================================================= */
 const POOLS = {
-  // IBO — 46 regularnih pitanja + 1 review
-  ibo: [
-    'Sanstefanski mir i stvaranje bugarske države',
-    'Velika istočna kriza i Berlinski kongres',
-    'Nastanak i razvoj hrvatskog nacionalnog pitanja u 19. veku',
-    'Prizrenska liga i stvaranje albanskog nacionalnog pokreta',
-    'Bosna i Hercegovina u odnosima evropskih sila i susednih balkanskih država tokom Velike istočne krize 1875–1878.',
-    'Makedonsko pitanje u balkanskim i evropskim odnosima',
-    'Ideje o ujedinjenju južnoslovenskih naroda u 19. veku',
-    'Crna Gora u vreme Nikole Petrovića',
-    'Srbija pod vlašću poslednjih Obrenovića',
-    'Grčka od Berlinskog kongresa do početka XX veka',
-    'Rumunija od Berlinskog kongresa do početka XX veka',
-    'Mladoturska revolucija i stvaranje turske nacije',
-    'Majski prevrat i vlast Petra I',
-    'Aneksiona kriza i odnosi Austrougarske i Srbije',
-    'Bugarska pod Ferdinandom početkom XX veka',
-    'Rumunija pod Karlom I početkom XX veka',
-    'Grčka pod Đorđem I i Elefteriosom Venizelosom početkom XX veka',
-    'Balkanski ratovi i njihove posledice',
-    'Izbijanje Prvog svetskog rata i ratne operacije na Balkanu 1914–1915.',
-    'Ulazak Bugarske i Rumunije u Prvi svetski rat i ratne operacije na Balkanu 1915–1917.',
-    'Ulazak Grčke u Prvi svetski rat i Solunski front 1917–1918.',
-    'Versajska mirovna konferencija i geopolitičke promene na Balkanu posle Prvog svetskog rata',
-    'Kemal Ataturk i stvaranje turske nacionalne države',
-    'Grčko-turski rat 1920–1923.',
-    'Od demokratije ka diktaturama — politički sistemi balkanskih država posle Prvog svetskog rata',
-    'Kraljevina SHS/Jugoslavija između dva svetska rata',
-    'Bugarska između dva svetska rata',
-    'Rumunija između dva svetska rata',
-    'Grčka pod Venizelosom i Metaksasom',
-    'Albanija pod Ahmedom Zoguom',
-    'Balkanske konferencije 1930–1933.',
-    'Balkanski sporazum / Balkanska antanta 1934–1940.',
-    'Mala antanta',
-    'Francuski i italijanski sistem saveza na Balkanu između dva svetska rata',
-    'Uticaj fašizma i nacizma na balkanske države',
-    'Prodor Musolinija i Hitlera na Balkan 1939–1941.',
-    'Rumunija i Bugarska kao satelitske države tokom Drugog svetskog rata',
-    'Okupirana Jugoslavija i Albanija tokom Drugog svetskog rata',
-    'Okupirana Grčka i početak građanskog rata 1944–1945.',
-    'Britanija i pokreti otpora na Balkanu tokom Drugog svetskog rata',
-    'Mirovni sporazumi i početak hladnoratovske podele interesnih sfera na Balkanu posle Drugog svetskog rata',
-    'Prosovjetska spoljna politika nove Jugoslavije 1944–1948.',
-    'Izgradnja komunističkih sistema u državama jugoistočne Evrope',
-    'Hladni rat u jugoistočnoj Evropi',
-    'Balkanski pakt Jugoslavije, Grčke i Turske i politika Zapada prema Balkanu tokom pedesetih godina',
-    'Jugoslavija i politika nesvrstavanja od šezdesetih do osamdesetih godina XX veka',
-    {review:true, text:'Kompletno ponavljanje svih 46 pitanja — Istorija balkanskih odnosa'}
-  ],
   pseu: [
     {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Klasična teorija političkog sistema'},
     {area: '1. Koncept političkog sistema i njegova primena na EU', text: 'Primena koncepta političkog sistema na Evropsku zajednicu/uniju'},
@@ -404,8 +346,7 @@ const POOLS = {
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Strukturni manjak demokratije'},
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Da li EU pretpostavlja novi tip demokratije?'},
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Krizni ishod legitimnosti i demokratije'},
-    {review:true, reviewRound:1, area: 'Ponavljanje — krug 1', text: 'Prvi krug ponavljanja: brzi pregled svih 105 pitanja, fokus na slabije oblasti'},
-    {review:true, reviewRound:2, area: 'Ponavljanje — krug 2', text: 'Drugi krug ponavljanja: detaljan pregled svih 105 pitanja, neposredno pred ispit'}
+    {review:true, reviewRound:1, area: 'Ponavljanje — krug 1', text: 'Prvi krug ponavljanja: brzi pregled svih 105 pitanja, fokus na slabije oblasti'}
   ],
   spt: [
     'Pozitivna i negativna sloboda',
@@ -478,16 +419,6 @@ const POOLS = {
 
 /* Tematske oblasti — SAMO za vizuelno grupisanje, NE utiču na raspored po danima */
 const THEMATIC_AREAS = {
-  ibo: [
-    [1,6,'Istočna kriza i nacionalna pitanja'],
-    [7,12,'Balkanske države do početka XX veka'],
-    [13,18,'Balkan pred Prvi svetski rat'],
-    [19,24,'Prvi svetski rat i novi balkanski poredak'],
-    [25,30,'Balkanske države između dva rata'],
-    [31,36,'Međuratni međunarodni odnosi na Balkanu'],
-    [37,40,'Drugi svetski rat na Balkanu'],
-    [41,46,'Posleratni Balkan i Hladni rat']
-  ],
   spt: [
     [1,4,'Sloboda'],
     [5,12,'Utilitarizam'],
@@ -525,6 +456,10 @@ function itemLookup(id){
 function reviewIdsForSubject(subj){
   return ITEM_POOL[subj].filter(it=>it.review).map(it=>it.id);
 }
+function reviewIdForRound(subj, round){
+  const it = ITEM_POOL[subj].find(x=>x.review && x.reviewRound===round);
+  return it ? it.id : null;
+}
 
 /* =========================================================================
    rangeIds — pretvara 1-based opseg pitanja u 0-based ID-jeve
@@ -536,33 +471,30 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 }
 
 /* =========================================================================
-   FIXED_SCHEDULE — raspored od 20. septembra (idx 0).
+   FIXED_SCHEDULE — raspored od 21. septembra (idx 0).
 
-   20. IBO (svih 46 pitanja + IBO revizija; dan zaključan samo za IBO) ·
-   21. IBO ispit ujutru, posle ceo PSEU (105 pitanja) ·
-   22. SAMO PSEU revizija · 23. PSEU ispit ujutru, posle SPT 1–32 ·
-   24. SPT 33–64 · 25. SAMO SPT revizija · 26. SPT ispit.
-   Dani u LOCKED_DAYS nemaju regularne stavke drugih predmeta.
+   21. PSEU 1–36  (oblasti 1–11)  + SPT 1–4   (sloboda)
+   22. PSEU 37–68 (oblasti 12–17)  + SPT 5–12  (utilitarizam)
+   23. PSEU 69–105 (oblasti 18–24) + SPT 13–19 (Rols, Dvorkin)
+   24. PSEU ponavljanje — krug 1   + SPT 20–45
+   25. PSEU ISPIT (9:00) · posle ispita SPT 46–64
+   26. SPT ponavljanje svih 64 pre ispita · SPT ISPIT (9:00)
    ========================================================================= */
 const FIXED_SCHEDULE = {
-  0: { ibo: rangeIds('ibo',1,46) },      // 20. sept — IBO gradivo (+ IBO revizija), ispit IBO 21. ujutru
-  1: { pseu: rangeIds('pseu',1,105) },   // 21. sept — IBO ispit ujutru, posle ceo PSEU (svih 105)
-  2: { },                                 // 22. sept — SAMO PSEU revizija, ispit PSEU 23. ujutru
-  3: { spt: rangeIds('spt',1,32) },      // 23. sept — PSEU ispit ujutru, posle SPT 1–32
-  4: { spt: rangeIds('spt',33,64) },     // 24. sept — SPT 33–64
-  5: { },                                 // 25. sept — SAMO SPT revizija, ispit SPT 26. ujutru
-  6: { }                                  // 26. sept — SPT ispit, bez novog gradiva
+  0: { pseu: rangeIds('pseu',1,36),  spt: rangeIds('spt',1,4) },
+  1: { pseu: rangeIds('pseu',37,68), spt: rangeIds('spt',5,12) },
+  2: { pseu: rangeIds('pseu',69,105), spt: rangeIds('spt',13,19) },
+  3: { pseu: [reviewIdForRound('pseu',1)], spt: rangeIds('spt',20,45) },
+  4: { spt: rangeIds('spt',46,64) },
+  5: { spt: reviewIdsForSubject('spt') }
 };
-
-/* Review dani -> koji predmet dobija review taj dan (koristi se u baseItemsForDay) */
-const FIXED_REVIEWS = { 0:'ibo', 2:'pseu', 5:'spt' };
 
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
 function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 0, 0); }
 function startOfToday(){ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
 function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,START_DAY+i); return Math.ceil((e-t)/86400000); }
-function subjectCode(subj){ return ({ibo:'IBO',pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
-function examClock(subj){ return ({ibo:'09:00',pseu:'09:00',spt:'09:00'})[subj] || ''; }
+function subjectCode(subj){ return ({pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
+function examClock(subj){ return ({pseu:'09:00',spt:'09:00'})[subj] || ''; }
 
 /* =========================================================================
    STANJE (localStorage)
@@ -573,7 +505,7 @@ let state = {
   dayPlan: {},             // dayIndex -> {type, workFrom, workTo, extra:{...}, walker}
   currentDayIndex: null,
   todayFinalized: false,
-  carryover: {ibo:[],pseu:[],spt:[]},
+  carryover: {pseu:[],spt:[]},
   carryoverSnapshots: {},  // dayIndex(dana koji je zaključen) -> carryover PRE tog finalize-a (za "vrati nazad")
   __fixedScheduleMigrationV2: false
 };
@@ -597,7 +529,7 @@ function loadState(){
       const data = JSON.parse(raw);
       state = Object.assign({
         progress:{}, examAnswers:{}, dayPlan:{}, currentDayIndex:null,
-        todayFinalized:false, carryover:{ibo:[],pseu:[],spt:[]},
+        todayFinalized:false, carryover:{pseu:[],spt:[]},
         carryoverSnapshots:{}, __fixedScheduleMigrationV2:false
       }, data);
       if(!state.carryover) state.carryover = {};
@@ -621,13 +553,11 @@ function showStorageWarning(show){
 }
 
 /* =========================================================================
-   JEDNOKRATNA MIGRACIJA
-   Potpun reset — ništa se ne markira kao završeno, aktivni dan se postavlja
-   na 20. septembar (idx 0), odakle novi raspored kreće.
+   JEDNOKRATNA MIGRACIJA — novi plan kreće 21. septembra (idx 0)
    ========================================================================= */
 function runMigrationIfNeeded(){
   if(state.__fixedScheduleMigrationV2) return;
-  state.currentDayIndex = 0; // 20. septembar — prvi dan plana
+  state.currentDayIndex = 0;
   state.todayFinalized = false;
   delete state.pendingCarryover;
   delete state.todayCache;
@@ -647,27 +577,25 @@ function activeDayIndex(){
    STAVKE PO DANU
    ========================================================================= */
 
-// "Goli" plan za dan d (FIXED_SCHEDULE + eventualni review taj dan), BEZ carryover-a.
+// "Goli" plan za dan d (FIXED_SCHEDULE), BEZ carryover-a.
 function baseItemsForDay(d){
   const out = {};
   const fs = FIXED_SCHEDULE[d] || {};
-  Object.keys(fs).forEach(s=>{ if(fs[s] && fs[s].length) out[s] = fs[s].slice(); });
-  const reviewSubj = FIXED_REVIEWS[d];
-  if(reviewSubj){
-    const ids = reviewIdsForSubject(reviewSubj);
-    if(ids.length) out[reviewSubj] = (out[reviewSubj]||[]).concat(ids);
-  }
+  Object.keys(fs).forEach(s=>{
+    const ids = (fs[s] || []).filter(Boolean);
+    if(ids.length) out[s] = ids.slice();
+  });
   return out;
 }
 
-// Stavke za AKTIVNI dan — uključuje carryover (samo za predmete kojima ovaj dan nije
-// zaključan za neki DRUGI predmet). Carryover ide ISPRED redovnih stavki tog dana.
+// Stavke za AKTIVNI dan — uključuje carryover (ne posle ispita tog predmeta).
+// Carryover ide ISPRED redovnih stavki tog dana.
 function itemsForActiveDay(d){
   const out = {};
   const base = baseItemsForDay(d);
-  const locked = LOCKED_DAYS[d]; // ime predmeta kome je dan rezervisan, ili undefined
+  const locked = LOCKED_DAYS[d];
   Object.keys(SUBJECTS).forEach(s=>{
-    const examOver = SUBJECTS[s].examDay <= d; // ispit tog predmeta je taj dan ili je prošao — nema prenošenja
+    const examOver = SUBJECTS[s].examDay <= d;
     const co = (examOver || (locked && locked !== s)) ? [] : (state.carryover[s] || []);
     const baseIds = base[s] || [];
     const merged = co.concat(baseIds);
@@ -740,9 +668,8 @@ function setActiveDay(idx){
 }
 
 /* =========================================================================
-   VREME UČENJA — predlog jutro/veče/Waklert mode.
-   Ova logika SAMO predlaže KADA se uči već određene predmete tog dana;
-   nikada ne menja broj/opseg pitanja niti datume.
+   VREME UČENJA — predlog KADA se uči već određeno gradivo tog dana.
+   Nikada ne menja broj/opseg pitanja niti datume.
    ========================================================================= */
 const DEFAULT_WORK_FROM = '13:30';
 const DEFAULT_WORK_TO = '23:30';
@@ -753,8 +680,9 @@ const POST_WORK_GAP_MIN = 15;
 const OPEN_END_SENTINEL = 100000;
 const WALKER_PRE_NEXT_GAP_HOURS = 4;
 const MIN_VIABLE_WINDOW_MIN = 60;
-const DIFFICULTY_RANK = {pseu:1, spt:4, ibo:5};
-const AVG_WORDS_PER_TOPIC = {ibo:610, pseu:430, spt:561};
+const EXAM_BUFFER_MIN = 180; // pretpostavka: ispit + put traju ~3h od početka
+const DIFFICULTY_RANK = {pseu:1, spt:4};
+const AVG_WORDS_PER_TOPIC = {pseu:430, spt:561};
 
 function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
 function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
@@ -852,22 +780,31 @@ function studySuggestionText(d, itemsBySubj){
   const codes = arr => arr.map(subjectCode).join(', ');
   if(p.walker) return walkerSuggestionText(d, p, itemsBySubj);
   if(EXAMS[d]){
+    // Dan ispita: gradivo tog predmeta = PRE ispita; ostalo = POSLE ispita
+    const examSubj = EXAMS[d].subj;
     const subs = fullList.map(x=>x.subj);
-    const hasExtra = p.extra && p.extra.enabled && p.extra.from && p.extra.to;
-    const extraNote = hasExtra ? `${p.extra.from}–${p.extra.to}` : null;
-    if(p.type === 'slobodan'){
-      const base = subs.length ? `Predlog: posle ispita — ${codes(subs)}` : 'Predlog: posle ispita — nema novih tema raspoređenih.';
-      return hasExtra ? `${base} (pazi, obaveza ${extraNote})` : base;
+    const pre = subs.filter(s=>s===examSubj);
+    const post = subs.filter(s=>s!==examSubj);
+    const parts = [];
+    if(pre.length) parts.push(`pre ispita (do ${examClock(examSubj)}) — ${codes(pre)}`);
+    if(post.length){
+      const examEnd = timeToMinutes(examClock(examSubj)) + EXAM_BUFFER_MIN;
+      let segs = [];
+      if(p.type === 'slobodan'){
+        segs = windowSegments(examEnd, timeToMinutes(FREE_SLEEP), p.extra);
+      } else {
+        const workFromMin = timeToMinutes(p.workFrom || DEFAULT_WORK_FROM);
+        const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
+        const sleepMin = 24*60 + 30;
+        if(workFromMin - examEnd >= MIN_VIABLE_WINDOW_MIN) segs = segs.concat(windowSegments(examEnd, workFromMin, p.extra));
+        const eveStart = workToMin + POST_WORK_GAP_MIN;
+        if(eveStart < sleepMin) segs = segs.concat(windowSegments(eveStart, sleepMin, p.extra));
+      }
+      segs = segs.filter(([s,e])=>(e-s) >= MIN_VIABLE_WINDOW_MIN);
+      parts.push(segs.length ? `posle ispita ${segsLabel(segs)} (${codes(post)})` : `posle ispita — ${codes(post)} (nema realnog prozora)`);
     }
-    const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
-    let segs = [[workToMin + POST_WORK_GAP_MIN, OPEN_END_SENTINEL]];
-    if(hasExtra){
-      const exStart = timeToMinutes(p.extra.from), exEnd = timeToMinutes(p.extra.to);
-      segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd,POST_WORK_GAP_MIN));
-    }
-    const label = segs.map(([s,e])=> e===OPEN_END_SENTINEL ? `${minutesToTime(s)}–...` : `${minutesToTime(s)}–${minutesToTime(e)}`).join(' i ');
-    const suf = subs.length ? ` (${codes(subs)})` : '';
-    return `Predlog: učenje — veče ${label}${suf}`;
+    if(!parts.length) parts.push('nema novih tema raspoređenih.');
+    return 'Predlog: ' + parts.join(' · ');
   }
   const list = fullList;
   if(p.type === 'slobodan'){
@@ -974,7 +911,7 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
     grp.className = 'group sig-'+subj;
     grp.innerHTML = `<div class="group-title">${subjectIcon(subj)}<span class="group-label">${s.label}</span> <span class="group-count">(${doneCount}/${visibleIds.length})</span></div>`;
     const locked = mode !== 'today';
-    const numberedSubjects = ['ibo','pseu','spt'];
+    const numberedSubjects = ['pseu','spt'];
     const hasAreas = visibleIds.some(id => itemLookup(id).area);
 
     const renderLabel = (id) => {
