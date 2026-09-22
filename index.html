@@ -119,13 +119,23 @@ body{margin:0;font-family:var(--sans);color:var(--ink);background:
 .area-title{font-size:.73rem;font-weight:750;color:var(--muted);margin:8px 0 4px}
 .area-count{font-weight:500;color:#918a7f}
 
-label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:pointer;font-size:.82rem;line-height:1.42;border-bottom:1px dotted rgba(117,111,102,.22)}
+label.item{display:flex;align-items:flex-start;gap:9px;padding:6px 7px;cursor:pointer;font-size:.82rem;line-height:1.42;border-bottom:1px dotted rgba(117,111,102,.22);flex-wrap:wrap}
 label.item:hover{background:rgba(23,32,29,.035)}
 label.item input{margin-top:2px;accent-color:var(--ink);width:15px;height:15px;flex-shrink:0;cursor:pointer}
 label.item input:checked~span.txt{color:#918b82;text-decoration:line-through;opacity:.72}
 label.item.review span.txt{font-weight:650}
 label.item.locked{cursor:default;opacity:.62}
 label.item.locked input{cursor:default}
+label.item span.txt{flex:1 1 auto;min-width:0}
+.timer-badge{flex:0 0 auto;font-size:.64rem;font-weight:750;padding:2px 7px;border-radius:2px;white-space:nowrap;align-self:center;background:rgba(23,32,29,.06);color:var(--muted);font-variant-numeric:tabular-nums}
+.timer-badge.timer-budget{background:rgba(23,32,29,.05);color:var(--muted)}
+.timer-badge.timer-live{background:rgba(98,92,150,.14);color:var(--spt);animation:timerPulse 2s ease-in-out infinite}
+.timer-badge.timer-over{background:rgba(168,67,57,.14);color:var(--red)}
+.timer-badge.timer-under{background:rgba(63,118,92,.14);color:var(--green)}
+.timer-badge.timer-ontime{background:rgba(63,118,92,.10);color:var(--accent)}
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.55}}
+.timer-start-btn{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:2px;cursor:pointer;align-self:center}
+.timer-start-btn:hover{background:var(--soft)}
 
 .loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}
 .empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
@@ -521,6 +531,7 @@ let state = {
   todayFinalized: false,
   carryover: {pseu:[],spt:[]},
   carryoverSnapshots: {},  // dayIndex(dana koji je zaključen) -> carryover PRE tog finalize-a (za "vrati nazad")
+  timing: {},              // id -> {start: iso|null, end: iso|null} — stvarno vreme rada na pitanju
   __fixedScheduleMigrationV3: false
 };
 let openDays = new Set();
@@ -544,11 +555,12 @@ function loadState(){
       state = Object.assign({
         progress:{}, examAnswers:{}, dayPlan:{}, currentDayIndex:null,
         todayFinalized:false, carryover:{pseu:[],spt:[]},
-        carryoverSnapshots:{}, __fixedScheduleMigrationV3:false
+        carryoverSnapshots:{}, timing:{}, __fixedScheduleMigrationV3:false
       }, data);
       if(!state.carryover) state.carryover = {};
       SUBJECT_KEYS.forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
       if(!state.carryoverSnapshots) state.carryoverSnapshots = {};
+      if(!state.timing) state.timing = {};
     }
   }catch(err){ console.error('Load error', err); }
 }
@@ -702,6 +714,80 @@ const MIN_VIABLE_WINDOW_MIN = 60;
 const EXAM_BUFFER_MIN = 180; // pretpostavka: ispit + put traju ~3h od početka
 const DIFFICULTY_RANK = {pseu:1, spt:4};
 const AVG_WORDS_PER_TOPIC = {pseu:430, spt:561};
+
+/* =========================================================================
+   TAJMER PO PITANJU — budžet vremena za svako pitanje unutar njegove sesije,
+   izračunat iz dužine sesije (FIXED_SCHEDULE label) i "težine" predmeta
+   (AVG_WORDS_PER_TOPIC). Pauza od 5 min se oduzima između svaka dva pitanja
+   u istoj sesiji pre podele preostalog vremena na pojedinačna pitanja.
+   ========================================================================= */
+const BREAK_MIN = 5;
+const BREAK_EVERY_N = 5; // pauza posle svakog 5. pitanja u sesiji (ne posle svakog pojedinačnog — inače bi pauze pojele većinu vremena kod gustih sesija)
+function numBreaksForSession(n){ return Math.max(0, Math.ceil(n / BREAK_EVERY_N) - 1); }
+
+// Parsira "01:00–06:00" ili "23:00–07:00 (sutra, 25.9)" -> {startMin, endMin, totalMin}
+function parseTimeRange(label){
+  if(!label) return null;
+  const m = label.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
+  if(!m) return null;
+  const startMin = Number(m[1])*60 + Number(m[2]);
+  let endMin = Number(m[3])*60 + Number(m[4]);
+  if(endMin <= startMin) endMin += 1440; // sesija prelazi preko ponoći
+  return {startMin, endMin, totalMin: endMin - startMin};
+}
+
+// ITEM_BUDGET: id -> budžet u minutima za to pitanje (na osnovu sesije u kojoj se nalazi)
+const ITEM_BUDGET = {};
+Object.keys(FIXED_SCHEDULE).forEach(dayKey=>{
+  (FIXED_SCHEDULE[dayKey] || []).forEach(sess=>{
+    const entries = [];
+    Object.keys(sess.items || {}).forEach(subj=>{
+      (sess.items[subj] || []).forEach(id=>{ if(id) entries.push({id, subj}); });
+    });
+    if(!entries.length) return;
+    const range = parseTimeRange(sess.label);
+    if(!range) return;
+    const breaksTotal = numBreaksForSession(entries.length) * BREAK_MIN;
+    const availableMin = Math.max(range.totalMin - breaksTotal, entries.length); // bar 1 min po pitanju
+    const weights = entries.map(x => AVG_WORDS_PER_TOPIC[x.subj] || 500);
+    const totalWeight = weights.reduce((a,b)=>a+b, 0) || entries.length;
+    let assigned = 0;
+    entries.forEach((x, idx)=>{
+      let m;
+      if(idx === entries.length - 1){
+        m = availableMin - assigned; // ostatak ide na poslednje pitanje, da se izbegne gubitak zaokruživanjem
+      } else {
+        m = Math.max(1, Math.round(availableMin * (weights[idx] / totalWeight)));
+        assigned += m;
+      }
+      ITEM_BUDGET[x.id] = m;
+    });
+  });
+});
+
+function fmtMin(min){ return Math.round(min) + ' min'; }
+function fmtDelta(min){
+  const r = Math.round(min);
+  return (r > 0 ? '+' : (r < 0 ? '' : '±')) + r + ' min';
+}
+function nowISO(){ return new Date().toISOString(); }
+function minutesBetween(isoA, isoB){ return (new Date(isoB) - new Date(isoA)) / 60000; }
+
+// Ukupno kašnjenje/prednost na osnovu SVIH završenih i merenih pitanja (start+end postoje)
+function computeDelayStats(){
+  let delta = 0, counted = 0;
+  Object.keys(state.progress || {}).forEach(id=>{
+    const p = state.progress[id];
+    if(!p || !p.done) return;
+    const t = state.timing && state.timing[id];
+    const budget = ITEM_BUDGET[id];
+    if(t && t.start && t.end && budget != null){
+      delta += (minutesBetween(t.start, t.end) - budget);
+      counted++;
+    }
+  });
+  return {delta, counted};
+}
 
 function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
 function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
@@ -903,7 +989,16 @@ function renderTodayCard(activeIdx){
   const daySelectBlock = `<div class="day-select-row">Aktivni dan: <select data-action="set-day">${dayOptions}</select></div>`;
   const pct=totalItems?Math.round(doneItems/totalItems*100):0;
   const lockedNote = LOCKED_DAYS[activeIdx] ? `<div class="today-stats" style="color:var(--red);font-weight:700;">🔒 Dan rezervisan isključivo za ${subjectCode(LOCKED_DAYS[activeIdx])} reviziju</div>` : '';
-  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${lockedNote}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
+  const dd = computeDelayStats();
+  let delayHtml = '';
+  if(dd.counted){
+    const cls = dd.delta > 0.5 ? 'var(--red)' : (dd.delta < -0.5 ? 'var(--green)' : 'var(--ink)');
+    const word = dd.delta > 0.5 ? 'U zaostatku' : (dd.delta < -0.5 ? 'U prednosti' : 'Tačno po planu');
+    delayHtml = `<div class="today-stats">⏱️ ${word}: <b style="color:${cls}">${fmtDelta(dd.delta)}</b> <span style="opacity:.75">(na osnovu ${dd.counted} merenih pitanja)</span></div>`;
+  } else {
+    delayHtml = `<div class="today-stats" style="opacity:.7">⏱️ Klikni ▶ pored pitanja da bi se merilo vreme i zaostatak.</div>`;
+  }
+  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${delayHtml}${lockedNote}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
 }
 
 function renderOverall(activeIdx){
@@ -946,11 +1041,44 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
     const renderLabel = (id) => {
       const it = itemLookup(id);
       const done = !!(state.progress[id] && state.progress[id].done);
+      const budget = ITEM_BUDGET[id];
+      const timing = (state.timing && state.timing[id]) || {};
       const lab = document.createElement('label');
       lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
       const numPrefix = (!it.review && numberedSubjects.includes(subj)) ? `${Number(id.split('-').pop()) + 1}. ` : '';
-      lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : numPrefix}${it.text}</span>`;
+
+      let timerHtml = '';
+      if(!locked && budget != null){
+        if(done && timing.start && timing.end){
+          const actual = minutesBetween(timing.start, timing.end);
+          const delta = actual - budget;
+          const cls = delta > 0.5 ? 'timer-over' : (delta < -0.5 ? 'timer-under' : 'timer-ontime');
+          timerHtml = `<span class="timer-badge ${cls}">✓ ${fmtMin(actual)} (${fmtDelta(delta)})</span>`;
+        } else if(!done && timing.start && !timing.end){
+          timerHtml = `<span class="timer-badge timer-live" data-timer-start="${timing.start}" data-timer-budget="${budget}">⏳ …</span>`;
+        } else if(!done){
+          timerHtml = `<span class="timer-badge timer-budget">⏱ ${fmtMin(budget)}</span><button type="button" class="timer-start-btn" data-timer-action="start" data-item-id="${id}" title="Počni merenje vremena">▶ počni</button>`;
+        }
+      }
+
+      lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : numPrefix}${it.text}</span>${timerHtml}`;
       return lab;
+    };
+
+    const breakDivider = () => {
+      const b = document.createElement('div');
+      b.style.cssText = 'font-size:.66rem;font-weight:700;color:var(--muted);text-align:center;padding:3px 0;opacity:.75;letter-spacing:.04em;';
+      b.textContent = `☕ ${BREAK_MIN} min pauza`;
+      return b;
+    };
+    let sinceBreakCount = 0;
+    const appendWithBreaks = (parent, id, isLast) => {
+      parent.appendChild(renderLabel(id));
+      sinceBreakCount++;
+      if(!locked && !isLast && sinceBreakCount >= BREAK_EVERY_N){
+        parent.appendChild(breakDivider());
+        sinceBreakCount = 0;
+      }
     };
 
     if(hasAreas){
@@ -968,11 +1096,11 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
         if(bucket.area){
           areaDiv.innerHTML = `<div class="area-title">${bucket.area} <span class="area-count">(${areaDone}/${bucket.ids.length})</span></div>`;
         }
-        bucket.ids.forEach(id=> areaDiv.appendChild(renderLabel(id)));
+        bucket.ids.forEach((id, i)=> appendWithBreaks(areaDiv, id, i===bucket.ids.length-1 && bucket===byArea[byArea.length-1]));
         grp.appendChild(areaDiv);
       });
     } else {
-      visibleIds.forEach(id=> grp.appendChild(renderLabel(id)));
+      visibleIds.forEach((id, i)=> appendWithBreaks(grp, id, i===visibleIds.length-1));
     }
     container.appendChild(grp);
   });
@@ -1170,11 +1298,29 @@ function attachDayListeners(){
     cb.addEventListener('click', e=>e.stopPropagation());
     cb.addEventListener('change', (e)=>{
       const id = e.target.dataset.itemId;
+      if(!state.timing) state.timing = {};
       if(e.target.checked){
         state.progress[id] = {done:true, completedAt: new Date().toISOString(), dayIndex: activeDayIndex()};
+        // ako je tajmer bio pokrenut a nije zaustavljen, zabeleži kraj sada
+        if(state.timing[id] && state.timing[id].start && !state.timing[id].end){
+          state.timing[id].end = nowISO();
+        }
       } else {
         state.progress[id] = {done:false, completedAt:null, dayIndex:null};
+        state.timing[id] = {start:null, end:null};
       }
+      saveState();
+      render();
+      restoreOpenState();
+    });
+  });
+  document.querySelectorAll('[data-timer-action="start"]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      e.preventDefault();
+      const id = btn.dataset.itemId;
+      if(!state.timing) state.timing = {};
+      state.timing[id] = {start: nowISO(), end: null};
       saveState();
       render();
       restoreOpenState();
@@ -1206,6 +1352,18 @@ document.addEventListener('click', (e)=>{
   if(e.target.closest('[data-action="finalize"]')){ finalizeDay(); return; }
 });
 
+function tickLiveTimers(){
+  document.querySelectorAll('.timer-live').forEach(el=>{
+    const start = el.dataset.timerStart;
+    const budget = parseFloat(el.dataset.timerBudget);
+    if(!start) return;
+    const elapsed = minutesBetween(start, nowISO());
+    const delta = elapsed - budget;
+    el.textContent = `⏳ ${fmtMin(elapsed)}` + (delta > 0.5 ? ` (${fmtDelta(delta)})` : '');
+    el.classList.toggle('timer-over', delta > 0.5);
+  });
+}
+
 (function init(){
   loadState();
   storageOk = verifyStorageWorks();
@@ -1213,6 +1371,8 @@ document.addEventListener('click', (e)=>{
   runMigrationIfNeeded();
   openDays.add(String(activeDayIndex()));
   render();
+  tickLiveTimers();
+  setInterval(tickLiveTimers, 15000);
 })();
 </script>
 </body>
