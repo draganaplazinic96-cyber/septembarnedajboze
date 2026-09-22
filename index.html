@@ -136,6 +136,13 @@ label.item span.txt{flex:1 1 auto;min-width:0}
 @keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.55}}
 .timer-start-btn{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:2px;cursor:pointer;align-self:center}
 .timer-start-btn:hover{background:var(--soft)}
+.timer-badge[data-timer-action]{cursor:pointer}
+.timer-badge[data-timer-action]:hover{filter:brightness(0.94)}
+.timer-edit{flex:0 0 auto;display:inline-flex;align-items:center;gap:4px;align-self:center;background:rgba(23,32,29,.05);padding:3px 5px;border-radius:2px}
+.timer-time-input{font-family:var(--sans);font-size:.68rem;padding:2px 3px;border:1px solid var(--line);background:var(--panel);color:var(--ink);width:76px}
+.timer-edit-sep{color:var(--muted);font-size:.68rem}
+.timer-edit-close{border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:.64rem;padding:2px 6px;border-radius:2px;cursor:pointer;line-height:1.4}
+.timer-edit-close:hover{background:var(--soft)}
 
 .loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}
 .empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
@@ -535,6 +542,7 @@ let state = {
   __fixedScheduleMigrationV3: false
 };
 let openDays = new Set();
+let openTimerEdits = new Set(); // id-jevi pitanja kod kojih je otvoren ručni unos vremena
 let storageOk = true;
 
 function verifyStorageWorks(){
@@ -772,6 +780,33 @@ function fmtDelta(min){
 }
 function nowISO(){ return new Date().toISOString(); }
 function minutesBetween(isoA, isoB){ return (new Date(isoB) - new Date(isoA)) / 60000; }
+
+// Za ručni unos vremena: ISO -> "HH:MM" za prikaz u <input type="time">
+function timeStrFromISO(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+// "HH:MM" (uneto ručno) + referentni datum (aktivni dan) -> puni ISO timestamp
+function isoFromTimeStr(hhmm, refDate){
+  if(!hhmm) return null;
+  const [h,m] = hhmm.split(':').map(Number);
+  if(Number.isNaN(h) || Number.isNaN(m)) return null;
+  const d = new Date(refDate.getFullYear(), refDate.getMonth(), refDate.getDate(), h, m, 0, 0);
+  return d.toISOString();
+}
+// Upiši ručno start ili end za pitanje; ako kraj ispadne <= početka, pretpostavi da je prešlo u ponoć
+function handleTimerFieldChange(id, field, value){
+  if(!state.timing) state.timing = {};
+  if(!state.timing[id]) state.timing[id] = {start:null, end:null};
+  const refDate = calendarDateForIndex(activeDayIndex());
+  state.timing[id][field] = isoFromTimeStr(value, refDate);
+  const t = state.timing[id];
+  if(t.start && t.end && new Date(t.end) <= new Date(t.start)){
+    t.end = new Date(new Date(t.end).getTime() + 86400000).toISOString();
+  }
+  saveState();
+}
 
 // Ukupno kašnjenje/prednost na osnovu SVIH završenih i merenih pitanja (start+end postoje)
 function computeDelayStats(){
@@ -1049,15 +1084,24 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
 
       let timerHtml = '';
       if(!locked && budget != null){
-        if(done && timing.start && timing.end){
+        if(openTimerEdits.has(id)){
+          const startVal = timeStrFromISO(timing.start);
+          const endVal = timeStrFromISO(timing.end);
+          timerHtml = `<span class="timer-edit">
+            <input type="time" class="timer-time-input" data-timer-field="start" data-item-id="${id}" value="${startVal}"/>
+            <span class="timer-edit-sep">–</span>
+            <input type="time" class="timer-time-input" data-timer-field="end" data-item-id="${id}" value="${endVal}"/>
+            <button type="button" class="timer-edit-close" data-timer-action="close-edit" data-item-id="${id}" title="Zatvori unos">✕</button>
+          </span>`;
+        } else if(done && timing.start && timing.end){
           const actual = minutesBetween(timing.start, timing.end);
           const delta = actual - budget;
           const cls = delta > 0.5 ? 'timer-over' : (delta < -0.5 ? 'timer-under' : 'timer-ontime');
-          timerHtml = `<span class="timer-badge ${cls}">✓ ${fmtMin(actual)} (${fmtDelta(delta)})</span>`;
+          timerHtml = `<span class="timer-badge ${cls}" data-timer-action="edit" data-item-id="${id}" title="Klikni da upišeš tačno vreme">✓ ${fmtMin(actual)} (${fmtDelta(delta)})</span>`;
         } else if(!done && timing.start && !timing.end){
-          timerHtml = `<span class="timer-badge timer-live" data-timer-start="${timing.start}" data-timer-budget="${budget}">⏳ …</span>`;
+          timerHtml = `<span class="timer-badge timer-live" data-timer-start="${timing.start}" data-timer-budget="${budget}" data-timer-action="edit" data-item-id="${id}" title="Klikni da upišeš tačno vreme">⏳ …</span>`;
         } else if(!done){
-          timerHtml = `<span class="timer-badge timer-budget">⏱ ${fmtMin(budget)}</span><button type="button" class="timer-start-btn" data-timer-action="start" data-item-id="${id}" title="Počni merenje vremena">▶ počni</button>`;
+          timerHtml = `<span class="timer-badge timer-budget" data-timer-action="edit" data-item-id="${id}" title="Klikni da upišeš tačno vreme">⏱ ${fmtMin(budget)}</span><button type="button" class="timer-start-btn" data-timer-action="start" data-item-id="${id}" title="Počni merenje vremena">▶ počni</button>`;
         }
       }
 
@@ -1322,6 +1366,34 @@ function attachDayListeners(){
       if(!state.timing) state.timing = {};
       state.timing[id] = {start: nowISO(), end: null};
       saveState();
+      render();
+      restoreOpenState();
+    });
+  });
+  document.querySelectorAll('[data-timer-action="edit"]').forEach(el=>{
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      e.preventDefault();
+      openTimerEdits.add(el.dataset.itemId);
+      render();
+      restoreOpenState();
+    });
+  });
+  document.querySelectorAll('[data-timer-action="close-edit"]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      e.preventDefault();
+      openTimerEdits.delete(btn.dataset.itemId);
+      render();
+      restoreOpenState();
+    });
+  });
+  document.querySelectorAll('.timer-time-input').forEach(inp=>{
+    inp.addEventListener('click', e=>e.stopPropagation());
+    inp.addEventListener('change', (e)=>{
+      const id = e.target.dataset.itemId;
+      const field = e.target.dataset.timerField;
+      handleTimerFieldChange(id, field, e.target.value);
       render();
       restoreOpenState();
     });
