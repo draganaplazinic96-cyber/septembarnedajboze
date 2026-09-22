@@ -195,7 +195,7 @@ label.item.locked input{cursor:default}
 
   <div id="days"><div class="loading">Učitavanje...</div></div>
 
-  <div class="footer-stamp">FIXED SCHEDULE · v3</div>
+  <div class="footer-stamp">FIXED SCHEDULE · v4</div>
 </div>
 
 <script>
@@ -210,30 +210,30 @@ function subjectIcon(subj){
   return icons[subj]||'';
 }
 
-const STORAGE_KEY = 'plan-sept-2026-v11'; // v11 — novi plan: početak 21. sept, PSEU 25. sept, SPT 26. sept
+const STORAGE_KEY = 'plan-sept-2026-v12'; // v12 — novi plan: učenje počinje 23. sept 01:00, ispiti 25. (PSEU) i 26. (SPT) sept
 const YEAR = 2026, MONTH = 8; // septembar
-const START_DAY = 21;
-const DAY_COUNT = 6; // indeksi 0..5 = 21..26. septembar
+const START_DAY = 23;
+const DAY_COUNT = 4; // indeksi 0..3 = 23..26. septembar
 const SUBJECT_KEYS = ['pseu','spt'];
 
 const SUBJECTS = {
-  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:4},
-  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:5}
+  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:2},
+  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:3}
 };
 
 const EXAMS = {
-  4: {type:'ispit', subj:'pseu'},
-  5: {type:'ispit', subj:'spt'}
+  2: {type:'ispit', subj:'pseu'},
+  3: {type:'ispit', subj:'spt'}
 };
 
-// Nema zaključanih dana — oba predmeta se preklapaju, a prenošenje (carryover) radi normalno.
+// Nema zaključanih dana.
 const LOCKED_DAYS = {};
 // Od kog dana predmet prelazi u status "PRITISAK" na radaru
-const REVIEW_DAY_FOR = { pseu:3, spt:4 };
+const REVIEW_DAY_FOR = { pseu:1, spt:2 };
 
 const REVIEW_LINKS = {
-  3:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
-  5:  {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
+  1:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
+  3:  {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
 };
 
 /* =========================================================================
@@ -471,22 +471,36 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 }
 
 /* =========================================================================
-   FIXED_SCHEDULE — raspored od 21. septembra (idx 0).
+   FIXED_SCHEDULE — niz SESIJA po danu. Rezovi su namerno postavljeni TAČNO
+   na granice tematskih celina (area kod PSEU, THEMATIC_AREAS kod SPT), ne
+   po broju pitanja — nijedna oblast se ne cepa na pola između sesija/dana.
 
-   21. PSEU 1–36  (oblasti 1–11)  + SPT 1–4   (sloboda)
-   22. PSEU 37–68 (oblasti 12–17)  + SPT 5–12  (utilitarizam)
-   23. PSEU 69–105 (oblasti 18–24) + SPT 13–19 (Rols, Dvorkin)
-   24. PSEU ponavljanje — krug 1   + SPT 20–45
-   25. PSEU ISPIT (9:00) · posle ispita SPT 46–64
-   26. SPT ponavljanje svih 64 pre ispita · SPT ISPIT (9:00)
+   PSEU rezovi: 21 (kraj oblasti 7. Kriza integracije), 52 (kraj 16. Modeli
+   upravljanja), 76 (kraj 18. Međuvladin metod) — sve tačne granice oblasti.
+   SPT rezovi: 12 (kraj Utilitarizma), 30 (kraj Komunitarizma/multikult.),
+   45 (kraj Multikulturalizam i javno/privatno) — sve tačne granice iz
+   THEMATIC_AREAS.
+
+   23. sesija 01:00–06:00: PSEU 1–21  (oblasti 1–7),  SPT 1–12  (Sloboda+Utilitarizam)
+       sesija 15:00–23:00: PSEU 22–52 (oblasti 8–16), SPT 13–30 (Rols/Dvorkin+Komunitarizam)
+   24. sesija 10:00–16:00: PSEU 53–76 (oblasti 17–18), SPT 31–45 (Građanstvo+Multikulturalizam)
+       sesija 23:00–07:00 (sutra, 25.9): PSEU 77–105 + regularno ponavljanje, SPT 46–64 (Etika brige+Demokratija)
+   25. bez sesija — PSEU ISPIT (9:00), posle toga posao
+   26. sesija 00:30–07:00: SPT ponavljanje svih 64 → SPT ISPIT (9:00)
    ========================================================================= */
 const FIXED_SCHEDULE = {
-  0: { pseu: rangeIds('pseu',1,36),  spt: rangeIds('spt',1,4) },
-  1: { pseu: rangeIds('pseu',37,68), spt: rangeIds('spt',5,12) },
-  2: { pseu: rangeIds('pseu',69,105), spt: rangeIds('spt',13,19) },
-  3: { pseu: [reviewIdForRound('pseu',1)], spt: rangeIds('spt',20,45) },
-  4: { spt: rangeIds('spt',46,64) },
-  5: { spt: reviewIdsForSubject('spt') }
+  0: [
+    { label:'01:00–06:00', items:{ pseu: rangeIds('pseu',1,21),  spt: rangeIds('spt',1,12) } },
+    { label:'15:00–23:00', items:{ pseu: rangeIds('pseu',22,52), spt: rangeIds('spt',13,30) } }
+  ],
+  1: [
+    { label:'10:00–16:00', items:{ pseu: rangeIds('pseu',53,76), spt: rangeIds('spt',31,45) } },
+    { label:'23:00–07:00 (sutra, 25.9)', items:{ pseu: rangeIds('pseu',77,105).concat([reviewIdForRound('pseu',1)]), spt: rangeIds('spt',46,64) } }
+  ],
+  2: [],
+  3: [
+    { label:'00:30–07:00', items:{ spt: reviewIdsForSubject('spt') } }
+  ]
 };
 
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
@@ -507,7 +521,7 @@ let state = {
   todayFinalized: false,
   carryover: {pseu:[],spt:[]},
   carryoverSnapshots: {},  // dayIndex(dana koji je zaključen) -> carryover PRE tog finalize-a (za "vrati nazad")
-  __fixedScheduleMigrationV2: false
+  __fixedScheduleMigrationV3: false
 };
 let openDays = new Set();
 let storageOk = true;
@@ -530,7 +544,7 @@ function loadState(){
       state = Object.assign({
         progress:{}, examAnswers:{}, dayPlan:{}, currentDayIndex:null,
         todayFinalized:false, carryover:{pseu:[],spt:[]},
-        carryoverSnapshots:{}, __fixedScheduleMigrationV2:false
+        carryoverSnapshots:{}, __fixedScheduleMigrationV3:false
       }, data);
       if(!state.carryover) state.carryover = {};
       SUBJECT_KEYS.forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
@@ -553,10 +567,10 @@ function showStorageWarning(show){
 }
 
 /* =========================================================================
-   JEDNOKRATNA MIGRACIJA — novi plan kreće 21. septembra (idx 0)
+   JEDNOKRATNA MIGRACIJA — novi plan kreće 23. septembra (idx 0)
    ========================================================================= */
 function runMigrationIfNeeded(){
-  if(state.__fixedScheduleMigrationV2) return;
+  if(state.__fixedScheduleMigrationV3) return;
   state.currentDayIndex = 0;
   state.todayFinalized = false;
   delete state.pendingCarryover;
@@ -564,7 +578,7 @@ function runMigrationIfNeeded(){
   if(!state.carryover) state.carryover = {};
   SUBJECT_KEYS.forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
 
-  state.__fixedScheduleMigrationV2 = true;
+  state.__fixedScheduleMigrationV3 = true;
   saveState();
 }
 
@@ -577,13 +591,17 @@ function activeDayIndex(){
    STAVKE PO DANU
    ========================================================================= */
 
-// "Goli" plan za dan d (FIXED_SCHEDULE), BEZ carryover-a.
+// "Goli" plan za dan d (FIXED_SCHEDULE), BEZ carryover-a — spljoštava sve sesije dana.
 function baseItemsForDay(d){
   const out = {};
-  const fs = FIXED_SCHEDULE[d] || {};
-  Object.keys(fs).forEach(s=>{
-    const ids = (fs[s] || []).filter(Boolean);
-    if(ids.length) out[s] = ids.slice();
+  const sessions = FIXED_SCHEDULE[d] || [];
+  sessions.forEach(sess=>{
+    const items = sess.items || {};
+    Object.keys(items).forEach(s=>{
+      const ids = (items[s] || []).filter(Boolean);
+      if(!ids.length) return;
+      out[s] = (out[s] || []).concat(ids);
+    });
   });
   return out;
 }
@@ -675,6 +693,7 @@ const DEFAULT_WORK_FROM = '13:30';
 const DEFAULT_WORK_TO = '23:30';
 const WAKE_TIME = '08:00';
 const FREE_WAKE = '12:00';
+const FREE_WAKE_DAY0 = '01:00'; // 23. septembar — učenje kreće odmah u 01:00, ne standardnih 12:00
 const FREE_SLEEP = '23:00';
 const POST_WORK_GAP_MIN = 15;
 const OPEN_END_SENTINEL = 100000;
@@ -690,9 +709,10 @@ function timeLabelWithDay(m){
   if(m === OPEN_END_SENTINEL) return '...';
   return m>=1440 ? (minutesToTime(m)+' (sutra)') : minutesToTime(m);
 }
+const DEFAULT_DAY_TYPE = {0:'slobodan', 1:'slobodan', 2:'radni', 3:'radni'}; // 23. i 24. neradni, 25. i 26. radni
 function getDayPlan(d){
   const p = state.dayPlan && state.dayPlan[String(d)];
-  const base = {type:'radni', workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO, extra:{enabled:false,from:'16:00',to:'17:00'}, walker:false};
+  const base = {type:(DEFAULT_DAY_TYPE[d]||'radni'), workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO, extra:{enabled:false,from:'16:00',to:'17:00'}, walker:false};
   if(p && p.type) return Object.assign({}, base, p, {extra: Object.assign({enabled:false,from:'16:00',to:'17:00'}, p.extra||{})});
   return base;
 }
@@ -774,7 +794,14 @@ function walkerSuggestionText(d, p, itemsBySubj){
   }
   return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–${timeLabelWithDay(endMin)}${suf}`;
 }
+const MANUAL_SUGGESTIONS = {
+  0: 'Predlog: učenje 01:00–06:00 i 15:00–23:00 (PSEU, SPT)',
+  1: 'Predlog: učenje 10:00–16:00 i 23:00–07:00 (sutra, 25.9) (PSEU, SPT)',
+  2: 'Predlog: ispit u 09:00 — posle toga posao, bez dodatnog učenja tog dana',
+  3: 'Predlog: učenje 00:30–07:00 (SPT), zatim ispit u 09:00'
+};
 function studySuggestionText(d, itemsBySubj){
+  if(MANUAL_SUGGESTIONS[d]) return MANUAL_SUGGESTIONS[d];
   const p = getDayPlan(d);
   const fullList = subjectListForSplit(itemsBySubj || {});
   const codes = arr => arr.map(subjectCode).join(', ');
@@ -791,7 +818,8 @@ function studySuggestionText(d, itemsBySubj){
       const examEnd = timeToMinutes(examClock(examSubj)) + EXAM_BUFFER_MIN;
       let segs = [];
       if(p.type === 'slobodan'){
-        segs = windowSegments(examEnd, timeToMinutes(FREE_SLEEP), p.extra);
+        const wakeTime = (d===0) ? FREE_WAKE_DAY0 : FREE_WAKE;
+        segs = windowSegments(Math.max(examEnd, timeToMinutes(wakeTime)), timeToMinutes(FREE_SLEEP), p.extra);
       } else {
         const workFromMin = timeToMinutes(p.workFrom || DEFAULT_WORK_FROM);
         const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
@@ -808,7 +836,8 @@ function studySuggestionText(d, itemsBySubj){
   }
   const list = fullList;
   if(p.type === 'slobodan'){
-    const segs = windowSegments(timeToMinutes(FREE_WAKE), timeToMinutes(FREE_SLEEP), p.extra);
+    const wakeTime = (d===0) ? FREE_WAKE_DAY0 : FREE_WAKE;
+    const segs = windowSegments(timeToMinutes(wakeTime), timeToMinutes(FREE_SLEEP), p.extra);
     const suf = fullList.length ? ` (${codes(fullList.map(x=>x.subj))})` : '';
     if(!segs.length) return 'Predlog: danas realno nema prozora za učenje (dodatne obaveze pojele ceo dan).';
     return `Predlog: učenje ${segsLabel(segs)}${suf} (+ pauze, ručak, obaveze)`;
@@ -949,6 +978,49 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
   });
 }
 
+function renderDaySessions(container, d, activeIdx){
+  const mode = d < activeIdx ? 'history' : (d === activeIdx ? 'today' : 'projected');
+  let any = false;
+
+  if(d === activeIdx){
+    const carryItems = {};
+    const locked = LOCKED_DAYS[d];
+    Object.keys(SUBJECTS).forEach(s=>{
+      const examOver = SUBJECTS[s].examDay <= d;
+      const co = (examOver || (locked && locked !== s)) ? [] : (state.carryover[s] || []);
+      if(co.length) carryItems[s] = co.slice();
+    });
+    if(Object.keys(carryItems).length){
+      const label = document.createElement('div');
+      label.style.cssText = 'font-family:var(--serif);font-size:.85rem;font-weight:700;color:var(--red);margin:0 0 2px;';
+      label.textContent = '⏪ Preneseno iz prethodnog dana';
+      container.appendChild(label);
+      renderGroupsForDay(container, d, carryItems, mode);
+      any = true;
+    }
+  }
+
+  if(mode === 'history'){
+    const items = itemsForDayHistory(d);
+    if(Object.keys(items).length){ renderGroupsForDay(container, d, items, mode); any = true; }
+    return any;
+  }
+
+  const sessions = FIXED_SCHEDULE[d] || [];
+  sessions.forEach(sess=>{
+    const items = sess.items || {};
+    const hasItems = Object.values(items).some(arr => arr && arr.length);
+    if(!hasItems) return;
+    any = true;
+    const sh = document.createElement('div');
+    sh.style.cssText = 'font-family:var(--serif);font-size:.85rem;font-weight:700;color:var(--ink);margin:14px 0 2px;padding-bottom:3px;border-bottom:1px solid var(--soft);';
+    sh.textContent = '🕐 ' + sess.label;
+    container.appendChild(sh);
+    renderGroupsForDay(container, d, items, mode);
+  });
+  return any;
+}
+
 function renderDays(activeIdx){
   const container = document.getElementById('days');
   container.innerHTML = '';
@@ -1038,7 +1110,7 @@ function renderDays(activeIdx){
 
     const mode = d < activeIdx ? 'history' : (d === activeIdx ? 'today' : 'projected');
     const beforeCount = body.children.length;
-    renderGroupsForDay(body, d, itemsForDay, mode);
+    renderDaySessions(body, d, activeIdx);
     if(body.children.length === beforeCount){
       const n = document.createElement('div');
       n.className = 'empty-note';
