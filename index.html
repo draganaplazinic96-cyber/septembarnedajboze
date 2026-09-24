@@ -151,6 +151,15 @@ label.item span.txt{flex:1 1 auto;min-width:0}
 .timer-edit-close{border:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:.64rem;padding:2px 6px;border-radius:2px;cursor:pointer;line-height:1.4}
 .timer-edit-close:hover{background:var(--soft)}
 
+.sleep-block{border-top:1px solid var(--soft);padding:10px 18px;font-size:.8rem}
+.sleep-btn{width:100%;border:1px solid var(--ink);background:var(--panel);color:var(--ink);padding:11px 14px;font-family:var(--sans);font-size:.78rem;font-weight:800;letter-spacing:.06em;cursor:pointer;border-radius:2px}
+.sleep-btn:hover{background:var(--soft)}
+.sleep-btn.wake{background:var(--ink);color:#f5efe4}
+.sleep-now{font-family:var(--serif);font-size:1rem;font-weight:600;margin-bottom:8px}
+.sleep-log{margin-top:8px;color:var(--muted);font-size:.74rem}
+.sleep-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:3px 0;border-bottom:1px dotted rgba(117,111,102,.22)}
+.sleep-row input[type="time"]{font-family:var(--sans);font-size:.72rem;padding:1px 3px;border:1px solid var(--line);background:var(--panel);color:var(--ink)}
+.sleep-del{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:.72rem;padding:0 4px}
 .loading{text-align:center;color:var(--muted);padding:30px;font-size:.8rem}
 .empty-note{font-size:.76rem;color:var(--muted);font-style:italic;padding:6px 8px}
 
@@ -563,7 +572,7 @@ function carryAllowed(subj, d){ return SUBJECTS[subj].examDay >= d; }
 let state = {
   progress: {}, examAnswers: {}, dayPlan: {}, currentDayIndex: null,
   todayFinalized: false, carryover: {pseu:[],spt:[]}, carryoverSnapshots: {},
-  timing: {}, __fixedScheduleMigrationV3: false
+  timing: {}, sleepLog: [], __fixedScheduleMigrationV3: false
 };
 let openDays = new Set();
 let openTimerEdits = new Set();
@@ -593,6 +602,7 @@ function loadState(){
       SUBJECT_KEYS.forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
       if(!state.carryoverSnapshots) state.carryoverSnapshots = {};
       if(!state.timing) state.timing = {};
+      if(!Array.isArray(state.sleepLog)) state.sleepLog = [];
     }
   }catch(err){ console.error('Load error', err); }
 }
@@ -820,6 +830,47 @@ function computeItemsForDisplay(d, activeIdx){
   return baseItemsForDay(d);
 }
 
+
+/* =========================================================================
+   SPAVANJE — beleži stvarno spavanje; NE dira štiklirana pitanja ni satnicu
+   ========================================================================= */
+function fmtDur(min){ const h=Math.floor(min/60), m=Math.round(min%60); return (h?h+' h ':'')+m+' min'; }
+function fmtDayTime(iso){ const d=new Date(iso); return `${d.getDate()}.${d.getMonth()+1}. ${timeStrFromISO(iso)}`; }
+function openSleep(){ const l=state.sleepLog||[]; const last=l[l.length-1]; return (last && !last.end) ? last : null; }
+function renderSleepBlock(){
+  const log = state.sleepLog || [];
+  const cur = openSleep();
+  let top;
+  if(cur){
+    const el = minutesBetween(cur.start, nowISO());
+    top = `<div class="sleep-now">😴 Spavaš od ${fmtDayTime(cur.start)} · ${fmtDur(el)}</div><button class="sleep-btn wake" data-action="sleep-end">☀️ Probudila sam se</button>`;
+  } else {
+    top = `<button class="sleep-btn" data-action="sleep-start">😴 Otišla sam na spavanje (sada)</button>`;
+  }
+  const rows = log.map((s,i)=>{
+    const dur = s.end ? ` · ${fmtDur(minutesBetween(s.start, s.end))}` : ' · u toku';
+    return `<div class="sleep-row"><span>${new Date(s.start).getDate()}.9.</span>
+      <input type="time" data-sleep-idx="${i}" data-sleep-field="start" value="${timeStrFromISO(s.start)}"/>
+      <span>→</span>
+      ${s.end ? `<input type="time" data-sleep-idx="${i}" data-sleep-field="end" value="${timeStrFromISO(s.end)}"/>` : '<span>…</span>'}
+      <span>${dur}</span>
+      <button class="sleep-del" data-action="sleep-del" data-sleep-idx="${i}" title="Obriši unos">✕</button></div>`;
+  }).join('');
+  return `<div class="sleep-block">${top}${log.length?`<div class="sleep-log">${rows}</div>`:''}</div>`;
+}
+function sleepStart(){ if(openSleep()) return; state.sleepLog.push({start: nowISO(), end: null}); saveState(); render(); restoreOpenState(); }
+function sleepEnd(){ const cur=openSleep(); if(!cur) return; cur.end = nowISO(); saveState(); render(); restoreOpenState(); }
+function sleepDel(i){ state.sleepLog.splice(i,1); saveState(); render(); restoreOpenState(); }
+function sleepEdit(i, field, value){
+  const s = state.sleepLog[i]; if(!s || !value) return;
+  const [h,m] = value.split(':').map(Number);
+  const ref = new Date(s[field] || s.start);
+  ref.setHours(h, m, 0, 0);
+  s[field] = ref.toISOString();
+  if(s.end && new Date(s.end) <= new Date(s.start)) s.end = new Date(new Date(s.end).getTime()+86400000).toISOString();
+  saveState(); render(); restoreOpenState();
+}
+
 function renderTodayCard(activeIdx){
   const el = document.getElementById('todayCard');
   const items = itemsForActiveDay(activeIdx);
@@ -845,7 +896,7 @@ function renderTodayCard(activeIdx){
   } else {
     delayHtml = `<div class="today-stats" style="opacity:.7">⏱️ Klikni ▶ pored pitanja da bi se merilo vreme i zaostatak.</div>`;
   }
-  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${delayHtml}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
+  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${delayHtml}${renderSleepBlock()}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
 }
 
 function renderOverall(activeIdx){
@@ -1188,6 +1239,8 @@ function attachDayListeners(){
 }
 
 document.addEventListener('change', (e)=>{
+  const sl = e.target.closest('[data-sleep-idx]');
+  if(sl && sl.tagName==='INPUT'){ sleepEdit(Number(sl.dataset.sleepIdx), sl.dataset.sleepField, sl.value); return; }
   const sel = e.target.closest('[data-action="set-day"]');
   if(!sel) return;
   const val = parseInt(sel.value, 10);
@@ -1198,6 +1251,10 @@ document.addEventListener('change', (e)=>{
 document.addEventListener('click', (e)=>{
   if(e.target.closest('[data-action="goback"]')){ goBackOneDay(); return; }
   if(e.target.closest('[data-action="finalize"]')){ finalizeDay(); return; }
+  if(e.target.closest('[data-action="sleep-start"]')){ sleepStart(); return; }
+  if(e.target.closest('[data-action="sleep-end"]')){ sleepEnd(); return; }
+  const del = e.target.closest('[data-action="sleep-del"]');
+  if(del){ sleepDel(Number(del.dataset.sleepIdx)); return; }
 });
 
 function tickLiveTimers(){
@@ -1219,7 +1276,7 @@ function tickLiveTimers(){
   runMigrationIfNeeded();
   openDays.add(String(activeDayIndex()));
   render();
-  setInterval(tickLiveTimers, 15000);
+  setInterval(()=>{ tickLiveTimers(); if(openSleep()){ const n=document.querySelector('.sleep-now'); if(n){ const c=openSleep(); n.textContent=`😴 Spavaš od ${fmtDayTime(c.start)} · ${fmtDur(minutesBetween(c.start, nowISO()))}`; } } }, 15000);
 })();
 </script>
 </body>
