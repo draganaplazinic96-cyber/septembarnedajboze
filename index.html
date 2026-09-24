@@ -131,6 +131,10 @@ label.item.locked input{cursor:default}
 label.item span.txt{flex:1 1 auto;min-width:0}
 .plan-clock{flex:0 0 auto;font-size:.68rem;font-weight:750;color:var(--accent);font-variant-numeric:tabular-nums;margin-top:2px;min-width:36px}
 .break-line{font-size:.68rem;font-weight:700;color:var(--muted);text-align:center;padding:4px 0;letter-spacing:.03em;border-bottom:1px dotted rgba(117,111,102,.22)}
+.plan-clock.late{color:var(--red)}
+.plan-clock small{font-size:.6rem;font-weight:600}
+.dyn-info{padding:0 18px 12px;font-size:.78rem;color:var(--accent);font-weight:650}
+.dyn-info .warn{color:var(--red)}
 .break-line.long{color:var(--accent)}
 .session-note{font-size:.76rem;font-weight:650;color:var(--muted);background:rgba(23,32,29,.045);border-left:3px solid var(--line);padding:7px 10px;margin:14px 0 4px}
 .timer-badge{flex:0 0 auto;font-size:.64rem;font-weight:750;padding:2px 7px;border-radius:2px;white-space:nowrap;align-self:center;background:rgba(23,32,29,.06);color:var(--muted);font-variant-numeric:tabular-nums}
@@ -533,15 +537,15 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 const FIXED_SCHEDULE = {
   0: [
     { label:'02:00–06:50', items:{ pseu: rangeIds('pseu',1,48) } },
-    { note:'😴 06:50–11:50 spavanje · 11:50–12:20 doručak' },
+    { note:'😴 06:50–11:50 spavanje · 11:50–12:20 doručak', ev:'sleep', n:1, dur:300, after:30, afterLabel:'doručak' },
     { label:'12:20–18:45', items:{ pseu: reviewIdsForRounds('pseu',[5]).concat(rangeIds('pseu',49,105), reviewIdsForRounds('pseu',[6])) } },
-    { note:'🍽 18:45–19:15 večera' },
+    { note:'🍽 18:45–19:15 večera', ev:'meal', key:'dinner', dur:30, label:'večera' },
     { label:'19:15–00:45 (prelazi u 25.9)', items:{ spt: rangeIds('spt',1,30) } },
-    { note:'😴 00:45–05:45 spavanje' }
+    { note:'😴 00:45–05:45 spavanje', ev:'sleep', n:2, dur:300 }
   ],
   1: [
     { label:'05:45–07:45', items:{ pseu: reviewIdsForRounds('pseu',[1,2,3,4]) } },
-    { note:'🎓 09:00 ispit PSEU → posao do 00:00' }
+    { note:'🎓 09:00 ispit PSEU → posao do 00:00', ev:'phase', minStart: new Date(2026,8,26,0,30) }
   ],
   2: [
     { label:'00:30–07:45', items:{ spt: rangeIds('spt',31,64).concat(reviewIdsForSubject('spt')) } },
@@ -843,7 +847,7 @@ function renderSleepBlock(){
   let top;
   if(cur){
     const el = minutesBetween(cur.start, nowISO());
-    top = `<div class="sleep-now">😴 Spavaš od ${fmtDayTime(cur.start)} · ${fmtDur(el)}</div><button class="sleep-btn wake" data-action="sleep-end">☀️ Probudila sam se</button>`;
+    top = `<div class="sleep-now">😴 Spavaš od ${fmtDayTime(cur.start)} · ${fmtDur(el)} · buđenje ${hh(addMin(new Date(cur.start), DEFAULT_SLEEP_MIN))}</div><button class="sleep-btn wake" data-action="sleep-end">☀️ Probudila sam se</button>`;
   } else {
     top = `<button class="sleep-btn" data-action="sleep-start">😴 Otišla sam na spavanje (sada)</button>`;
   }
@@ -871,6 +875,159 @@ function sleepEdit(i, field, value){
   saveState(); render(); restoreOpenState();
 }
 
+
+/* =========================================================================
+   DINAMIČKA SATNICA — kad klikneš „Otišla sam na spavanje", spavanje traje
+   5 h od klika (ili do klika „Probudila sam se"), posle prvog spavanja ide
+   30 min doručka, pa se SVA neurađena pitanja nižu redom od tog trenutka,
+   sa pauzama (10 min posle ~45 min rada, svaka treća 20 min), večerom i
+   sledećim spavanjem. Štiklirana pitanja se ne diraju i ne troše vreme.
+   Tvrde tačke: SPT deo 26. ne kreće pre 00:30 (posao); rok za PSEU je
+   25. u 07:45, za SPT 26. u 07:45 — sve što pada posle roka je ⚠ crveno.
+   ========================================================================= */
+const EXAM_AT  = { pseu: new Date(2026,8,25,9,0),  spt: new Date(2026,8,26,9,0) };
+const DEADLINE = { pseu: new Date(2026,8,25,7,45), spt: new Date(2026,8,26,7,45) };
+const DEFAULT_SLEEP_MIN = 300;
+let DYN = null;
+
+function hh(d){ return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function addMin(d, m){ return new Date(d.getTime() + m*60000); }
+
+function buildSequence(){
+  const seq = [];
+  for(let d=0; d<DAY_COUNT; d++){
+    (FIXED_SCHEDULE[d]||[]).forEach(sess=>{
+      if(sess.ev){ seq.push(Object.assign({kind:'ev', day:d}, sess)); return; }
+      if(!sess.items) return;
+      Object.keys(SUBJECTS).forEach(s=>(sess.items[s]||[]).forEach(id=>seq.push({kind:'item', id, subj:s, day:d})));
+    });
+  }
+  return seq;
+}
+const SEQ = buildSequence();
+const SLEEP_EV_IDX = SEQ.map((x,i)=>(x.kind==='ev' && x.ev==='sleep') ? i : -1).filter(i=>i>=0);
+const PHASE_IDX = SEQ.findIndex(x=>x.kind==='ev' && x.ev==='phase');
+
+function computeDynamic(){
+  const log = state.sleepLog || [];
+  if(!log.length) return null;
+  const isDone = id => !!(state.progress[id] && state.progress[id].done);
+  const k = log.length, last = log[k-1];
+  const sleepStart = new Date(last.start);
+  const wake = last.end ? new Date(last.end) : addMin(sleepStart, DEFAULT_SLEEP_MIN);
+
+  let anchorIdx, plannedEv = null;
+  if(k <= SLEEP_EV_IDX.length){ anchorIdx = SLEEP_EV_IDX[k-1]; plannedEv = SEQ[anchorIdx]; }
+  else anchorIdx = (PHASE_IDX>=0 && sleepStart >= SEQ[PHASE_IDX].minStart) ? PHASE_IDX : SLEEP_EV_IDX[SLEEP_EV_IDX.length-1];
+
+  const events = {};
+  log.forEach((s,i)=>{
+    const st = new Date(s.start);
+    const en = s.end ? new Date(s.end) : addMin(st, DEFAULT_SLEEP_MIN);
+    const ev = (SLEEP_EV_IDX[i]!=null) ? SEQ[SLEEP_EV_IDX[i]] : null;
+    events['sleep'+(i+1)] = {start:st, end:en, auto:!s.end, afterMin: ev ? (ev.after||0) : 0, afterLabel: ev ? ev.afterLabel : null};
+  });
+
+  let cursor = addMin(wake, plannedEv ? (plannedEv.after||0) : 0);
+  const alive = subj => EXAM_AT[subj] > sleepStart;
+  const startAt = {}, endAt = {}, brk = {}, late = {};
+  let cum = 0, nb = 0, lastId = null;
+  const place = x => {
+    if(cursor >= DEADLINE[x.subj]){ late[x.id] = true; return; } // ne staje pre ispita — ne troši vreme
+    if(lastId && cum >= 45){
+      nb++; const len = (nb % 3 === 0) ? 20 : 10;
+      brk[lastId] = {len, start: cursor}; cursor = addMin(cursor, len); cum = 0;
+    }
+    const b = ITEM_BUDGET[x.id] || 5;
+    startAt[x.id] = cursor; cursor = addMin(cursor, b); endAt[x.id] = cursor;
+    if(cursor > DEADLINE[x.subj]) late[x.id] = true;
+    cum += b; lastId = x.id;
+  };
+  const resetRhythm = () => { cum = 0; lastId = null; };
+
+  const before = SEQ.slice(0, anchorIdx).filter(x=>x.kind==='item' && !isDone(x.id) && alive(x.subj));
+  const nextSubj = Object.keys(EXAM_AT).filter(s=>EXAM_AT[s] > cursor).sort((a,b)=>EXAM_AT[a]-EXAM_AT[b])[0];
+  before.filter(x=>x.subj===nextSubj).forEach(place);
+  let deferred = before.filter(x=>x.subj!==nextSubj);
+
+  for(let i=anchorIdx+1; i<SEQ.length; i++){
+    const x = SEQ[i];
+    if(x.kind === 'ev'){
+      if(x.ev === 'phase'){
+        if(cursor < x.minStart) cursor = new Date(x.minStart);
+        resetRhythm(); deferred.forEach(place); deferred = [];
+      } else if(x.ev === 'sleep'){
+        const n = SLEEP_EV_IDX.indexOf(i) + 1;
+        const st = cursor, en = addMin(cursor, x.dur);
+        events['sleep'+n] = {start:st, end:en, planned:true, afterMin:x.after||0, afterLabel:x.afterLabel};
+        cursor = addMin(en, x.after||0); resetRhythm();
+      } else if(x.ev === 'meal'){
+        events[x.key] = {start:cursor, end:addMin(cursor, x.dur), label:x.label};
+        cursor = events[x.key].end; resetRhythm();
+      }
+      continue;
+    }
+    if(!isDone(x.id) && alive(x.subj)) place(x);
+  }
+  deferred.forEach(place);
+
+  const lateCount = {};
+  Object.keys(late).forEach(id=>{ const s=id.split('-')[0]; lateCount[s]=(lateCount[s]||0)+1; });
+  return {startAt, endAt, brk, late, lateCount, events, wake, auto: !last.end, k};
+}
+
+function clockHtml(id, dayIdx){
+  const isDone = !!(state.progress[id] && state.progress[id].done);
+  if(DYN && !isDone){
+    const t = DYN.startAt[id];
+    if(!t) return DYN.late[id] ? `<span class="plan-clock late" title="Po ovoj satnici ne staje pre ispita">⚠ ne staje</span>` : `<span class="plan-clock late" title="Ispit iz ovog predmeta je već prošao">—</span>`;
+    const suffix = (t.getDate() !== START_DAY + dayIdx) ? ` <small>(${t.getDate()}.9)</small>` : '';
+    return `<span class="plan-clock${DYN.late[id]?' late':''}" title="Pomereno prema spavanju">${DYN.late[id]?'⚠ ':''}${hh(t)}${suffix}</span>`;
+  }
+  return ITEM_START[id] ? `<span class="plan-clock">${ITEM_START[id]}</span>` : '';
+}
+
+function noteText(sess){
+  if(!DYN || !sess.ev) return sess.note;
+  if(sess.ev === 'sleep'){
+    const e = DYN.events['sleep'+sess.n];
+    if(!e) return sess.note + ' (preskočeno po novoj satnici)';
+    const tag = e.planned ? ' (po novoj satnici)' : (e.auto ? ' (automatski +5 h)' : ' (stvarno)');
+    let t = `😴 ${hh(e.start)}–${hh(e.end)} spavanje${tag}`;
+    if(e.afterMin) t += ` · ${hh(e.end)}–${hh(addMin(e.end, e.afterMin))} ${e.afterLabel}`;
+    return t;
+  }
+  if(sess.ev === 'meal'){
+    const e = DYN.events[sess.key];
+    return e ? `🍽 ${hh(e.start)}–${hh(e.end)} ${e.label} (po novoj satnici)` : sess.note;
+  }
+  return sess.note;
+}
+
+function sessionLabel(sess){
+  if(!DYN) return '🕐 ' + sess.label;
+  let mn = null, mx = null;
+  Object.values(sess.items||{}).forEach(arr=>(arr||[]).forEach(id=>{
+    const s = DYN.startAt[id], e = DYN.endAt[id];
+    if(s && (!mn || s < mn)) mn = s;
+    if(e && (!mx || e > mx)) mx = e;
+  }));
+  if(!mn){
+    const anyLate = Object.values(sess.items||{}).some(arr=>(arr||[]).some(id=>DYN.late[id]));
+    return anyLate ? `🕐 ${sess.label} · ⚠ po ovoj satnici ne staje pre ispita` : `🕐 ${sess.label} · ✓`;
+  }
+  const dd = d => `${hh(d)}${d.getDate()!==mn.getDate()?` (${d.getDate()}.9)`:''}`;
+  return `🕐 plan ${sess.label} → sada ${hh(mn)}–${dd(mx)}`;
+}
+
+function dynInfoHtml(){
+  if(!DYN) return '';
+  let t = `🔁 Satnica je pomerena prema spavanju · učenje nastavljaš od ${hh(addMin(DYN.wake, (DYN.events['sleep'+DYN.k]||{}).afterMin||0))}${DYN.auto?' (buđenje automatski 5 h posle klika)':''}`;
+  const w = Object.keys(DYN.lateCount).map(s=>`${DYN.lateCount[s]} ${subjectCode(s)} pitanja posle roka (${hh(DEADLINE[s])})`);
+  if(w.length) t += `<br><span class="warn">⚠ Po ovoj satnici: ${w.join(' · ')}</span>`;
+  return `<div class="dyn-info">${t}</div>`;
+}
+
 function renderTodayCard(activeIdx){
   const el = document.getElementById('todayCard');
   const items = itemsForActiveDay(activeIdx);
@@ -896,7 +1053,7 @@ function renderTodayCard(activeIdx){
   } else {
     delayHtml = `<div class="today-stats" style="opacity:.7">⏱️ Klikni ▶ pored pitanja da bi se merilo vreme i zaostatak.</div>`;
   }
-  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${delayHtml}${renderSleepBlock()}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
+  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${delayHtml}${dynInfoHtml()}${renderSleepBlock()}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
 }
 
 function renderOverall(activeIdx){
@@ -950,7 +1107,7 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
       const lab = document.createElement('label');
       lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
       const numPrefix = !it.review ? `${Number(id.split('-').pop()) + 1}. ` : '';
-      const clock = ITEM_START[id] ? `<span class="plan-clock">${ITEM_START[id]}</span>` : '';
+      const clock = clockHtml(id, dayIndex);
 
       let timerHtml = '';
       if(budget != null){
@@ -981,7 +1138,11 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
 
     const appendItem = (parent, id) => {
       parent.appendChild(renderLabel(id));
-      if(BREAK_AFTER[id] && mode !== 'history') parent.appendChild(breakLine(id));
+      if(mode === 'history') return;
+      if(DYN){
+        const b = DYN.brk[id];
+        if(b){ const el = document.createElement('div'); el.className = 'break-line' + (b.len>=20?' long':''); el.textContent = `${b.len>=20?'🍽':'☕'} ${b.len} min pauza · ${hh(b.start)}–${hh(addMin(b.start,b.len))}`; parent.appendChild(el); }
+      } else if(BREAK_AFTER[id]) parent.appendChild(breakLine(id));
     };
 
     const byArea = []; const areaIndex = {};
@@ -1032,7 +1193,7 @@ function renderDaySessions(container, d, activeIdx){
     if(sess.note){
       const n = document.createElement('div');
       n.className = 'session-note';
-      n.textContent = sess.note;
+      n.textContent = noteText(sess);
       container.appendChild(n);
       return;
     }
@@ -1041,7 +1202,7 @@ function renderDaySessions(container, d, activeIdx){
     any = true;
     const sh = document.createElement('div');
     sh.style.cssText = 'font-family:var(--serif);font-size:.85rem;font-weight:700;color:var(--ink);margin:14px 0 2px;padding-bottom:3px;border-bottom:1px solid var(--soft);';
-    sh.textContent = '🕐 ' + sess.label;
+    sh.textContent = sessionLabel(sess);
     container.appendChild(sh);
     renderGroupsForDay(container, d, items, mode);
   });
@@ -1145,6 +1306,7 @@ function renderDays(activeIdx){
 
 function render(){
   const activeIdx = activeDayIndex();
+  DYN = computeDynamic();
   renderMissionStrip();
   renderTodayCard(activeIdx);
   renderOverall(activeIdx);
@@ -1276,7 +1438,7 @@ function tickLiveTimers(){
   runMigrationIfNeeded();
   openDays.add(String(activeDayIndex()));
   render();
-  setInterval(()=>{ tickLiveTimers(); if(openSleep()){ const n=document.querySelector('.sleep-now'); if(n){ const c=openSleep(); n.textContent=`😴 Spavaš od ${fmtDayTime(c.start)} · ${fmtDur(minutesBetween(c.start, nowISO()))}`; } } }, 15000);
+  setInterval(()=>{ tickLiveTimers(); if(openSleep()){ const n=document.querySelector('.sleep-now'); if(n){ const c=openSleep(); n.textContent=`😴 Spavaš od ${fmtDayTime(c.start)} · ${fmtDur(minutesBetween(c.start, nowISO()))} · buđenje ${hh(addMin(new Date(c.start), DEFAULT_SLEEP_MIN))}`; } } }, 15000);
 })();
 </script>
 </body>
