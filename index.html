@@ -2,7 +2,7 @@
 <html lang="sr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Plan učenja — rok septembar 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,12 +14,14 @@
   --spt:#5857a6;--pseu:#527d47;
   --red:#a84339;--green:#3f765c;--accent:#2f4740;--warn-bg:#ead6cf;--warn-text:#8d302b;
   --serif:'Fraunces',Georgia,serif;--sans:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
 }
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;font-family:var(--sans);color:var(--ink);background:
   linear-gradient(rgba(35,45,40,.035) 1px,transparent 1px),
   linear-gradient(90deg,rgba(35,45,40,.025) 1px,transparent 1px),var(--paper);
-  background-size:32px 32px;padding:34px 18px 80px;-webkit-font-smoothing:antialiased}
+  background-size:32px 32px;background-color:var(--paper);padding:34px 18px 80px;-webkit-font-smoothing:antialiased}
 .wrap{max-width:980px;margin:0 auto}
 .command-header{position:relative;border-top:6px solid var(--ink);border-bottom:1px solid var(--ink);padding:24px 0 22px;margin-bottom:18px;overflow:hidden}
 .command-title{font-family:var(--serif);font-size:clamp(2.9rem,8vw,6rem);line-height:.83;letter-spacing:-.055em;font-weight:600;margin:0;text-transform:uppercase}
@@ -127,6 +129,10 @@ label.item.review span.txt{font-weight:650}
 label.item.locked{cursor:default;opacity:.62}
 label.item.locked input{cursor:default}
 label.item span.txt{flex:1 1 auto;min-width:0}
+.plan-clock{flex:0 0 auto;font-size:.68rem;font-weight:750;color:var(--accent);font-variant-numeric:tabular-nums;margin-top:2px;min-width:36px}
+.break-line{font-size:.68rem;font-weight:700;color:var(--muted);text-align:center;padding:4px 0;letter-spacing:.03em;border-bottom:1px dotted rgba(117,111,102,.22)}
+.break-line.long{color:var(--accent)}
+.session-note{font-size:.76rem;font-weight:650;color:var(--muted);background:rgba(23,32,29,.045);border-left:3px solid var(--line);padding:7px 10px;margin:14px 0 4px}
 .timer-badge{flex:0 0 auto;font-size:.64rem;font-weight:750;padding:2px 7px;border-radius:2px;white-space:nowrap;align-self:center;background:rgba(23,32,29,.06);color:var(--muted);font-variant-numeric:tabular-nums}
 .timer-badge.timer-budget{background:rgba(23,32,29,.05);color:var(--muted)}
 .timer-badge.timer-live{background:rgba(98,92,150,.14);color:var(--spt);animation:timerPulse 2s ease-in-out infinite}
@@ -134,6 +140,7 @@ label.item span.txt{flex:1 1 auto;min-width:0}
 .timer-badge.timer-under{background:rgba(63,118,92,.14);color:var(--green)}
 .timer-badge.timer-ontime{background:rgba(63,118,92,.10);color:var(--accent)}
 @keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.55}}
+@media (prefers-reduced-motion:reduce){.timer-badge.timer-live{animation:none}}
 .timer-start-btn{flex:0 0 auto;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:2px;cursor:pointer;align-self:center}
 .timer-start-btn:hover{background:var(--soft)}
 .timer-badge[data-timer-action]{cursor:pointer}
@@ -212,7 +219,7 @@ label.item span.txt{flex:1 1 auto;min-width:0}
 
   <div id="days"><div class="loading">Učitavanje...</div></div>
 
-  <div class="footer-stamp">FIXED SCHEDULE · v4</div>
+  <div class="footer-stamp">FIXED SCHEDULE · v5 · 24–26. sept</div>
 </div>
 
 <script>
@@ -227,34 +234,34 @@ function subjectIcon(subj){
   return icons[subj]||'';
 }
 
-const STORAGE_KEY = 'plan-sept-2026-v12'; // v12 — novi plan: učenje počinje 23. sept 01:00, ispiti 25. (PSEU) i 26. (SPT) sept
+const STORAGE_KEY = 'plan-sept-2026-v13'; // v13 — novi plan: učenje počinje 24. sept 02:00, ispiti 25. (PSEU) i 26. (SPT) u 09:00
 const YEAR = 2026, MONTH = 8; // septembar
-const START_DAY = 23;
-const DAY_COUNT = 4; // indeksi 0..3 = 23..26. septembar
+const START_DAY = 24;
+const DAY_COUNT = 3; // indeksi 0..2 = 24..26. septembar
 const SUBJECT_KEYS = ['pseu','spt'];
 
 const SUBJECTS = {
-  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:2},
-  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:3}
+  pseu: {label:"Politički sistem Evropske unije",   cls:"pseu", color:"var(--pseu)", examDay:1},
+  spt:  {label:"Savremena politička teorija",       cls:"spt",  color:"var(--spt)",  examDay:2}
 };
 
 const EXAMS = {
-  2: {type:'ispit', subj:'pseu'},
-  3: {type:'ispit', subj:'spt'}
+  1: {type:'ispit', subj:'pseu'},
+  2: {type:'ispit', subj:'spt'}
 };
 
-// Nema zaključanih dana.
 const LOCKED_DAYS = {};
 // Od kog dana predmet prelazi u status "PRITISAK" na radaru
-const REVIEW_DAY_FOR = { pseu:1, spt:2 };
+const REVIEW_DAY_FOR = { pseu:0, spt:1 };
 
 const REVIEW_LINKS = {
-  1:  {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
-  3:  {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
+  1: {subj:'pseu', url:'https://draganaplazinic96-cyber.github.io/pseu1.2.9./'},
+  2: {subj:'spt',  url:'https://draganaplazinic96-cyber.github.io/SPT/'}
 };
 
 /* =========================================================================
    POOLS — sadržaj gradiva
+   PSEU: pitanja 1–105 (gradivo zaključno sa str. 106). SPT: svih 64.
    ========================================================================= */
 const POOLS = {
   pseu: [
@@ -363,7 +370,10 @@ const POOLS = {
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Strukturni manjak demokratije'},
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Da li EU pretpostavlja novi tip demokratije?'},
     {area: '24. Demokratija u EU / demokratski deficit', text: 'Krizni ishod legitimnosti i demokratije'},
-    {review:true, reviewRound:1, area: 'Ponavljanje — krug 1', text: 'Prvi krug ponavljanja: brzi pregled svih 105 pitanja, fokus na slabije oblasti'}
+    {review:true, reviewRound:1, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 1–7 (pitanja 1–21) — definicije, faze, ugovori i godine'},
+    {review:true, reviewRound:2, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 8–16 (pitanja 22–52) — sastav, nadležnosti i odlučivanje institucija'},
+    {review:true, reviewRound:3, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 17–18 (pitanja 53–76) — komunitarni i međuvladin metod'},
+    {review:true, reviewRound:4, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 19–24 (pitanja 77–105) — OMK, kriza, javnost, stranke, demokratija'}
   ],
   spt: [
     'Pozitivna i negativna sloboda',
@@ -430,11 +440,12 @@ const POOLS = {
     'Trijumf demokratije i postdemokratija',
     'Postdemokratija kao dijagnoza stanja realne demokratije',
     'Postdemokratija kao otklon od realne demokratije',
-    {review:true, text:'Ponovljeno svih 64 pitanja'}
+    {review:true, reviewRound:1, area:'Ponavljanje pred ispit', text:'Ponavljanje 1–30: sloboda, utilitarizam, Rols/Dvorkin, komunitarizam, liberalizam, nacionalizam'},
+    {review:true, reviewRound:2, area:'Ponavljanje pred ispit', text:'Ponavljanje 31–64: građanstvo, republikanizam, multikulturalizam, etika brige, demokratija'}
   ]
 };
 
-/* Tematske oblasti — SAMO za vizuelno grupisanje, NE utiču na raspored po danima */
+/* Tematske oblasti — SAMO za vizuelno grupisanje */
 const THEMATIC_AREAS = {
   spt: [
     [1,4,'Sloboda'],
@@ -473,14 +484,7 @@ function itemLookup(id){
 function reviewIdsForSubject(subj){
   return ITEM_POOL[subj].filter(it=>it.review).map(it=>it.id);
 }
-function reviewIdForRound(subj, round){
-  const it = ITEM_POOL[subj].find(x=>x.review && x.reviewRound===round);
-  return it ? it.id : null;
-}
 
-/* =========================================================================
-   rangeIds — pretvara 1-based opseg pitanja u 0-based ID-jeve
-   ========================================================================= */
 function rangeIds(subj, startOneBased, endOneBasedInclusive){
   const ids = [];
   for(let i=startOneBased; i<=endOneBasedInclusive; i++) ids.push(`${subj}-${i-1}`);
@@ -488,37 +492,53 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 }
 
 /* =========================================================================
-   FIXED_SCHEDULE — niz SESIJA po danu. Rezovi su namerno postavljeni TAČNO
-   na granice tematskih celina (area kod PSEU, THEMATIC_AREAS kod SPT), ne
-   po broju pitanja — nijedna oblast se ne cepa na pola između sesija/dana.
+   FIXED_SCHEDULE — sesije po danu. Rezovi su na granicama tematskih celina.
 
-   PSEU rezovi: 21 (kraj oblasti 7. Kriza integracije), 52 (kraj 16. Modeli
-   upravljanja), 76 (kraj 18. Međuvladin metod) — sve tačne granice oblasti.
-   SPT rezovi: 12 (kraj Utilitarizma), 30 (kraj Komunitarizma/multikult.),
-   45 (kraj Multikulturalizam i javno/privatno) — sve tačne granice iz
-   THEMATIC_AREAS.
+   24. (slobodan)
+     02:00–07:30  PSEU 1–48   (oblasti 1–14, zaključno sa ECB)
+     07:30–12:30  spavanje
+     13:00–18:45  PSEU 49–105 (oblasti 15–24)
+     18:45–19:15  večera
+     19:15–00:45  SPT 1–30    (Sloboda → Komunitarizam/multikulturalizam)
+     00:45–05:45  spavanje
+   25. 05:45–07:45 PSEU ponavljanje (4 bloka) → ISPIT 09:00 → posao do 00:00
+   26. 00:30–07:45 SPT 31–64 + ponavljanje svih 64 (2 bloka) → ISPIT 09:00
 
-   23. sesija 01:00–06:00: PSEU 1–21  (oblasti 1–7),  SPT 1–12  (Sloboda+Utilitarizam)
-       sesija 15:00–23:00: PSEU 22–52 (oblasti 8–16), SPT 13–30 (Rols/Dvorkin+Komunitarizam)
-   24. sesija 10:00–16:00: PSEU 53–76 (oblasti 17–18), SPT 31–45 (Građanstvo+Multikulturalizam)
-       sesija 23:00–07:00 (sutra, 25.9): PSEU 77–105 + regularno ponavljanje, SPT 46–64 (Etika brige+Demokratija)
-   25. bez sesija — PSEU ISPIT (9:00), posle toga posao
-   26. sesija 00:30–07:00: SPT ponavljanje svih 64 → SPT ISPIT (9:00)
+   Vreme po pitanju = proporcionalno "težini" pitanja, izračunatoj iz
+   stvarnog broja reči u skriptama (PSEU_KOMPLETNO_GRADIVO, SPT_ISPIT):
+     PSEU: 1,5 min fiksnog uvoda + reči × koeficijent gustine činjenica
+           (godine, brojevi, imena, tabele) — raspon 0,85–1,40
+     SPT:  1,5 min fiksnog uvoda + (jezgro „Kompletan odgovor" × 1 +
+           priča/potpitanja × 0,5) × koeficijent gustine autora/pojmova
+   Isti tempo (težina po minutu) u svim sesijama novog gradiva, tako da
+   nijedan predmet nije ni potcenjen ni precenjen u odnosu na drugi.
+   Pauze: posle ~45–55 min rada 10 min; svaka treća pauza 20 min.
    ========================================================================= */
 const FIXED_SCHEDULE = {
   0: [
-    { label:'01:00–06:00', items:{ pseu: rangeIds('pseu',1,21),  spt: rangeIds('spt',1,12) } },
-    { label:'15:00–23:00', items:{ pseu: rangeIds('pseu',22,52), spt: rangeIds('spt',13,30) } }
+    { label:'02:00–07:30', items:{ pseu: rangeIds('pseu',1,48) } },
+    { note:'😴 07:30–12:30 spavanje · 12:30–13:00 doručak' },
+    { label:'13:00–18:45', items:{ pseu: rangeIds('pseu',49,105) } },
+    { note:'🍽 18:45–19:15 večera' },
+    { label:'19:15–00:45 (prelazi u 25.9)', items:{ spt: rangeIds('spt',1,30) } },
+    { note:'😴 00:45–05:45 spavanje' }
   ],
   1: [
-    { label:'10:00–16:00', items:{ pseu: rangeIds('pseu',53,76), spt: rangeIds('spt',31,45) } },
-    { label:'23:00–07:00 (sutra, 25.9)', items:{ pseu: rangeIds('pseu',77,105).concat([reviewIdForRound('pseu',1)]), spt: rangeIds('spt',46,64) } }
+    { label:'05:45–07:45', items:{ pseu: reviewIdsForSubject('pseu') } },
+    { note:'🎓 09:00 ispit PSEU → posao do 00:00' }
   ],
-  2: [],
-  3: [
-    { label:'00:30–07:00', items:{ spt: reviewIdsForSubject('spt') } }
+  2: [
+    { label:'00:30–07:45', items:{ spt: rangeIds('spt',31,64).concat(reviewIdsForSubject('spt')) } },
+    { note:'🎓 09:00 ispit SPT' }
   ]
 };
+
+/* Izračunato unapred iz broja reči (vidi gore): minuti po pitanju, planirani
+   početak i pauza posle pitanja. */
+const ITEM_BUDGET = {"pseu-0":7,"pseu-1":4,"pseu-2":6,"pseu-3":8,"pseu-4":5,"pseu-5":5,"pseu-6":5,"pseu-7":4,"pseu-8":6,"pseu-9":5,"pseu-10":3,"pseu-11":6,"pseu-12":3,"pseu-13":5,"pseu-14":4,"pseu-15":6,"pseu-16":5,"pseu-17":5,"pseu-18":5,"pseu-19":3,"pseu-20":7,"pseu-21":2,"pseu-22":4,"pseu-23":5,"pseu-24":7,"pseu-25":5,"pseu-26":5,"pseu-27":5,"pseu-28":8,"pseu-29":11,"pseu-30":5,"pseu-31":8,"pseu-32":11,"pseu-33":4,"pseu-34":6,"pseu-35":5,"pseu-36":7,"pseu-37":9,"pseu-38":5,"pseu-39":5,"pseu-40":5,"pseu-41":7,"pseu-42":5,"pseu-43":3,"pseu-44":9,"pseu-45":6,"pseu-46":5,"pseu-47":6,"pseu-48":3,"pseu-49":3,"pseu-50":6,"pseu-51":4,"pseu-52":3,"pseu-53":4,"pseu-54":9,"pseu-55":8,"pseu-56":2,"pseu-57":4,"pseu-58":5,"pseu-59":5,"pseu-60":2,"pseu-61":3,"pseu-62":6,"pseu-63":4,"pseu-64":3,"pseu-65":3,"pseu-66":5,"pseu-67":2,"pseu-68":3,"pseu-69":8,"pseu-70":8,"pseu-71":5,"pseu-72":3,"pseu-73":4,"pseu-74":3,"pseu-75":8,"pseu-76":4,"pseu-77":7,"pseu-78":9,"pseu-79":11,"pseu-80":5,"pseu-81":8,"pseu-82":10,"pseu-83":4,"pseu-84":4,"pseu-85":2,"pseu-86":6,"pseu-87":7,"pseu-88":4,"pseu-89":5,"pseu-90":5,"pseu-91":5,"pseu-92":4,"pseu-93":4,"pseu-94":4,"pseu-95":5,"pseu-96":4,"pseu-97":5,"pseu-98":4,"pseu-99":7,"pseu-100":7,"pseu-101":6,"pseu-102":5,"pseu-103":5,"pseu-104":3,"spt-0":15,"spt-1":13,"spt-2":18,"spt-3":12,"spt-4":6,"spt-5":6,"spt-6":11,"spt-7":11,"spt-8":9,"spt-9":8,"spt-10":9,"spt-11":6,"spt-12":8,"spt-13":6,"spt-14":8,"spt-15":9,"spt-16":11,"spt-17":9,"spt-18":9,"spt-19":8,"spt-20":10,"spt-21":8,"spt-22":8,"spt-23":11,"spt-24":7,"spt-25":7,"spt-26":7,"spt-27":6,"spt-28":7,"spt-29":7,"pseu-105":21,"pseu-106":35,"pseu-107":22,"pseu-108":32,"spt-30":6,"spt-31":6,"spt-32":7,"spt-33":7,"spt-34":6,"spt-35":12,"spt-36":8,"spt-37":11,"spt-38":8,"spt-39":11,"spt-40":7,"spt-41":6,"spt-42":9,"spt-43":8,"spt-44":6,"spt-45":8,"spt-46":4,"spt-47":3,"spt-48":7,"spt-49":8,"spt-50":7,"spt-51":7,"spt-52":7,"spt-53":7,"spt-54":6,"spt-55":9,"spt-56":8,"spt-57":10,"spt-58":8,"spt-59":9,"spt-60":5,"spt-61":8,"spt-62":11,"spt-63":9,"spt-64":48,"spt-65":48};
+const ITEM_START = {"pseu-0":"02:00","pseu-1":"02:07","pseu-2":"02:11","pseu-3":"02:17","pseu-4":"02:25","pseu-5":"02:30","pseu-6":"02:35","pseu-7":"02:40","pseu-8":"02:44","pseu-9":"03:00","pseu-10":"03:05","pseu-11":"03:08","pseu-12":"03:14","pseu-13":"03:17","pseu-14":"03:22","pseu-15":"03:26","pseu-16":"03:32","pseu-17":"03:37","pseu-18":"03:42","pseu-19":"03:57","pseu-20":"04:00","pseu-21":"04:07","pseu-22":"04:09","pseu-23":"04:13","pseu-24":"04:18","pseu-25":"04:25","pseu-26":"04:30","pseu-27":"04:35","pseu-28":"04:40","pseu-29":"05:08","pseu-30":"05:19","pseu-31":"05:24","pseu-32":"05:32","pseu-33":"05:43","pseu-34":"05:47","pseu-35":"06:03","pseu-36":"06:08","pseu-37":"06:15","pseu-38":"06:24","pseu-39":"06:29","pseu-40":"06:34","pseu-41":"06:39","pseu-42":"06:46","pseu-43":"07:01","pseu-44":"07:04","pseu-45":"07:13","pseu-46":"07:19","pseu-47":"07:24","pseu-48":"13:00","pseu-49":"13:03","pseu-50":"13:06","pseu-51":"13:12","pseu-52":"13:16","pseu-53":"13:19","pseu-54":"13:23","pseu-55":"13:32","pseu-56":"13:40","pseu-57":"13:42","pseu-58":"13:56","pseu-59":"14:01","pseu-60":"14:06","pseu-61":"14:08","pseu-62":"14:11","pseu-63":"14:17","pseu-64":"14:21","pseu-65":"14:24","pseu-66":"14:27","pseu-67":"14:32","pseu-68":"14:34","pseu-69":"14:37","pseu-70":"14:55","pseu-71":"15:03","pseu-72":"15:08","pseu-73":"15:11","pseu-74":"15:15","pseu-75":"15:18","pseu-76":"15:26","pseu-77":"15:30","pseu-78":"15:37","pseu-79":"16:06","pseu-80":"16:17","pseu-81":"16:22","pseu-82":"16:30","pseu-83":"16:40","pseu-84":"16:44","pseu-85":"16:48","pseu-86":"16:50","pseu-87":"17:06","pseu-88":"17:13","pseu-89":"17:17","pseu-90":"17:22","pseu-91":"17:27","pseu-92":"17:32","pseu-93":"17:36","pseu-94":"17:40","pseu-95":"17:44","pseu-96":"17:49","pseu-97":"18:03","pseu-98":"18:08","pseu-99":"18:12","pseu-100":"18:19","pseu-101":"18:26","pseu-102":"18:32","pseu-103":"18:37","pseu-104":"18:42","spt-0":"19:15","spt-1":"19:30","spt-2":"19:43","spt-3":"20:11","spt-4":"20:23","spt-5":"20:29","spt-6":"20:35","spt-7":"20:46","spt-8":"21:07","spt-9":"21:16","spt-10":"21:24","spt-11":"21:33","spt-12":"21:39","spt-13":"21:47","spt-14":"22:13","spt-15":"22:21","spt-16":"22:30","spt-17":"22:41","spt-18":"22:50","spt-19":"23:09","spt-20":"23:17","spt-21":"23:27","spt-22":"23:35","spt-23":"23:43","spt-24":"00:04","spt-25":"00:11","spt-26":"00:18","spt-27":"00:25","spt-28":"00:31","spt-29":"00:38","pseu-105":"05:45","pseu-106":"06:06","pseu-107":"06:51","pseu-108":"07:13","spt-30":"00:30","spt-31":"00:36","spt-32":"00:42","spt-33":"00:49","spt-34":"00:56","spt-35":"01:02","spt-36":"01:14","spt-37":"01:32","spt-38":"01:43","spt-39":"01:51","spt-40":"02:02","spt-41":"02:09","spt-42":"02:15","spt-43":"02:34","spt-44":"02:42","spt-45":"02:48","spt-46":"02:56","spt-47":"03:00","spt-48":"03:03","spt-49":"03:10","spt-50":"03:18","spt-51":"03:45","spt-52":"03:52","spt-53":"03:59","spt-54":"04:06","spt-55":"04:12","spt-56":"04:21","spt-57":"04:29","spt-58":"04:49","spt-59":"04:57","spt-60":"05:06","spt-61":"05:11","spt-62":"05:19","spt-63":"05:30","spt-64":"05:49","spt-65":"06:57"};
+const BREAK_AFTER = {"pseu-8":10,"pseu-18":10,"pseu-28":20,"pseu-34":10,"pseu-42":10,"pseu-57":10,"pseu-69":10,"pseu-78":20,"pseu-86":10,"pseu-96":10,"spt-2":10,"spt-7":10,"spt-13":20,"spt-18":10,"spt-23":10,"pseu-106":10,"spt-36":10,"spt-42":10,"spt-50":20,"spt-57":10,"spt-63":10,"spt-64":20};
+
 
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
 function calendarDateForIndex(i){ return new Date(YEAR, MONTH, START_DAY+i, 12, 0, 0); }
@@ -527,22 +547,19 @@ function daysUntilIndex(i){ const t=startOfToday(); const e=new Date(YEAR,MONTH,
 function subjectCode(subj){ return ({pseu:'PSEU',spt:'SPT'})[subj] || subj.toUpperCase(); }
 function examClock(subj){ return ({pseu:'09:00',spt:'09:00'})[subj] || ''; }
 
+// Da li je carryover za predmet dozvoljen na dan d (ispit tog dana je u 09:00, pa sesija pre ispita važi)
+function carryAllowed(subj, d){ return SUBJECTS[subj].examDay >= d; }
+
 /* =========================================================================
    STANJE (localStorage)
    ========================================================================= */
 let state = {
-  progress: {},          // id -> {done, completedAt, dayIndex}
-  examAnswers: {},        // dayIndex -> 'yes'/'no'
-  dayPlan: {},             // dayIndex -> {type, workFrom, workTo, extra:{...}, walker}
-  currentDayIndex: null,
-  todayFinalized: false,
-  carryover: {pseu:[],spt:[]},
-  carryoverSnapshots: {},  // dayIndex(dana koji je zaključen) -> carryover PRE tog finalize-a (za "vrati nazad")
-  timing: {},              // id -> {start: iso|null, end: iso|null} — stvarno vreme rada na pitanju
-  __fixedScheduleMigrationV3: false
+  progress: {}, examAnswers: {}, dayPlan: {}, currentDayIndex: null,
+  todayFinalized: false, carryover: {pseu:[],spt:[]}, carryoverSnapshots: {},
+  timing: {}, __fixedScheduleMigrationV3: false
 };
 let openDays = new Set();
-let openTimerEdits = new Set(); // id-jevi pitanja kod kojih je otvoren ručni unos vremena
+let openTimerEdits = new Set();
 let storageOk = true;
 
 function verifyStorageWorks(){
@@ -586,18 +603,12 @@ function showStorageWarning(show){
   document.getElementById('storageWarning').classList.toggle('show', !!show);
 }
 
-/* =========================================================================
-   JEDNOKRATNA MIGRACIJA — novi plan kreće 23. septembra (idx 0)
-   ========================================================================= */
 function runMigrationIfNeeded(){
   if(state.__fixedScheduleMigrationV3) return;
   state.currentDayIndex = 0;
   state.todayFinalized = false;
-  delete state.pendingCarryover;
-  delete state.todayCache;
   if(!state.carryover) state.carryover = {};
   SUBJECT_KEYS.forEach(s=>{ if(!Array.isArray(state.carryover[s])) state.carryover[s] = []; });
-
   state.__fixedScheduleMigrationV3 = true;
   saveState();
 }
@@ -610,12 +621,9 @@ function activeDayIndex(){
 /* =========================================================================
    STAVKE PO DANU
    ========================================================================= */
-
-// "Goli" plan za dan d (FIXED_SCHEDULE), BEZ carryover-a — spljoštava sve sesije dana.
 function baseItemsForDay(d){
   const out = {};
-  const sessions = FIXED_SCHEDULE[d] || [];
-  sessions.forEach(sess=>{
+  (FIXED_SCHEDULE[d] || []).forEach(sess=>{
     const items = sess.items || {};
     Object.keys(items).forEach(s=>{
       const ids = (items[s] || []).filter(Boolean);
@@ -626,23 +634,17 @@ function baseItemsForDay(d){
   return out;
 }
 
-// Stavke za AKTIVNI dan — uključuje carryover (ne posle ispita tog predmeta).
-// Carryover ide ISPRED redovnih stavki tog dana.
 function itemsForActiveDay(d){
   const out = {};
   const base = baseItemsForDay(d);
-  const locked = LOCKED_DAYS[d];
   Object.keys(SUBJECTS).forEach(s=>{
-    const examOver = SUBJECTS[s].examDay <= d;
-    const co = (examOver || (locked && locked !== s)) ? [] : (state.carryover[s] || []);
-    const baseIds = base[s] || [];
-    const merged = co.concat(baseIds);
+    const co = carryAllowed(s, d) ? (state.carryover[s] || []) : [];
+    const merged = co.concat(base[s] || []);
     if(merged.length) out[s] = merged;
   });
   return out;
 }
 
-// Šta je STVARNO završeno baš tog (prošlog) dana — na osnovu progress[id].dayIndex
 function itemsForDayHistory(d){
   const out = {};
   Object.keys(SUBJECTS).forEach(subj=>{
@@ -656,19 +658,18 @@ function itemsForDayHistory(d){
 }
 
 /* =========================================================================
-   AKCIJE: zaključi dan / vrati nazad / promeni aktivni dan
+   AKCIJE
    ========================================================================= */
 function finalizeDay(){
   const d = activeDayIndex();
   const items = itemsForActiveDay(d);
-
   state.carryoverSnapshots[d] = JSON.parse(JSON.stringify(state.carryover));
-
-  Object.keys(items).forEach(s=>{
-    const stillUndone = items[s].filter(id => !(state.progress[id] && state.progress[id].done));
-    state.carryover[s] = (SUBJECTS[s].examDay <= d + 1) ? [] : stillUndone;
+  Object.keys(SUBJECTS).forEach(s=>{
+    const list = items[s] || [];
+    const stillUndone = list.filter(id => !(state.progress[id] && state.progress[id].done));
+    // ispit tog predmeta je već bio (danas ili ranije) → ništa se ne prenosi
+    state.carryover[s] = (SUBJECTS[s].examDay <= d) ? [] : stillUndone;
   });
-
   if(d < DAY_COUNT - 1){
     state.currentDayIndex = d + 1;
     state.todayFinalized = false;
@@ -706,72 +707,22 @@ function setActiveDay(idx){
 }
 
 /* =========================================================================
-   VREME UČENJA — predlog KADA se uči već određeno gradivo tog dana.
-   Nikada ne menja broj/opseg pitanja niti datume.
+   VREME UČENJA — prikaz/predlog
    ========================================================================= */
 const DEFAULT_WORK_FROM = '13:30';
 const DEFAULT_WORK_TO = '23:30';
+const DEFAULT_WORK_BY_DAY = { 1:{from:'11:00', to:'00:00'} }; // 25.9: posle ispita posao do ponoći
 const WAKE_TIME = '08:00';
 const FREE_WAKE = '12:00';
-const FREE_WAKE_DAY0 = '01:00'; // 23. septembar — učenje kreće odmah u 01:00, ne standardnih 12:00
+const FREE_WAKE_DAY0 = '02:00';
 const FREE_SLEEP = '23:00';
 const POST_WORK_GAP_MIN = 15;
 const OPEN_END_SENTINEL = 100000;
 const WALKER_PRE_NEXT_GAP_HOURS = 4;
 const MIN_VIABLE_WINDOW_MIN = 60;
-const EXAM_BUFFER_MIN = 180; // pretpostavka: ispit + put traju ~3h od početka
+const EXAM_BUFFER_MIN = 180;
 const DIFFICULTY_RANK = {pseu:1, spt:4};
-const AVG_WORDS_PER_TOPIC = {pseu:430, spt:561};
-
-/* =========================================================================
-   TAJMER PO PITANJU — budžet vremena za svako pitanje unutar njegove sesije,
-   izračunat iz dužine sesije (FIXED_SCHEDULE label) i "težine" predmeta
-   (AVG_WORDS_PER_TOPIC). Pauza od 5 min se oduzima između svaka dva pitanja
-   u istoj sesiji pre podele preostalog vremena na pojedinačna pitanja.
-   ========================================================================= */
-const BREAK_MIN = 5;
-const BREAK_EVERY_N = 5; // pauza posle svakog 5. pitanja u sesiji (ne posle svakog pojedinačnog — inače bi pauze pojele većinu vremena kod gustih sesija)
-function numBreaksForSession(n){ return Math.max(0, Math.ceil(n / BREAK_EVERY_N) - 1); }
-
-// Parsira "01:00–06:00" ili "23:00–07:00 (sutra, 25.9)" -> {startMin, endMin, totalMin}
-function parseTimeRange(label){
-  if(!label) return null;
-  const m = label.match(/(\d{1,2}):(\d{2})\s*[–-]\s*(\d{1,2}):(\d{2})/);
-  if(!m) return null;
-  const startMin = Number(m[1])*60 + Number(m[2]);
-  let endMin = Number(m[3])*60 + Number(m[4]);
-  if(endMin <= startMin) endMin += 1440; // sesija prelazi preko ponoći
-  return {startMin, endMin, totalMin: endMin - startMin};
-}
-
-// ITEM_BUDGET: id -> budžet u minutima za to pitanje (na osnovu sesije u kojoj se nalazi)
-const ITEM_BUDGET = {};
-Object.keys(FIXED_SCHEDULE).forEach(dayKey=>{
-  (FIXED_SCHEDULE[dayKey] || []).forEach(sess=>{
-    const entries = [];
-    Object.keys(sess.items || {}).forEach(subj=>{
-      (sess.items[subj] || []).forEach(id=>{ if(id) entries.push({id, subj}); });
-    });
-    if(!entries.length) return;
-    const range = parseTimeRange(sess.label);
-    if(!range) return;
-    const breaksTotal = numBreaksForSession(entries.length) * BREAK_MIN;
-    const availableMin = Math.max(range.totalMin - breaksTotal, entries.length); // bar 1 min po pitanju
-    const weights = entries.map(x => AVG_WORDS_PER_TOPIC[x.subj] || 500);
-    const totalWeight = weights.reduce((a,b)=>a+b, 0) || entries.length;
-    let assigned = 0;
-    entries.forEach((x, idx)=>{
-      let m;
-      if(idx === entries.length - 1){
-        m = availableMin - assigned; // ostatak ide na poslednje pitanje, da se izbegne gubitak zaokruživanjem
-      } else {
-        m = Math.max(1, Math.round(availableMin * (weights[idx] / totalWeight)));
-        assigned += m;
-      }
-      ITEM_BUDGET[x.id] = m;
-    });
-  });
-});
+const AVG_WORDS_PER_TOPIC = {pseu:470, spt:1023};
 
 function fmtMin(min){ return Math.round(min) + ' min'; }
 function fmtDelta(min){
@@ -781,13 +732,11 @@ function fmtDelta(min){
 function nowISO(){ return new Date().toISOString(); }
 function minutesBetween(isoA, isoB){ return (new Date(isoB) - new Date(isoA)) / 60000; }
 
-// Za ručni unos vremena: ISO -> "HH:MM" za prikaz u <input type="time">
 function timeStrFromISO(iso){
   if(!iso) return '';
   const d = new Date(iso);
   return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
 }
-// "HH:MM" (uneto ručno) + referentni datum (aktivni dan) -> puni ISO timestamp
 function isoFromTimeStr(hhmm, refDate){
   if(!hhmm) return null;
   const [h,m] = hhmm.split(':').map(Number);
@@ -795,7 +744,6 @@ function isoFromTimeStr(hhmm, refDate){
   const d = new Date(refDate.getFullYear(), refDate.getMonth(), refDate.getDate(), h, m, 0, 0);
   return d.toISOString();
 }
-// Upiši ručno start ili end za pitanje; ako kraj ispadne <= početka, pretpostavi da je prešlo u ponoć
 function handleTimerFieldChange(id, field, value){
   if(!state.timing) state.timing = {};
   if(!state.timing[id]) state.timing[id] = {start:null, end:null};
@@ -808,7 +756,6 @@ function handleTimerFieldChange(id, field, value){
   saveState();
 }
 
-// Ukupno kašnjenje/prednost na osnovu SVIH završenih i merenih pitanja (start+end postoje)
 function computeDelayStats(){
   let delta = 0, counted = 0;
   Object.keys(state.progress || {}).forEach(id=>{
@@ -826,161 +773,20 @@ function computeDelayStats(){
 
 function timeToMinutes(t){ const [h,m] = t.split(':').map(Number); return h*60+(m||0); }
 function minutesToTime(m){ const mm=((m%1440)+1440)%1440; return String(Math.floor(mm/60)).padStart(2,'0')+':'+String(mm%60).padStart(2,'0'); }
-function timeLabelWithDay(m){
-  if(m === OPEN_END_SENTINEL) return '...';
-  return m>=1440 ? (minutesToTime(m)+' (sutra)') : minutesToTime(m);
-}
-const DEFAULT_DAY_TYPE = {0:'slobodan', 1:'slobodan', 2:'radni', 3:'radni'}; // 23. i 24. neradni, 25. i 26. radni
+const DEFAULT_DAY_TYPE = {0:'slobodan', 1:'radni', 2:'slobodan'};
 function getDayPlan(d){
   const p = state.dayPlan && state.dayPlan[String(d)];
-  const base = {type:(DEFAULT_DAY_TYPE[d]||'radni'), workFrom: DEFAULT_WORK_FROM, workTo: DEFAULT_WORK_TO, extra:{enabled:false,from:'16:00',to:'17:00'}, walker:false};
+  const w = DEFAULT_WORK_BY_DAY[d] || {from:DEFAULT_WORK_FROM, to:DEFAULT_WORK_TO};
+  const base = {type:(DEFAULT_DAY_TYPE[d]||'radni'), workFrom: w.from, workTo: w.to, extra:{enabled:false,from:'16:00',to:'17:00'}, walker:false};
   if(p && p.type) return Object.assign({}, base, p, {extra: Object.assign({enabled:false,from:'16:00',to:'17:00'}, p.extra||{})});
   return base;
 }
-function getTodayObligationEndMin(p){
-  const candidates = [];
-  if(p.type !== 'slobodan' && p.workTo) candidates.push(timeToMinutes(p.workTo));
-  if(p.extra && p.extra.enabled && p.extra.to) candidates.push(timeToMinutes(p.extra.to));
-  if(!candidates.length) return null;
-  return Math.max(...candidates);
-}
-function getNextDayObligationStartMin(d){
-  if(d + 1 >= DAY_COUNT) return null;
-  const next = getDayPlan(d + 1);
-  const candidates = [];
-  if(next.type !== 'slobodan' && next.workFrom) candidates.push(timeToMinutes(next.workFrom));
-  if(next.extra && next.extra.enabled && next.extra.from) candidates.push(timeToMinutes(next.extra.from));
-  if(!candidates.length) return null;
-  return Math.min(...candidates);
-}
-function subtractBusy(winStart, winEnd, busyStart, busyEnd, gap){
-  gap = gap || 0;
-  if(winEnd<=winStart) return [];
-  if(busyEnd==null || busyStart==null || busyEnd<=busyStart || busyEnd<=winStart || busyStart>=winEnd) return [[winStart,winEnd]];
-  const segs = [];
-  if(busyStart > winStart) segs.push([winStart, Math.min(busyStart,winEnd)]);
-  if(busyEnd < winEnd) segs.push([Math.max(busyEnd+gap,winStart), winEnd]);
-  return segs.filter(([s,e])=>e>s);
-}
-function windowSegments(winStart, winEnd, extra){
-  let segs = [[winStart,winEnd]];
-  if(extra && extra.enabled && extra.from && extra.to){
-    const exStart = timeToMinutes(extra.from), exEnd = timeToMinutes(extra.to);
-    segs = segs.flatMap(([s,e])=>subtractBusy(s,e,exStart,exEnd,POST_WORK_GAP_MIN));
-  }
-  return segs.filter(([s,e])=>e>s);
-}
-function segsTotalMin(segs){ return segs.reduce((a,[s,e])=>a+(e-s),0); }
-function segsLabel(segs){ return segs.map(([s,e])=>`${minutesToTime(s)}–${minutesToTime(e)}`).join(' i '); }
-function subjectListForSplit(itemsBySubj){
-  const list = [];
-  Object.keys(SUBJECTS).forEach(s=>{
-    if(itemsBySubj[s] && itemsBySubj[s].length){
-      list.push({subj:s, count:itemsBySubj[s].length, weight: itemsBySubj[s].length * (AVG_WORDS_PER_TOPIC[s]||500)});
-    }
-  });
-  list.sort((a,b)=> (DIFFICULTY_RANK[a.subj]||99) - (DIFFICULTY_RANK[b.subj]||99));
-  return list;
-}
-function splitSubjectsByWindows(list, morningMin, eveningMin){
-  if(!list.length) return {morning:[], evening:[]};
-  if(morningMin <= 0) return {morning:[], evening:list.map(x=>x.subj)};
-  if(eveningMin <= 0) return {morning:list.map(x=>x.subj), evening:[]};
-  const total = list.reduce((a,b)=>a+b.weight,0);
-  const morningTarget = total * (morningMin/(morningMin+eveningMin));
-  let acc=0; const morning=[]; const evening=[];
-  list.forEach(item=>{
-    if(acc < morningTarget){ morning.push(item.subj); acc += item.weight; }
-    else evening.push(item.subj);
-  });
-  if(!morning.length){ morning.push(evening.shift()); }
-  if(!evening.length && morning.length>1){ evening.push(morning.pop()); }
-  return {morning, evening};
-}
-function walkerSuggestionText(d, p, itemsBySubj){
-  const startObligationEnd = getTodayObligationEndMin(p);
-  if(startObligationEnd == null){
-    return '🌙 Waklert mode je uključen, ali danas nema definisane obaveze (posao ni dodatna obaveza) — nema od čega da se računa "posle obaveze".';
-  }
-  const startMin = startObligationEnd + POST_WORK_GAP_MIN;
-  const nextStart = getNextDayObligationStartMin(d);
-  const fullList = subjectListForSplit(itemsBySubj || {});
-  const suf = fullList.length ? ` (${fullList.map(x=>subjectCode(x.subj)).join(', ')})` : '';
-  if(nextStart == null){
-    return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–...${suf}`;
-  }
-  const endMin = 1440 + nextStart - (WALKER_PRE_NEXT_GAP_HOURS * 60);
-  if(endMin <= startMin){
-    return '🌙 Waklert mode: sledeća obaveza je preblizu — nema realnog prozora za učenje.';
-  }
-  return `Predlog (🌙 Waklert mode): učenje ${timeLabelWithDay(startMin)}–${timeLabelWithDay(endMin)}${suf}`;
-}
 const MANUAL_SUGGESTIONS = {
-  0: 'Predlog: učenje 01:00–06:00 i 15:00–23:00 (PSEU, SPT)',
-  1: 'Predlog: učenje 10:00–16:00 i 23:00–07:00 (sutra, 25.9) (PSEU, SPT)',
-  2: 'Predlog: ispit u 09:00 — posle toga posao, bez dodatnog učenja tog dana',
-  3: 'Predlog: učenje 00:30–07:00 (SPT), zatim ispit u 09:00'
+  0: 'Učenje 02:00–07:30 (PSEU 1–48) · spavanje 07:30–12:30 · 13:00–18:45 (PSEU 49–105) · večera · 19:15–00:45 (SPT 1–30) · spavanje 00:45–05:45',
+  1: 'Ponavljanje PSEU 05:45–07:45 → ispit 09:00 → posao do 00:00',
+  2: 'Učenje 00:30–07:45 (SPT 31–64 + ponavljanje svih 64) → ispit 09:00'
 };
-function studySuggestionText(d, itemsBySubj){
-  if(MANUAL_SUGGESTIONS[d]) return MANUAL_SUGGESTIONS[d];
-  const p = getDayPlan(d);
-  const fullList = subjectListForSplit(itemsBySubj || {});
-  const codes = arr => arr.map(subjectCode).join(', ');
-  if(p.walker) return walkerSuggestionText(d, p, itemsBySubj);
-  if(EXAMS[d]){
-    // Dan ispita: gradivo tog predmeta = PRE ispita; ostalo = POSLE ispita
-    const examSubj = EXAMS[d].subj;
-    const subs = fullList.map(x=>x.subj);
-    const pre = subs.filter(s=>s===examSubj);
-    const post = subs.filter(s=>s!==examSubj);
-    const parts = [];
-    if(pre.length) parts.push(`pre ispita (do ${examClock(examSubj)}) — ${codes(pre)}`);
-    if(post.length){
-      const examEnd = timeToMinutes(examClock(examSubj)) + EXAM_BUFFER_MIN;
-      let segs = [];
-      if(p.type === 'slobodan'){
-        const wakeTime = (d===0) ? FREE_WAKE_DAY0 : FREE_WAKE;
-        segs = windowSegments(Math.max(examEnd, timeToMinutes(wakeTime)), timeToMinutes(FREE_SLEEP), p.extra);
-      } else {
-        const workFromMin = timeToMinutes(p.workFrom || DEFAULT_WORK_FROM);
-        const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
-        const sleepMin = 24*60 + 30;
-        if(workFromMin - examEnd >= MIN_VIABLE_WINDOW_MIN) segs = segs.concat(windowSegments(examEnd, workFromMin, p.extra));
-        const eveStart = workToMin + POST_WORK_GAP_MIN;
-        if(eveStart < sleepMin) segs = segs.concat(windowSegments(eveStart, sleepMin, p.extra));
-      }
-      segs = segs.filter(([s,e])=>(e-s) >= MIN_VIABLE_WINDOW_MIN);
-      parts.push(segs.length ? `posle ispita ${segsLabel(segs)} (${codes(post)})` : `posle ispita — ${codes(post)} (nema realnog prozora)`);
-    }
-    if(!parts.length) parts.push('nema novih tema raspoređenih.');
-    return 'Predlog: ' + parts.join(' · ');
-  }
-  const list = fullList;
-  if(p.type === 'slobodan'){
-    const wakeTime = (d===0) ? FREE_WAKE_DAY0 : FREE_WAKE;
-    const segs = windowSegments(timeToMinutes(wakeTime), timeToMinutes(FREE_SLEEP), p.extra);
-    const suf = fullList.length ? ` (${codes(fullList.map(x=>x.subj))})` : '';
-    if(!segs.length) return 'Predlog: danas realno nema prozora za učenje (dodatne obaveze pojele ceo dan).';
-    return `Predlog: učenje ${segsLabel(segs)}${suf} (+ pauze, ručak, obaveze)`;
-  }
-  const wakeMin = timeToMinutes(WAKE_TIME);
-  const workFromMin = timeToMinutes(p.workFrom || DEFAULT_WORK_FROM);
-  const workToMin = timeToMinutes(p.workTo || DEFAULT_WORK_TO);
-  const sleepMin = 24*60 + 30;
-  const morningSegs = workFromMin > wakeMin ? windowSegments(wakeMin, workFromMin, p.extra) : [];
-  const eveningStartMin = workToMin + POST_WORK_GAP_MIN;
-  const eveningSegs = eveningStartMin < sleepMin ? windowSegments(eveningStartMin, sleepMin, p.extra) : [];
-  const morningMinRaw = segsTotalMin(morningSegs);
-  const eveningMinRaw = segsTotalMin(eveningSegs);
-  const morningViable = morningMinRaw >= MIN_VIABLE_WINDOW_MIN;
-  const eveningViable = eveningMinRaw >= MIN_VIABLE_WINDOW_MIN;
-  const {morning, evening} = splitSubjectsByWindows(list, morningViable?morningMinRaw:0, eveningViable?eveningMinRaw:0);
-  const parts = [];
-  if(morningViable) parts.push(`jutro ${segsLabel(morningSegs)}${morning.length?` (${codes(morning)})`:''}`);
-  if(eveningViable) parts.push(`veče ${segsLabel(eveningSegs)}${evening.length?` (${codes(evening)})`:''}`);
-  if(!parts.length) return 'Predlog: danas realno nema prozora za učenje — samo brzi pregled ako stigneš.';
-  return 'Predlog: učenje — ' + parts.join(' i ');
-}
+function studySuggestionText(d){ return MANUAL_SUGGESTIONS[d] || ''; }
 
 /* =========================================================================
    RENDER
@@ -991,7 +797,7 @@ function renderMissionStrip(){
   const ordered=SUBJECT_KEYS;
   const next=ordered.find(s=>daysUntilIndex(SUBJECTS[s].examDay)>=0) || ordered[ordered.length-1];
   const nextDays=daysUntilIndex(SUBJECTS[next].examDay);
-  const nextText=nextDays===0 ? 'DANAS' : (nextDays===1 ? 'SUTRA' : `ZA ${nextDays} DANA`);
+  const nextText=nextDays===0 ? 'DANAS' : (nextDays===1 ? 'SUTRA' : (nextDays<0 ? 'PROŠLO' : `ZA ${nextDays} DANA`));
   const stops=ordered.map(s=>{
     const d=daysUntilIndex(SUBJECTS[s].examDay);
     const cls=d<0?'past':(s===next?'next':'');
@@ -1023,7 +829,6 @@ function renderTodayCard(activeIdx){
   const dayOptions = Array.from({length:DAY_COUNT}, (_,i)=>`<option value="${i}" ${i===activeIdx?'selected':''}>${dayLabel(i)}</option>`).join('');
   const daySelectBlock = `<div class="day-select-row">Aktivni dan: <select data-action="set-day">${dayOptions}</select></div>`;
   const pct=totalItems?Math.round(doneItems/totalItems*100):0;
-  const lockedNote = LOCKED_DAYS[activeIdx] ? `<div class="today-stats" style="color:var(--red);font-weight:700;">🔒 Dan rezervisan isključivo za ${subjectCode(LOCKED_DAYS[activeIdx])} reviziju</div>` : '';
   const dd = computeDelayStats();
   let delayHtml = '';
   if(dd.counted){
@@ -1033,7 +838,7 @@ function renderTodayCard(activeIdx){
   } else {
     delayHtml = `<div class="today-stats" style="opacity:.7">⏱️ Klikni ▶ pored pitanja da bi se merilo vreme i zaostatak.</div>`;
   }
-  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${delayHtml}${lockedNote}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
+  el.innerHTML=`<div class="today-card"><div class="today-top"><div class="today-date">${dayLabel(activeIdx)}</div></div><div class="today-stats"><div>Dnevna ruta · <b>${doneItems}/${totalItems}</b> završeno · ${pct}%</div></div>${delayHtml}${finalizeBlock}${backBlock}${daySelectBlock}</div>`;
 }
 
 function renderOverall(activeIdx){
@@ -1059,19 +864,25 @@ function renderOverall(activeIdx){
   document.getElementById('overallBar').style.width = overallPct+'%';
 }
 
+function breakLine(id){
+  const len = BREAK_AFTER[id];
+  const b = document.createElement('div');
+  b.className = 'break-line' + (len >= 20 ? ' long' : '');
+  const endMin = timeToMinutes(ITEM_START[id]) + ITEM_BUDGET[id];
+  b.textContent = `${len >= 20 ? '🍽' : '☕'} ${len} min pauza · ${minutesToTime(endMin)}–${minutesToTime(endMin+len)}`;
+  return b;
+}
+
 function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
   Object.keys(SUBJECTS).forEach(subj=>{
     const ids = itemsBySubj[subj];
     if(!ids || !ids.length) return;
     const s = SUBJECTS[subj];
-    const visibleIds = ids;
-    const doneCount = visibleIds.filter(id => state.progress[id] && state.progress[id].done).length;
+    const doneCount = ids.filter(id => state.progress[id] && state.progress[id].done).length;
     const grp = document.createElement('div');
     grp.className = 'group sig-'+subj;
-    grp.innerHTML = `<div class="group-title">${subjectIcon(subj)}<span class="group-label">${s.label}</span> <span class="group-count">(${doneCount}/${visibleIds.length})</span></div>`;
+    grp.innerHTML = `<div class="group-title">${subjectIcon(subj)}<span class="group-label">${s.label}</span> <span class="group-count">(${doneCount}/${ids.length})</span></div>`;
     const locked = mode !== 'today';
-    const numberedSubjects = ['pseu','spt'];
-    const hasAreas = visibleIds.some(id => itemLookup(id).area);
 
     const renderLabel = (id) => {
       const it = itemLookup(id);
@@ -1080,17 +891,18 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
       const timing = (state.timing && state.timing[id]) || {};
       const lab = document.createElement('label');
       lab.className = 'item' + (it.review ? ' review' : '') + (locked ? ' locked' : '');
-      const numPrefix = (!it.review && numberedSubjects.includes(subj)) ? `${Number(id.split('-').pop()) + 1}. ` : '';
+      const numPrefix = !it.review ? `${Number(id.split('-').pop()) + 1}. ` : '';
+      const clock = ITEM_START[id] ? `<span class="plan-clock">${ITEM_START[id]}</span>` : '';
 
       let timerHtml = '';
-      if(!locked && budget != null){
-        if(openTimerEdits.has(id)){
-          const startVal = timeStrFromISO(timing.start);
-          const endVal = timeStrFromISO(timing.end);
+      if(budget != null){
+        if(locked){
+          timerHtml = `<span class="timer-badge timer-budget">⏱ ${fmtMin(budget)}</span>`;
+        } else if(openTimerEdits.has(id)){
           timerHtml = `<span class="timer-edit">
-            <input type="time" class="timer-time-input" data-timer-field="start" data-item-id="${id}" value="${startVal}"/>
+            <input type="time" class="timer-time-input" data-timer-field="start" data-item-id="${id}" value="${timeStrFromISO(timing.start)}"/>
             <span class="timer-edit-sep">–</span>
-            <input type="time" class="timer-time-input" data-timer-field="end" data-item-id="${id}" value="${endVal}"/>
+            <input type="time" class="timer-time-input" data-timer-field="end" data-item-id="${id}" value="${timeStrFromISO(timing.end)}"/>
             <button type="button" class="timer-edit-close" data-timer-action="close-edit" data-item-id="${id}" title="Zatvori unos">✕</button>
           </span>`;
         } else if(done && timing.start && timing.end){
@@ -1105,47 +917,29 @@ function renderGroupsForDay(container, dayIndex, itemsBySubj, mode){
         }
       }
 
-      lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/><span class="txt">${it.review ? '🔁 ' : numPrefix}${it.text}</span>${timerHtml}`;
+      lab.innerHTML = `<input type="checkbox" data-item-id="${id}" ${done?'checked':''} ${locked?'disabled':''}/>${clock}<span class="txt">${it.review ? '🔁 ' : numPrefix}${it.text}</span>${timerHtml}`;
       return lab;
     };
 
-    const breakDivider = () => {
-      const b = document.createElement('div');
-      b.style.cssText = 'font-size:.66rem;font-weight:700;color:var(--muted);text-align:center;padding:3px 0;opacity:.75;letter-spacing:.04em;';
-      b.textContent = `☕ ${BREAK_MIN} min pauza`;
-      return b;
-    };
-    let sinceBreakCount = 0;
-    const appendWithBreaks = (parent, id, isLast) => {
+    const appendItem = (parent, id) => {
       parent.appendChild(renderLabel(id));
-      sinceBreakCount++;
-      if(!locked && !isLast && sinceBreakCount >= BREAK_EVERY_N){
-        parent.appendChild(breakDivider());
-        sinceBreakCount = 0;
-      }
+      if(BREAK_AFTER[id] && mode !== 'history') parent.appendChild(breakLine(id));
     };
 
-    if(hasAreas){
-      const byArea = []; const areaIndex = {};
-      visibleIds.forEach(id=>{
-        const it = itemLookup(id);
-        const key = it.area || '';
-        if(!(key in areaIndex)){ areaIndex[key] = byArea.length; byArea.push({area:key, ids:[]}); }
-        byArea[areaIndex[key]].ids.push(id);
-      });
-      byArea.forEach(bucket=>{
-        const areaDone = bucket.ids.filter(id => state.progress[id] && state.progress[id].done).length;
-        const areaDiv = document.createElement('div');
-        areaDiv.className = 'area-group';
-        if(bucket.area){
-          areaDiv.innerHTML = `<div class="area-title">${bucket.area} <span class="area-count">(${areaDone}/${bucket.ids.length})</span></div>`;
-        }
-        bucket.ids.forEach((id, i)=> appendWithBreaks(areaDiv, id, i===bucket.ids.length-1 && bucket===byArea[byArea.length-1]));
-        grp.appendChild(areaDiv);
-      });
-    } else {
-      visibleIds.forEach((id, i)=> appendWithBreaks(grp, id, i===visibleIds.length-1));
-    }
+    const byArea = []; const areaIndex = {};
+    ids.forEach(id=>{
+      const key = itemLookup(id).area || '';
+      if(!(key in areaIndex)){ areaIndex[key] = byArea.length; byArea.push({area:key, ids:[]}); }
+      byArea[areaIndex[key]].ids.push(id);
+    });
+    byArea.forEach(bucket=>{
+      const areaDone = bucket.ids.filter(id => state.progress[id] && state.progress[id].done).length;
+      const areaDiv = document.createElement('div');
+      areaDiv.className = 'area-group';
+      if(bucket.area) areaDiv.innerHTML = `<div class="area-title">${bucket.area} <span class="area-count">(${areaDone}/${bucket.ids.length})</span></div>`;
+      bucket.ids.forEach(id=> appendItem(areaDiv, id));
+      grp.appendChild(areaDiv);
+    });
     container.appendChild(grp);
   });
 }
@@ -1156,16 +950,14 @@ function renderDaySessions(container, d, activeIdx){
 
   if(d === activeIdx){
     const carryItems = {};
-    const locked = LOCKED_DAYS[d];
     Object.keys(SUBJECTS).forEach(s=>{
-      const examOver = SUBJECTS[s].examDay <= d;
-      const co = (examOver || (locked && locked !== s)) ? [] : (state.carryover[s] || []);
+      const co = carryAllowed(s, d) ? (state.carryover[s] || []) : [];
       if(co.length) carryItems[s] = co.slice();
     });
     if(Object.keys(carryItems).length){
       const label = document.createElement('div');
       label.style.cssText = 'font-family:var(--serif);font-size:.85rem;font-weight:700;color:var(--red);margin:0 0 2px;';
-      label.textContent = '⏪ Preneseno iz prethodnog dana';
+      label.textContent = '⏪ Preneseno iz prethodnog dana (satnica je iz prvobitnog plana)';
       container.appendChild(label);
       renderGroupsForDay(container, d, carryItems, mode);
       any = true;
@@ -1178,11 +970,16 @@ function renderDaySessions(container, d, activeIdx){
     return any;
   }
 
-  const sessions = FIXED_SCHEDULE[d] || [];
-  sessions.forEach(sess=>{
+  (FIXED_SCHEDULE[d] || []).forEach(sess=>{
+    if(sess.note){
+      const n = document.createElement('div');
+      n.className = 'session-note';
+      n.textContent = sess.note;
+      container.appendChild(n);
+      return;
+    }
     const items = sess.items || {};
-    const hasItems = Object.values(items).some(arr => arr && arr.length);
-    if(!hasItems) return;
+    if(!Object.values(items).some(arr => arr && arr.length)) return;
     any = true;
     const sh = document.createElement('div');
     sh.style.cssText = 'font-family:var(--serif);font-size:.85rem;font-weight:700;color:var(--ink);margin:14px 0 2px;padding-bottom:3px;border-bottom:1px solid var(--soft);';
@@ -1203,19 +1000,16 @@ function renderDays(activeIdx){
 
     const header = document.createElement('div');
     header.className = 'day-header';
-    header.dataset.short = String(START_DAY+d).padStart(2,'0') + ' SEP';
 
     const exam = EXAMS[d];
-    let examFlagHtml = '';
-    let examSubjLabel = '';
+    let examFlagHtml = '', examSubjLabel = '';
     if(exam){
       examSubjLabel = SUBJECTS[exam.subj].label;
-      examFlagHtml = `<span class="exam-flag">🎓 ${exam.type.toUpperCase()} — ${examSubjLabel}</span>`;
+      examFlagHtml = `<span class="exam-flag">🎓 ${exam.type.toUpperCase()} 09:00 — ${examSubjLabel}</span>`;
     }
     let tagHtml = '';
     if(d < activeIdx) tagHtml = `<span class="day-tag past">prošlo</span>`;
     else if(d > activeIdx) tagHtml = `<span class="day-tag projected">projekcija</span>`;
-    if(LOCKED_DAYS[d]) tagHtml += `<span class="day-tag locked">SAMO ${subjectCode(LOCKED_DAYS[d])}</span>`;
 
     const itemsForDay = computeItemsForDisplay(d, activeIdx);
     let dayTotal=0, dayDone=0;
@@ -1228,7 +1022,7 @@ function renderDays(activeIdx){
 
     header.innerHTML = `
       <div class="day-title" data-short="${String(START_DAY+d).padStart(2,'0')} SEP">${dayLabel(d)}${examFlagHtml}${tagHtml}</div>
-      <div style="display:flex;align-items:center;">
+      <div style="display:flex;align-items:center;gap:8px;">
         <div class="day-progress">${dayTotal? `${dayDone}/${dayTotal}`:''}</div>
         <span class="chevron">▶</span>
       </div>
@@ -1258,24 +1052,18 @@ function renderDays(activeIdx){
         <label><input type="radio" name="daytype-${d}" data-plan-day="${d}" data-plan-field="type" value="radni" ${plan.type!=='slobodan'?'checked':''}/> Radni dan</label>
         <label><input type="radio" name="daytype-${d}" data-plan-day="${d}" data-plan-field="type" value="slobodan" ${plan.type==='slobodan'?'checked':''}/> Slobodan dan</label>
       </div>
-      ${plan.type!=='slobodan' ? `<div class="plan-times">Posao od <input type="time" data-plan-day="${d}" data-plan-field="workFrom" value="${plan.workFrom||DEFAULT_WORK_FROM}"/> do <input type="time" data-plan-day="${d}" data-plan-field="workTo" value="${plan.workTo||DEFAULT_WORK_TO}"/></div>` : ''}
-      <div class="plan-times">
-        <label><input type="checkbox" data-plan-day="${d}" data-plan-field="extraEnabled" ${plan.extra&&plan.extra.enabled?'checked':''}/> Dodatne obaveze</label>
-        ${(plan.extra&&plan.extra.enabled) ? ` od <input type="time" data-plan-day="${d}" data-plan-field="extraFrom" value="${plan.extra.from||'16:00'}"/> do <input type="time" data-plan-day="${d}" data-plan-field="extraTo" value="${plan.extra.to||'17:00'}"/>` : ''}
-        <label title="Bez noćnog sna: učenje počinje posle obaveze i traje do ${WALKER_PRE_NEXT_GAP_HOURS}h pre sledeće obaveze"><input type="checkbox" data-plan-day="${d}" data-plan-field="walker" ${plan.walker?'checked':''}/> 🌙 Waklert mode</label>
-      </div>
-      <div class="plan-suggestion">${studySuggestionText(d, itemsForDay)}</div>
+      ${plan.type!=='slobodan' ? `<div class="plan-times">Posao od <input type="time" data-plan-day="${d}" data-plan-field="workFrom" value="${plan.workFrom}"/> do <input type="time" data-plan-day="${d}" data-plan-field="workTo" value="${plan.workTo}"/></div>` : ''}
+      <div class="plan-suggestion">${studySuggestionText(d)}</div>
     `;
     body.appendChild(planEl);
 
     if(exam){
       const answer = state.examAnswers[d];
-      const verb = exam.type === 'kolokvijum' ? 'kolokvijum' : 'ispit';
       const ec = document.createElement('div');
       ec.className = 'examcheck-block';
       ec.innerHTML = `
-        <label class="item"><input type="checkbox" data-examcheck="${d}" data-examval="yes" ${answer==='yes'?'checked':''}/><span class="txt">Izašla sam na ${verb} — ${examSubjLabel}</span></label>
-        <label class="item"><input type="checkbox" data-examcheck="${d}" data-examval="no" ${answer==='no'?'checked':''}/><span class="txt">Nisam izašla na ${verb} — ${examSubjLabel}</span></label>
+        <label class="item"><input type="checkbox" data-examcheck="${d}" data-examval="yes" ${answer==='yes'?'checked':''}/><span class="txt">Izašla sam na ispit — ${examSubjLabel}</span></label>
+        <label class="item"><input type="checkbox" data-examcheck="${d}" data-examval="no" ${answer==='no'?'checked':''}/><span class="txt">Nisam izašla na ispit — ${examSubjLabel}</span></label>
       `;
       body.appendChild(ec);
     }
@@ -1286,7 +1074,7 @@ function renderDays(activeIdx){
     if(body.children.length === beforeCount){
       const n = document.createElement('div');
       n.className = 'empty-note';
-      n.textContent = mode==='history' ? 'Ništa evidentirano ovog dana.' : 'Za sada ništa raspoređeno (ili je sve gradivo do ovog dana već završeno).';
+      n.textContent = mode==='history' ? 'Ništa evidentirano ovog dana.' : 'Za sada ništa raspoređeno.';
       body.appendChild(n);
     }
 
@@ -1303,6 +1091,7 @@ function render(){
   renderTodayCard(activeIdx);
   renderOverall(activeIdx);
   renderDays(activeIdx);
+  tickLiveTimers();
 }
 
 function trackOpenState(){
@@ -1324,14 +1113,8 @@ function attachDayListeners(){
       const d = e.target.dataset.planDay;
       const field = e.target.dataset.planField;
       if(!state.dayPlan) state.dayPlan = {};
-      const prev = state.dayPlan[d] || {};
-      const cur = Object.assign({type:'radni', workFrom:DEFAULT_WORK_FROM, workTo:DEFAULT_WORK_TO, walker:false}, prev);
-      cur.extra = Object.assign({enabled:false, from:'16:00', to:'17:00'}, prev.extra||{});
-      if(field === 'extraEnabled') cur.extra.enabled = e.target.checked;
-      else if(field === 'extraFrom') cur.extra.from = e.target.value;
-      else if(field === 'extraTo') cur.extra.to = e.target.value;
-      else if(field === 'walker') cur.walker = e.target.checked;
-      else cur[field] = e.target.value;
+      const cur = Object.assign({}, getDayPlan(Number(d)), state.dayPlan[d] || {});
+      cur[field] = e.target.value;
       state.dayPlan[d] = cur;
       saveState();
       render();
@@ -1345,7 +1128,6 @@ function attachDayListeners(){
       if(!state.timing) state.timing = {};
       if(e.target.checked){
         state.progress[id] = {done:true, completedAt: new Date().toISOString(), dayIndex: activeDayIndex()};
-        // ako je tajmer bio pokrenut a nije zaustavljen, zabeleži kraj sada
         if(state.timing[id] && state.timing[id].start && !state.timing[id].end){
           state.timing[id].end = nowISO();
         }
@@ -1360,53 +1142,40 @@ function attachDayListeners(){
   });
   document.querySelectorAll('[data-timer-action="start"]').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation(); e.preventDefault();
       const id = btn.dataset.itemId;
       if(!state.timing) state.timing = {};
       state.timing[id] = {start: nowISO(), end: null};
-      saveState();
-      render();
-      restoreOpenState();
+      saveState(); render(); restoreOpenState();
     });
   });
   document.querySelectorAll('[data-timer-action="edit"]').forEach(el=>{
     el.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation(); e.preventDefault();
       openTimerEdits.add(el.dataset.itemId);
-      render();
-      restoreOpenState();
+      render(); restoreOpenState();
     });
   });
   document.querySelectorAll('[data-timer-action="close-edit"]').forEach(btn=>{
     btn.addEventListener('click', (e)=>{
-      e.stopPropagation();
-      e.preventDefault();
+      e.stopPropagation(); e.preventDefault();
       openTimerEdits.delete(btn.dataset.itemId);
-      render();
-      restoreOpenState();
+      render(); restoreOpenState();
     });
   });
   document.querySelectorAll('.timer-time-input').forEach(inp=>{
     inp.addEventListener('click', e=>e.stopPropagation());
     inp.addEventListener('change', (e)=>{
-      const id = e.target.dataset.itemId;
-      const field = e.target.dataset.timerField;
-      handleTimerFieldChange(id, field, e.target.value);
-      render();
-      restoreOpenState();
+      handleTimerFieldChange(e.target.dataset.itemId, e.target.dataset.timerField, e.target.value);
+      render(); restoreOpenState();
     });
   });
   document.querySelectorAll('input[data-examcheck]').forEach(cb=>{
     cb.addEventListener('click', e=>e.stopPropagation());
     cb.addEventListener('change', (e)=>{
       const d = e.target.dataset.examcheck;
-      const val = e.target.dataset.examval;
-      state.examAnswers[d] = e.target.checked ? val : null;
-      saveState();
-      render();
-      restoreOpenState();
+      state.examAnswers[d] = e.target.checked ? e.target.dataset.examval : null;
+      saveState(); render(); restoreOpenState();
     });
   });
 }
@@ -1443,7 +1212,6 @@ function tickLiveTimers(){
   runMigrationIfNeeded();
   openDays.add(String(activeDayIndex()));
   render();
-  tickLiveTimers();
   setInterval(tickLiveTimers, 15000);
 })();
 </script>
