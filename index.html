@@ -219,7 +219,7 @@ label.item span.txt{flex:1 1 auto;min-width:0}
 
   <div id="days"><div class="loading">Učitavanje...</div></div>
 
-  <div class="footer-stamp">FIXED SCHEDULE · v5 · 24–26. sept</div>
+  <div class="footer-stamp">FIXED SCHEDULE · v6 · 24–26. sept · nova PSEU skripta</div>
 </div>
 
 <script>
@@ -373,7 +373,9 @@ const POOLS = {
     {review:true, reviewRound:1, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 1–7 (pitanja 1–21) — definicije, faze, ugovori i godine'},
     {review:true, reviewRound:2, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 8–16 (pitanja 22–52) — sastav, nadležnosti i odlučivanje institucija'},
     {review:true, reviewRound:3, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 17–18 (pitanja 53–76) — komunitarni i međuvladin metod'},
-    {review:true, reviewRound:4, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 19–24 (pitanja 77–105) — OMK, kriza, javnost, stranke, demokratija'}
+    {review:true, reviewRound:4, area: 'Ponavljanje pred ispit', text: 'Ponavljanje: oblasti 19–24 (pitanja 77–105) — OMK, kriza, javnost, stranke, demokratija'},
+    {review:true, reviewRound:5, area: 'Ponavljanje posle sna', text: 'Ponavljanje 1–48 (jutarnja sesija): ključni pojmovi, godine, sastavi institucija'},
+    {review:true, reviewRound:6, area: 'Ponavljanje na kraju sesije', text: 'Ponavljanje 49–105 (popodnevna sesija): modeli upravljanja, kriza, javnost, demokratija'}
   ],
   spt: [
     'Pozitivna i negativna sloboda',
@@ -484,6 +486,9 @@ function itemLookup(id){
 function reviewIdsForSubject(subj){
   return ITEM_POOL[subj].filter(it=>it.review).map(it=>it.id);
 }
+function reviewIdsForRounds(subj, rounds){
+  return rounds.map(r=>{ const it = ITEM_POOL[subj].find(x=>x.review && x.reviewRound===r); return it ? it.id : null; }).filter(Boolean);
+}
 
 function rangeIds(subj, startOneBased, endOneBasedInclusive){
   const ids = [];
@@ -494,10 +499,12 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 /* =========================================================================
    FIXED_SCHEDULE — sesije po danu. Rezovi su na granicama tematskih celina.
 
+   PSEU po NOVOJ skripti (PSEU - nova skripta.pdf, ~39.700 reči, ~20% kraće);
+   ušteđeno vreme je prebačeno u ponavljanje.
    24. (slobodan)
-     02:00–07:30  PSEU 1–48   (oblasti 1–14, zaključno sa ECB)
-     07:30–12:30  spavanje
-     13:00–18:45  PSEU 49–105 (oblasti 15–24)
+     02:00–06:50  PSEU 1–48   (oblasti 1–14, zaključno sa ECB)
+     06:50–11:50  spavanje
+     12:20–18:45  PSEU: ponavljanje 1–48 → 49–105 (oblasti 15–24) → ponavljanje 49–105
      18:45–19:15  večera
      19:15–00:45  SPT 1–30    (Sloboda → Komunitarizam/multikulturalizam)
      00:45–05:45  spavanje
@@ -506,8 +513,8 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
 
    Vreme po pitanju = proporcionalno "težini" pitanja, izračunatoj iz
    stvarnog broja reči u skriptama (PSEU_KOMPLETNO_GRADIVO, SPT_ISPIT):
-     PSEU: 1,5 min fiksnog uvoda + reči × koeficijent gustine činjenica
-           (godine, brojevi, imena, tabele) — raspon 0,85–1,40
+     PSEU: 1,5 min fiksnog uvoda + reči × 1,10 (beleške sa skraćenicama) ×
+           koeficijent gustine činjenica (godine, brojevi, imena) — 0,85–1,40
      SPT:  1,5 min fiksnog uvoda + (jezgro „Kompletan odgovor" × 1 +
            priča/potpitanja × 0,5) × koeficijent gustine autora/pojmova
    Isti tempo (težina po minutu) u svim sesijama novog gradiva, tako da
@@ -516,15 +523,15 @@ function rangeIds(subj, startOneBased, endOneBasedInclusive){
    ========================================================================= */
 const FIXED_SCHEDULE = {
   0: [
-    { label:'02:00–07:30', items:{ pseu: rangeIds('pseu',1,48) } },
-    { note:'😴 07:30–12:30 spavanje · 12:30–13:00 doručak' },
-    { label:'13:00–18:45', items:{ pseu: rangeIds('pseu',49,105) } },
+    { label:'02:00–06:50', items:{ pseu: rangeIds('pseu',1,48) } },
+    { note:'😴 06:50–11:50 spavanje · 11:50–12:20 doručak' },
+    { label:'12:20–18:45', items:{ pseu: reviewIdsForRounds('pseu',[5]).concat(rangeIds('pseu',49,105), reviewIdsForRounds('pseu',[6])) } },
     { note:'🍽 18:45–19:15 večera' },
     { label:'19:15–00:45 (prelazi u 25.9)', items:{ spt: rangeIds('spt',1,30) } },
     { note:'😴 00:45–05:45 spavanje' }
   ],
   1: [
-    { label:'05:45–07:45', items:{ pseu: reviewIdsForSubject('pseu') } },
+    { label:'05:45–07:45', items:{ pseu: reviewIdsForRounds('pseu',[1,2,3,4]) } },
     { note:'🎓 09:00 ispit PSEU → posao do 00:00' }
   ],
   2: [
@@ -535,9 +542,9 @@ const FIXED_SCHEDULE = {
 
 /* Izračunato unapred iz broja reči (vidi gore): minuti po pitanju, planirani
    početak i pauza posle pitanja. */
-const ITEM_BUDGET = {"pseu-0":7,"pseu-1":4,"pseu-2":6,"pseu-3":8,"pseu-4":5,"pseu-5":5,"pseu-6":5,"pseu-7":4,"pseu-8":6,"pseu-9":5,"pseu-10":3,"pseu-11":6,"pseu-12":3,"pseu-13":5,"pseu-14":4,"pseu-15":6,"pseu-16":5,"pseu-17":5,"pseu-18":5,"pseu-19":3,"pseu-20":7,"pseu-21":2,"pseu-22":4,"pseu-23":5,"pseu-24":7,"pseu-25":5,"pseu-26":5,"pseu-27":5,"pseu-28":8,"pseu-29":11,"pseu-30":5,"pseu-31":8,"pseu-32":11,"pseu-33":4,"pseu-34":6,"pseu-35":5,"pseu-36":7,"pseu-37":9,"pseu-38":5,"pseu-39":5,"pseu-40":5,"pseu-41":7,"pseu-42":5,"pseu-43":3,"pseu-44":9,"pseu-45":6,"pseu-46":5,"pseu-47":6,"pseu-48":3,"pseu-49":3,"pseu-50":6,"pseu-51":4,"pseu-52":3,"pseu-53":4,"pseu-54":9,"pseu-55":8,"pseu-56":2,"pseu-57":4,"pseu-58":5,"pseu-59":5,"pseu-60":2,"pseu-61":3,"pseu-62":6,"pseu-63":4,"pseu-64":3,"pseu-65":3,"pseu-66":5,"pseu-67":2,"pseu-68":3,"pseu-69":8,"pseu-70":8,"pseu-71":5,"pseu-72":3,"pseu-73":4,"pseu-74":3,"pseu-75":8,"pseu-76":4,"pseu-77":7,"pseu-78":9,"pseu-79":11,"pseu-80":5,"pseu-81":8,"pseu-82":10,"pseu-83":4,"pseu-84":4,"pseu-85":2,"pseu-86":6,"pseu-87":7,"pseu-88":4,"pseu-89":5,"pseu-90":5,"pseu-91":5,"pseu-92":4,"pseu-93":4,"pseu-94":4,"pseu-95":5,"pseu-96":4,"pseu-97":5,"pseu-98":4,"pseu-99":7,"pseu-100":7,"pseu-101":6,"pseu-102":5,"pseu-103":5,"pseu-104":3,"spt-0":15,"spt-1":13,"spt-2":18,"spt-3":12,"spt-4":6,"spt-5":6,"spt-6":11,"spt-7":11,"spt-8":9,"spt-9":8,"spt-10":9,"spt-11":6,"spt-12":8,"spt-13":6,"spt-14":8,"spt-15":9,"spt-16":11,"spt-17":9,"spt-18":9,"spt-19":8,"spt-20":10,"spt-21":8,"spt-22":8,"spt-23":11,"spt-24":7,"spt-25":7,"spt-26":7,"spt-27":6,"spt-28":7,"spt-29":7,"pseu-105":21,"pseu-106":35,"pseu-107":22,"pseu-108":32,"spt-30":6,"spt-31":6,"spt-32":7,"spt-33":7,"spt-34":6,"spt-35":12,"spt-36":8,"spt-37":11,"spt-38":8,"spt-39":11,"spt-40":7,"spt-41":6,"spt-42":9,"spt-43":8,"spt-44":6,"spt-45":8,"spt-46":4,"spt-47":3,"spt-48":7,"spt-49":8,"spt-50":7,"spt-51":7,"spt-52":7,"spt-53":7,"spt-54":6,"spt-55":9,"spt-56":8,"spt-57":10,"spt-58":8,"spt-59":9,"spt-60":5,"spt-61":8,"spt-62":11,"spt-63":9,"spt-64":48,"spt-65":48};
-const ITEM_START = {"pseu-0":"02:00","pseu-1":"02:07","pseu-2":"02:11","pseu-3":"02:17","pseu-4":"02:25","pseu-5":"02:30","pseu-6":"02:35","pseu-7":"02:40","pseu-8":"02:44","pseu-9":"03:00","pseu-10":"03:05","pseu-11":"03:08","pseu-12":"03:14","pseu-13":"03:17","pseu-14":"03:22","pseu-15":"03:26","pseu-16":"03:32","pseu-17":"03:37","pseu-18":"03:42","pseu-19":"03:57","pseu-20":"04:00","pseu-21":"04:07","pseu-22":"04:09","pseu-23":"04:13","pseu-24":"04:18","pseu-25":"04:25","pseu-26":"04:30","pseu-27":"04:35","pseu-28":"04:40","pseu-29":"05:08","pseu-30":"05:19","pseu-31":"05:24","pseu-32":"05:32","pseu-33":"05:43","pseu-34":"05:47","pseu-35":"06:03","pseu-36":"06:08","pseu-37":"06:15","pseu-38":"06:24","pseu-39":"06:29","pseu-40":"06:34","pseu-41":"06:39","pseu-42":"06:46","pseu-43":"07:01","pseu-44":"07:04","pseu-45":"07:13","pseu-46":"07:19","pseu-47":"07:24","pseu-48":"13:00","pseu-49":"13:03","pseu-50":"13:06","pseu-51":"13:12","pseu-52":"13:16","pseu-53":"13:19","pseu-54":"13:23","pseu-55":"13:32","pseu-56":"13:40","pseu-57":"13:42","pseu-58":"13:56","pseu-59":"14:01","pseu-60":"14:06","pseu-61":"14:08","pseu-62":"14:11","pseu-63":"14:17","pseu-64":"14:21","pseu-65":"14:24","pseu-66":"14:27","pseu-67":"14:32","pseu-68":"14:34","pseu-69":"14:37","pseu-70":"14:55","pseu-71":"15:03","pseu-72":"15:08","pseu-73":"15:11","pseu-74":"15:15","pseu-75":"15:18","pseu-76":"15:26","pseu-77":"15:30","pseu-78":"15:37","pseu-79":"16:06","pseu-80":"16:17","pseu-81":"16:22","pseu-82":"16:30","pseu-83":"16:40","pseu-84":"16:44","pseu-85":"16:48","pseu-86":"16:50","pseu-87":"17:06","pseu-88":"17:13","pseu-89":"17:17","pseu-90":"17:22","pseu-91":"17:27","pseu-92":"17:32","pseu-93":"17:36","pseu-94":"17:40","pseu-95":"17:44","pseu-96":"17:49","pseu-97":"18:03","pseu-98":"18:08","pseu-99":"18:12","pseu-100":"18:19","pseu-101":"18:26","pseu-102":"18:32","pseu-103":"18:37","pseu-104":"18:42","spt-0":"19:15","spt-1":"19:30","spt-2":"19:43","spt-3":"20:11","spt-4":"20:23","spt-5":"20:29","spt-6":"20:35","spt-7":"20:46","spt-8":"21:07","spt-9":"21:16","spt-10":"21:24","spt-11":"21:33","spt-12":"21:39","spt-13":"21:47","spt-14":"22:13","spt-15":"22:21","spt-16":"22:30","spt-17":"22:41","spt-18":"22:50","spt-19":"23:09","spt-20":"23:17","spt-21":"23:27","spt-22":"23:35","spt-23":"23:43","spt-24":"00:04","spt-25":"00:11","spt-26":"00:18","spt-27":"00:25","spt-28":"00:31","spt-29":"00:38","pseu-105":"05:45","pseu-106":"06:06","pseu-107":"06:51","pseu-108":"07:13","spt-30":"00:30","spt-31":"00:36","spt-32":"00:42","spt-33":"00:49","spt-34":"00:56","spt-35":"01:02","spt-36":"01:14","spt-37":"01:32","spt-38":"01:43","spt-39":"01:51","spt-40":"02:02","spt-41":"02:09","spt-42":"02:15","spt-43":"02:34","spt-44":"02:42","spt-45":"02:48","spt-46":"02:56","spt-47":"03:00","spt-48":"03:03","spt-49":"03:10","spt-50":"03:18","spt-51":"03:45","spt-52":"03:52","spt-53":"03:59","spt-54":"04:06","spt-55":"04:12","spt-56":"04:21","spt-57":"04:29","spt-58":"04:49","spt-59":"04:57","spt-60":"05:06","spt-61":"05:11","spt-62":"05:19","spt-63":"05:30","spt-64":"05:49","spt-65":"06:57"};
-const BREAK_AFTER = {"pseu-8":10,"pseu-18":10,"pseu-28":20,"pseu-34":10,"pseu-42":10,"pseu-57":10,"pseu-69":10,"pseu-78":20,"pseu-86":10,"pseu-96":10,"spt-2":10,"spt-7":10,"spt-13":20,"spt-18":10,"spt-23":10,"pseu-106":10,"spt-36":10,"spt-42":10,"spt-50":20,"spt-57":10,"spt-63":10,"spt-64":20};
+const ITEM_BUDGET = {"pseu-0":4,"pseu-1":3,"pseu-2":6,"pseu-3":6,"pseu-4":4,"pseu-5":3,"pseu-6":2,"pseu-7":3,"pseu-8":5,"pseu-9":3,"pseu-10":4,"pseu-11":8,"pseu-12":4,"pseu-13":5,"pseu-14":4,"pseu-15":5,"pseu-16":6,"pseu-17":5,"pseu-18":6,"pseu-19":3,"pseu-20":6,"pseu-21":2,"pseu-22":4,"pseu-23":4,"pseu-24":6,"pseu-25":5,"pseu-26":5,"pseu-27":4,"pseu-28":6,"pseu-29":10,"pseu-30":6,"pseu-31":7,"pseu-32":9,"pseu-33":3,"pseu-34":5,"pseu-35":3,"pseu-36":8,"pseu-37":4,"pseu-38":5,"pseu-39":4,"pseu-40":4,"pseu-41":6,"pseu-42":5,"pseu-43":3,"pseu-44":9,"pseu-45":6,"pseu-46":5,"pseu-47":7,"pseu-109":35,"pseu-48":4,"pseu-49":3,"pseu-50":4,"pseu-51":2,"pseu-52":2,"pseu-53":4,"pseu-54":4,"pseu-55":4,"pseu-56":2,"pseu-57":3,"pseu-58":3,"pseu-59":5,"pseu-60":2,"pseu-61":2,"pseu-62":5,"pseu-63":3,"pseu-64":3,"pseu-65":3,"pseu-66":5,"pseu-67":3,"pseu-68":3,"pseu-69":6,"pseu-70":8,"pseu-71":6,"pseu-72":3,"pseu-73":4,"pseu-74":4,"pseu-75":5,"pseu-76":2,"pseu-77":4,"pseu-78":8,"pseu-79":10,"pseu-80":5,"pseu-81":8,"pseu-82":10,"pseu-83":4,"pseu-84":5,"pseu-85":2,"pseu-86":6,"pseu-87":6,"pseu-88":4,"pseu-89":5,"pseu-90":4,"pseu-91":5,"pseu-92":3,"pseu-93":4,"pseu-94":3,"pseu-95":5,"pseu-96":4,"pseu-97":5,"pseu-98":4,"pseu-99":8,"pseu-100":8,"pseu-101":6,"pseu-102":6,"pseu-103":5,"pseu-104":6,"pseu-110":30,"spt-0":15,"spt-1":13,"spt-2":18,"spt-3":12,"spt-4":6,"spt-5":6,"spt-6":11,"spt-7":11,"spt-8":9,"spt-9":8,"spt-10":9,"spt-11":6,"spt-12":8,"spt-13":6,"spt-14":8,"spt-15":9,"spt-16":11,"spt-17":9,"spt-18":9,"spt-19":8,"spt-20":10,"spt-21":8,"spt-22":8,"spt-23":11,"spt-24":7,"spt-25":7,"spt-26":7,"spt-27":6,"spt-28":7,"spt-29":7,"pseu-105":21,"pseu-106":34,"pseu-107":20,"pseu-108":35,"spt-30":6,"spt-31":6,"spt-32":7,"spt-33":7,"spt-34":6,"spt-35":12,"spt-36":8,"spt-37":11,"spt-38":8,"spt-39":11,"spt-40":7,"spt-41":6,"spt-42":9,"spt-43":8,"spt-44":6,"spt-45":8,"spt-46":4,"spt-47":3,"spt-48":7,"spt-49":8,"spt-50":7,"spt-51":7,"spt-52":7,"spt-53":7,"spt-54":6,"spt-55":9,"spt-56":8,"spt-57":10,"spt-58":8,"spt-59":9,"spt-60":5,"spt-61":8,"spt-62":11,"spt-63":9,"spt-64":48,"spt-65":48};
+const ITEM_START = {"pseu-0":"02:00","pseu-1":"02:04","pseu-2":"02:07","pseu-3":"02:13","pseu-4":"02:19","pseu-5":"02:23","pseu-6":"02:26","pseu-7":"02:28","pseu-8":"02:31","pseu-9":"02:36","pseu-10":"02:39","pseu-11":"02:43","pseu-12":"03:01","pseu-13":"03:05","pseu-14":"03:10","pseu-15":"03:14","pseu-16":"03:19","pseu-17":"03:25","pseu-18":"03:30","pseu-19":"03:36","pseu-20":"03:39","pseu-21":"03:45","pseu-22":"03:57","pseu-23":"04:01","pseu-24":"04:05","pseu-25":"04:11","pseu-26":"04:16","pseu-27":"04:21","pseu-28":"04:25","pseu-29":"04:31","pseu-30":"04:41","pseu-31":"05:07","pseu-32":"05:14","pseu-33":"05:23","pseu-34":"05:26","pseu-35":"05:31","pseu-36":"05:34","pseu-37":"05:42","pseu-38":"05:46","pseu-39":"05:51","pseu-40":"06:05","pseu-41":"06:09","pseu-42":"06:15","pseu-43":"06:20","pseu-44":"06:23","pseu-45":"06:32","pseu-46":"06:38","pseu-47":"06:43","pseu-109":"12:20","pseu-48":"12:55","pseu-49":"12:59","pseu-50":"13:02","pseu-51":"13:16","pseu-52":"13:18","pseu-53":"13:20","pseu-54":"13:24","pseu-55":"13:28","pseu-56":"13:32","pseu-57":"13:34","pseu-58":"13:37","pseu-59":"13:40","pseu-60":"13:45","pseu-61":"13:47","pseu-62":"13:49","pseu-63":"13:54","pseu-64":"13:57","pseu-65":"14:00","pseu-66":"14:03","pseu-67":"14:18","pseu-68":"14:21","pseu-69":"14:24","pseu-70":"14:30","pseu-71":"14:38","pseu-72":"14:44","pseu-73":"14:47","pseu-74":"14:51","pseu-75":"14:55","pseu-76":"15:00","pseu-77":"15:02","pseu-78":"15:06","pseu-79":"15:34","pseu-80":"15:44","pseu-81":"15:49","pseu-82":"15:57","pseu-83":"16:07","pseu-84":"16:11","pseu-85":"16:16","pseu-86":"16:18","pseu-87":"16:34","pseu-88":"16:40","pseu-89":"16:44","pseu-90":"16:49","pseu-91":"16:53","pseu-92":"16:58","pseu-93":"17:01","pseu-94":"17:05","pseu-95":"17:08","pseu-96":"17:13","pseu-97":"17:17","pseu-98":"17:32","pseu-99":"17:36","pseu-100":"17:44","pseu-101":"17:52","pseu-102":"17:58","pseu-103":"18:04","pseu-104":"18:09","pseu-110":"18:15","spt-0":"19:15","spt-1":"19:30","spt-2":"19:43","spt-3":"20:11","spt-4":"20:23","spt-5":"20:29","spt-6":"20:35","spt-7":"20:46","spt-8":"21:07","spt-9":"21:16","spt-10":"21:24","spt-11":"21:33","spt-12":"21:39","spt-13":"21:47","spt-14":"22:13","spt-15":"22:21","spt-16":"22:30","spt-17":"22:41","spt-18":"22:50","spt-19":"23:09","spt-20":"23:17","spt-21":"23:27","spt-22":"23:35","spt-23":"23:43","spt-24":"00:04","spt-25":"00:11","spt-26":"00:18","spt-27":"00:25","spt-28":"00:31","spt-29":"00:38","pseu-105":"05:45","pseu-106":"06:06","pseu-107":"06:50","pseu-108":"07:10","spt-30":"00:30","spt-31":"00:36","spt-32":"00:42","spt-33":"00:49","spt-34":"00:56","spt-35":"01:02","spt-36":"01:14","spt-37":"01:32","spt-38":"01:43","spt-39":"01:51","spt-40":"02:02","spt-41":"02:09","spt-42":"02:15","spt-43":"02:34","spt-44":"02:42","spt-45":"02:48","spt-46":"02:56","spt-47":"03:00","spt-48":"03:03","spt-49":"03:10","spt-50":"03:18","spt-51":"03:45","spt-52":"03:52","spt-53":"03:59","spt-54":"04:06","spt-55":"04:12","spt-56":"04:21","spt-57":"04:29","spt-58":"04:49","spt-59":"04:57","spt-60":"05:06","spt-61":"05:11","spt-62":"05:19","spt-63":"05:30","spt-64":"05:49","spt-65":"06:57"};
+const BREAK_AFTER = {"pseu-11":10,"pseu-21":10,"pseu-30":20,"pseu-39":10,"pseu-50":10,"pseu-66":10,"pseu-78":20,"pseu-86":10,"pseu-97":10,"spt-2":10,"spt-7":10,"spt-13":20,"spt-18":10,"spt-23":10,"pseu-106":10,"spt-36":10,"spt-42":10,"spt-50":20,"spt-57":10,"spt-63":10,"spt-64":20};
 
 
 function dayLabel(i){ return `${START_DAY+i}. septembar`; }
@@ -782,7 +789,7 @@ function getDayPlan(d){
   return base;
 }
 const MANUAL_SUGGESTIONS = {
-  0: 'Učenje 02:00–07:30 (PSEU 1–48) · spavanje 07:30–12:30 · 13:00–18:45 (PSEU 49–105) · večera · 19:15–00:45 (SPT 1–30) · spavanje 00:45–05:45',
+  0: 'Učenje 02:00–06:50 (PSEU 1–48) · spavanje 06:50–11:50 · 12:20–18:45 (ponavljanje 1–48, PSEU 49–105, ponavljanje 49–105) · večera · 19:15–00:45 (SPT 1–30) · spavanje 00:45–05:45',
   1: 'Ponavljanje PSEU 05:45–07:45 → ispit 09:00 → posao do 00:00',
   2: 'Učenje 00:30–07:45 (SPT 31–64 + ponavljanje svih 64) → ispit 09:00'
 };
